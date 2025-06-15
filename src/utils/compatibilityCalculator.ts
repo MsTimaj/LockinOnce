@@ -1,3 +1,4 @@
+
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
 import { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
@@ -207,9 +208,17 @@ export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentRe
 };
 
 const generateCompatibleAssessmentResults = (userProfile: ComprehensiveAssessmentResults): ComprehensiveAssessmentResults => {
-  const compatibleAttachment = userProfile.attachmentStyle?.dominantStyle === 'secure' ? 'secure' :
-                              userProfile.attachmentStyle?.dominantStyle === 'anxious' ? 'secure' :
-                              userProfile.attachmentStyle?.dominantStyle === 'avoidant' ? 'secure' : 'secure';
+  // Provide safe defaults if userProfile or its properties are null/undefined
+  const userAttachmentStyle = userProfile?.attachmentStyle?.dominantStyle || 'secure';
+  const userIntroversion = userProfile?.personality?.introversion || 50;
+  const userExtroversion = userProfile?.personality?.extroversion || 50;
+  const userThinking = userProfile?.personality?.thinking || 60;
+  const userFeeling = userProfile?.personality?.feeling || 60;
+  const userBirthOrder = userProfile?.birthOrder?.birthOrder || 'oldest';
+
+  const compatibleAttachment = userAttachmentStyle === 'secure' ? 'secure' :
+                              userAttachmentStyle === 'anxious' ? 'secure' :
+                              userAttachmentStyle === 'avoidant' ? 'secure' : 'secure';
 
   return {
     attachmentStyle: {
@@ -220,14 +229,14 @@ const generateCompatibleAssessmentResults = (userProfile: ComprehensiveAssessmen
       dominantStyle: compatibleAttachment
     },
     personality: {
-      introversion: userProfile.personality?.introversion ? 40 : 80,
-      extroversion: userProfile.personality?.extroversion ? 40 : 80,
-      thinking: userProfile.personality?.thinking || 60,
-      feeling: userProfile.personality?.feeling || 60,
+      introversion: userIntroversion > userExtroversion ? 40 : 80,
+      extroversion: userExtroversion > userIntroversion ? 40 : 80,
+      thinking: userThinking,
+      feeling: userFeeling,
       dominantType: "Compatible Type"
     },
     birthOrder: {
-      birthOrder: userProfile.birthOrder?.birthOrder === 'oldest' ? 'youngest' : 'oldest',
+      birthOrder: userBirthOrder === 'oldest' ? 'youngest' : 'oldest',
       familySize: "medium",
       parentalDynamics: "supportive"
     },

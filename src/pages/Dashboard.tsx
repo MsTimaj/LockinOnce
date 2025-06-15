@@ -24,21 +24,37 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userProfile = UserStateManager.getUserProfile();
-    
-    // Check if user has completed onboarding
-    if (!userProfile || !UserStateManager.hasCompletedOnboarding()) {
-      navigate('/onboarding');
-      return;
-    }
+    const initializeDashboard = async () => {
+      try {
+        // Check if user has completed onboarding
+        const hasCompleted = await UserStateManager.hasCompletedOnboarding();
+        if (!hasCompleted) {
+          navigate('/onboarding');
+          return;
+        }
 
-    // Generate matches based on user's assessment results
-    if (UserStateManager.isAssessmentComplete()) {
-      const generatedMatches = generateCompatibleMatches(userProfile.assessmentResults);
-      setMatches(generatedMatches);
-    }
-    
-    setIsLoading(false);
+        // Get user profile
+        const userProfile = await UserStateManager.getUserProfile();
+        if (!userProfile) {
+          navigate('/onboarding');
+          return;
+        }
+
+        // Generate matches based on user's assessment results
+        const isComplete = await UserStateManager.isAssessmentComplete();
+        if (isComplete && userProfile.assessmentResults) {
+          const generatedMatches = generateCompatibleMatches(userProfile.assessmentResults);
+          setMatches(generatedMatches);
+        }
+      } catch (error) {
+        console.error('Failed to initialize dashboard:', error);
+        navigate('/onboarding');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeDashboard();
   }, [navigate]);
 
   const handleMatchClick = (match: MatchProfile) => {

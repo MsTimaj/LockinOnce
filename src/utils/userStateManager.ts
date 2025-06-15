@@ -46,7 +46,6 @@ export class UserStateManager {
       const { error } = await supabase
         .from('user_profiles')
         .upsert({
-          id: profile.id,
           created_at: profile.createdAt,
           last_updated: profile.lastUpdated,
           basic_info: profile.basicInfo,
@@ -90,7 +89,8 @@ export class UserStateManager {
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
-        .eq('id', profileId)
+        .order('last_updated', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (error || !data) return;
