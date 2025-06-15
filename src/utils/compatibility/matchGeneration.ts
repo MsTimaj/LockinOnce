@@ -7,9 +7,15 @@ import { filterProfilesByPreferences } from "./profileFiltering";
 import { generateCompatibleAssessmentResults } from "./compatibleProfileGenerator";
 
 export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentResults): MatchProfile[] => {
-  // Filter matches based on user preferences
+  // Filter matches based on user preferences (if they exist)
   const preferences = userProfile?.preferences;
-  const filteredProfiles = filterProfilesByPreferences(baseProfiles, preferences);
+  console.log('User preferences for filtering:', preferences);
+  
+  const filteredProfiles = preferences 
+    ? filterProfilesByPreferences(baseProfiles, preferences)
+    : baseProfiles;
+
+  console.log(`Filtered ${filteredProfiles.length} profiles from ${baseProfiles.length} total`);
 
   return filteredProfiles.map((profile, index) => {
     const compatibleResults = generateCompatibleAssessmentResults(userProfile, index);
