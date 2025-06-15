@@ -5,10 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Brain, Users, Target, ArrowRight, Sparkles, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
 
 const AIResultsSummary = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [currentInsight, setCurrentInsight] = useState(0);
+  const [chatTopic, setChatTopic] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const navigate = useNavigate();
 
   const insights = [
@@ -33,6 +36,11 @@ const AIResultsSummary = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  const handleLearnMore = (topic: string) => {
+    setChatTopic(topic);
+    setIsChatOpen(true);
+  };
 
   const mockAnalysis = {
     dominantStyle: "Secure Attachment",
@@ -94,7 +102,15 @@ const AIResultsSummary = () => {
           </CardHeader>
           <CardContent className="text-center">
             <div className="text-4xl font-bold text-rose-600 mb-2">{mockAnalysis.readinessScore}%</div>
-            <p className="text-sm text-gray-600">You're highly prepared for a meaningful relationship</p>
+            <p className="text-sm text-gray-600 mb-3">You're highly prepared for a meaningful relationship</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleLearnMore("relationship readiness")}
+              className="text-rose-600 border-rose-200 hover:bg-rose-50"
+            >
+              Learn More
+            </Button>
           </CardContent>
         </Card>
 
@@ -111,10 +127,18 @@ const AIResultsSummary = () => {
               <Badge variant="secondary" className="mb-3 bg-green-100 text-green-800">
                 {mockAnalysis.dominantStyle}
               </Badge>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-3">
                 Your secure attachment style means you're comfortable with intimacy and independence. 
                 This is your biggest relationship asset - you naturally create safe, stable connections.
               </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleLearnMore("attachment style")}
+                className="text-rose-600 border-rose-200 hover:bg-rose-50"
+              >
+                Learn More
+              </Button>
             </CardContent>
           </Card>
 
@@ -129,10 +153,18 @@ const AIResultsSummary = () => {
               <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-800">
                 {mockAnalysis.personalityType}
               </Badge>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 mb-3">
                 You process emotions deeply and value authentic connections. You prefer meaningful 
                 conversations over small talk, which helps you build genuine relationships.
               </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleLearnMore("communication style")}
+                className="text-rose-600 border-rose-200 hover:bg-rose-50"
+              >
+                Learn More
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -144,7 +176,7 @@ const AIResultsSummary = () => {
               <CardTitle className="text-green-700">Your Strengths</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
+              <ul className="space-y-2 mb-3">
                 {mockAnalysis.topStrengths.map((strength, index) => (
                   <li key={index} className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -152,6 +184,14 @@ const AIResultsSummary = () => {
                   </li>
                 ))}
               </ul>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleLearnMore("relationship strengths")}
+                className="text-rose-600 border-rose-200 hover:bg-rose-50"
+              >
+                Learn More
+              </Button>
             </CardContent>
           </Card>
 
@@ -160,7 +200,7 @@ const AIResultsSummary = () => {
               <CardTitle className="text-amber-700">Growth Opportunities</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
+              <ul className="space-y-2 mb-3">
                 {mockAnalysis.growthAreas.map((area, index) => (
                   <li key={index} className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
@@ -168,6 +208,14 @@ const AIResultsSummary = () => {
                   </li>
                 ))}
               </ul>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleLearnMore("relationship growth areas")}
+                className="text-rose-600 border-rose-200 hover:bg-rose-50"
+              >
+                Learn More
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -181,7 +229,15 @@ const AIResultsSummary = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700 italic">"{mockAnalysis.datingStrategy}"</p>
+            <p className="text-gray-700 italic mb-3">"{mockAnalysis.datingStrategy}"</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleLearnMore("personalized dating strategy")}
+              className="text-rose-600 border-rose-200 hover:bg-rose-50"
+            >
+              Learn More
+            </Button>
           </CardContent>
         </Card>
 
@@ -191,7 +247,7 @@ const AIResultsSummary = () => {
             <CardTitle className="text-rose-700">How We'll Match You</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-2 mb-3">
               {mockAnalysis.matchingFactors.map((factor, index) => (
                 <div key={index} className="flex justify-between items-center text-sm">
                   <span className="text-gray-700">{factor.split(' (')[0]}</span>
@@ -201,6 +257,14 @@ const AIResultsSummary = () => {
                 </div>
               ))}
             </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => handleLearnMore("matching algorithm")}
+              className="text-rose-600 border-rose-200 hover:bg-rose-50"
+            >
+              Learn More
+            </Button>
           </CardContent>
         </Card>
 
@@ -234,6 +298,12 @@ const AIResultsSummary = () => {
           </p>
         </div>
       </div>
+
+      <LoveVeeChatButton 
+        initialTopic={chatTopic}
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+      />
     </div>
   );
 };
