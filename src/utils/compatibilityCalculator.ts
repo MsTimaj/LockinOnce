@@ -232,7 +232,11 @@ const generateCompatibleAssessmentResults = (userProfile: ComprehensiveAssessmen
       parentalDynamics: "supportive"
     },
     relationshipIntent: {
-      timeline: "1-2 years"
+      timeline: "1-2 years",
+      commitment: "marriage",
+      lifeGoals: "family_career",
+      familyPlanning: "want_children",
+      relocatation: "somewhat_flexible"
     },
     emotionalCapacity: {
       stressManagement: "healthy_coping",
