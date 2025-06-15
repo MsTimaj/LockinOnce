@@ -87,7 +87,12 @@
 
   /* Modern Glass Cards */
   .card-glass {
-    @apply bg-card/60 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02];
+    @apply bg-card/60 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02];
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .card-glass:hover {
+    box-shadow: 0 35px 60px -12px rgba(232, 121, 183, 0.4), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   /* Modern Input Style */
