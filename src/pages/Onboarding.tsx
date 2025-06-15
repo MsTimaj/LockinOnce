@@ -7,15 +7,19 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
-import ValuesAssessment, { ValuesResults } from "@/components/assessments/ValuesAssessment";
-import ProximityIntimacyAssessment, { ProximityIntimacyResults } from "@/components/assessments/ProximityIntimacyAssessment";
+import PersonalityAssessment, { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
+import RelationshipIntentAssessment, { RelationshipIntentResults } from "@/components/assessments/RelationshipIntentAssessment";
+import EmotionalCapacityAssessment, { EmotionalCapacityResults } from "@/components/assessments/EmotionalCapacityAssessment";
+import AttractionLayerAssessment, { AttractionLayerResults } from "@/components/assessments/AttractionLayerAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
   const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
-  const [valuesResults, setValuesResults] = useState<ValuesResults | null>(null);
-  const [proximityResults, setProximityResults] = useState<ProximityIntimacyResults | null>(null);
+  const [personalityResults, setPersonalityResults] = useState<PersonalityResults | null>(null);
+  const [relationshipIntentResults, setRelationshipIntentResults] = useState<RelationshipIntentResults | null>(null);
+  const [emotionalCapacityResults, setEmotionalCapacityResults] = useState<EmotionalCapacityResults | null>(null);
+  const [attractionLayerResults, setAttractionLayerResults] = useState<AttractionLayerResults | null>(null);
   const totalSteps = 7;
   const navigate = useNavigate();
 
@@ -24,6 +28,9 @@ const Onboarding = () => {
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+    } else {
+      // Navigate to dashboard when all assessments are complete
+      navigate('/dashboard');
     }
   };
 
@@ -45,15 +52,27 @@ const Onboarding = () => {
     nextStep();
   };
 
-  const handleValuesComplete = (results: ValuesResults) => {
-    setValuesResults(results);
-    console.log('Values Results:', results);
+  const handlePersonalityComplete = (results: PersonalityResults) => {
+    setPersonalityResults(results);
+    console.log('Personality Results:', results);
     nextStep();
   };
 
-  const handleProximityComplete = (results: ProximityIntimacyResults) => {
-    setProximityResults(results);
-    console.log('Proximity & Intimacy Results:', results);
+  const handleRelationshipIntentComplete = (results: RelationshipIntentResults) => {
+    setRelationshipIntentResults(results);
+    console.log('Relationship Intent Results:', results);
+    nextStep();
+  };
+
+  const handleEmotionalCapacityComplete = (results: EmotionalCapacityResults) => {
+    setEmotionalCapacityResults(results);
+    console.log('Emotional Capacity Results:', results);
+    nextStep();
+  };
+
+  const handleAttractionLayerComplete = (results: AttractionLayerResults) => {
+    setAttractionLayerResults(results);
+    console.log('Attraction Layer Results:', results);
     nextStep();
   };
 
@@ -67,7 +86,7 @@ const Onboarding = () => {
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Let's create your profile based on proven relationship science. 
-              This will take about 8-10 minutes and help us find your most compatible matches.
+              This will take about 10-12 minutes and help us find your most compatible matches.
             </p>
             <div className="card-glass p-6 border-l-4 border-accent">
               <p className="text-accent font-medium mb-2">
@@ -79,10 +98,16 @@ const Onboarding = () => {
               </p>
             </div>
             <div className="card-glass p-6">
-              <p className="text-primary font-medium">
+              <h3 className="text-primary font-medium mb-3">Our Philosophy</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 "Deep compatibility isn't about finding someone identical to you—
-                it's about finding someone who complements your emotional patterns."
+                it's about finding someone who complements your emotional patterns and shares your commitment to growth."
               </p>
+              <div className="space-y-2 text-left">
+                <p className="text-xs text-muted-foreground">✓ Science-based compatibility matching</p>
+                <p className="text-xs text-muted-foreground">✓ Focus on emotional maturity and readiness</p>
+                <p className="text-xs text-muted-foreground">✓ Commitment to long-term partnership goals</p>
+              </div>
             </div>
           </div>
         );
@@ -91,57 +116,21 @@ const Onboarding = () => {
       case 3:
         return <BirthOrderAssessment onComplete={handleBirthOrderComplete} />;
       case 4:
-        return <ValuesAssessment onComplete={handleValuesComplete} />;
+        return <PersonalityAssessment onComplete={handlePersonalityComplete} />;
       case 5:
-        return <ProximityIntimacyAssessment onComplete={handleProximityComplete} />;
+        return <RelationshipIntentAssessment onComplete={handleRelationshipIntentComplete} />;
       case 6:
-        return (
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Your Compatibility Profile
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Here's your complete relationship compatibility profile.
-            </p>
-            <div className="space-y-4">
-              {attachmentResults && (
-                <div className="card-glass p-4 text-left">
-                  <p className="text-sm text-muted-foreground mb-2">Attachment Style:</p>
-                  <p className="text-primary font-medium capitalize">{attachmentResults.dominantStyle}</p>
-                </div>
-              )}
-              {birthOrderResults && (
-                <div className="card-glass p-4 text-left">
-                  <p className="text-sm text-muted-foreground mb-2">Family Background:</p>
-                  <p className="text-primary font-medium capitalize">{birthOrderResults.birthOrder} child</p>
-                </div>
-              )}
-              {valuesResults && (
-                <div className="card-glass p-4 text-left">
-                  <p className="text-sm text-muted-foreground mb-2">Core Values:</p>
-                  <p className="text-primary font-medium">{valuesResults.coreValues.length} selected</p>
-                </div>
-              )}
-              {proximityResults && (
-                <div className="card-glass p-4 text-left">
-                  <p className="text-sm text-muted-foreground mb-2">Intimacy Style:</p>
-                  <p className="text-primary font-medium capitalize">{proximityResults.emotionalIntimacy.replace('_', ' ')}</p>
-                </div>
-              )}
-            </div>
-            <div className="text-left space-y-4">
-              <p className="text-accent font-medium">Step 6 of 7 - Almost done!</p>
-            </div>
-          </div>
-        );
+        return <EmotionalCapacityAssessment onComplete={handleEmotionalCapacityComplete} />;
+      case 7:
+        return <AttractionLayerAssessment onComplete={handleAttractionLayerComplete} />;
       default:
         return (
           <div className="text-center space-y-6">
             <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Step {currentStep} of {totalSteps}
+              Assessment Complete!
             </h2>
             <p className="text-lg text-muted-foreground">
-              More assessment steps coming soon...
+              Redirecting to your dashboard...
             </p>
           </div>
         );
@@ -177,23 +166,14 @@ const Onboarding = () => {
           </CardContent>
         </Card>
 
-        {/* Navigation */}
-        {currentStep !== 2 && currentStep !== 3 && currentStep !== 4 && currentStep !== 5 && (
-          <div className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="px-8"
-            >
-              Previous
-            </Button>
+        {/* Navigation - Only show for welcome step */}
+        {currentStep === 1 && (
+          <div className="flex justify-center">
             <Button 
               onClick={nextStep}
-              disabled={currentStep === totalSteps}
               className="btn-gradient px-8"
             >
-              {currentStep === totalSteps ? 'Complete' : 'Continue'}
+              Start Assessment
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
