@@ -3,50 +3,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LockInOnce Design System - Sunset Harmony Theme */
+/* LockInOnce Design System - Modern Pink Romance Theme */
 
 @layer base {
   :root {
-    /* LockInOnce Sunset Harmony Colors */
-    --primary: 26 63% 80%; /* Soft Sunset Pink #F6AFA3 */
-    --secondary: 321 26% 76%; /* Misty Lavender #D1B3C4 */
-    --accent: 8 100% 71%; /* Glow Coral #FF7B6D */
-    --background-light: 213 69% 87%; /* Sky Blue Fade #C3DAF4 */
-    --background-dark: 210 26% 23%; /* Indigo Dusk #2C3A4B */
-    --foreground-dark: 210 18% 12%; /* Midnight Shadow #1B1F22 */
-    --foreground-light: 23 100% 96%; /* Dawn Blush #FFEFE9 */
+    /* LockInOnce Modern Pink Romance Colors */
+    --primary: 330 81% 60%; /* Rose Pink #E879B7 */
+    --secondary: 316 44% 75%; /* Soft Mauve #D4A5C4 */
+    --accent: 342 90% 65%; /* Coral Pink #F96B8B */
+    --background-light: 320 100% 98%; /* Soft Pink White #FFF7FC */
+    --background-dark: 240 15% 15%; /* Deep Charcoal #1F1F23 */
+    --foreground-dark: 240 15% 8%; /* Rich Black #14141A */
+    --foreground-light: 320 50% 98%; /* Pearl Pink #FCF7F9 */
     
     /* Default light theme */
     --background: var(--background-light);
     --foreground: var(--foreground-dark);
-    --card: 0 0% 100%;
+    --card: 320 50% 99%;
     --card-foreground: var(--foreground-dark);
-    --popover: 0 0% 100%;
+    --popover: 320 50% 99%;
     --popover-foreground: var(--foreground-dark);
     --primary-foreground: 0 0% 100%;
     --secondary-foreground: var(--foreground-dark);
-    --muted: 213 69% 90%;
-    --muted-foreground: 210 18% 40%;
-    --border: 213 69% 85%;
-    --input: 213 69% 85%;
+    --muted: 320 40% 95%;
+    --muted-foreground: 240 15% 40%;
+    --border: 320 40% 90%;
+    --input: 320 40% 90%;
     --ring: var(--primary);
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
-    /* Twilight theme */
+    /* Dark theme */
     --background: var(--background-dark);
     --foreground: var(--foreground-light);
-    --card: 210 26% 25%;
+    --card: 240 15% 18%;
     --card-foreground: var(--foreground-light);
-    --popover: 210 26% 25%;
+    --popover: 240 15% 18%;
     --popover-foreground: var(--foreground-light);
     --primary-foreground: var(--foreground-dark);
     --secondary-foreground: var(--foreground-light);
-    --muted: 210 26% 20%;
-    --muted-foreground: 210 18% 60%;
-    --border: 210 26% 30%;
-    --input: 210 26% 30%;
+    --muted: 240 15% 12%;
+    --muted-foreground: 240 15% 60%;
+    --border: 240 15% 25%;
+    --input: 240 15% 25%;
   }
 }
 
@@ -57,7 +57,6 @@
 
   body {
     @apply bg-background text-foreground font-inter;
-    /* Mobile-first optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
@@ -67,86 +66,97 @@
     @apply font-playfair;
   }
 
-  /* Mobile touch improvements */
   button, [role="button"] {
     touch-action: manipulation;
   }
 
-  /* Prevent zoom on input focus for iOS */
   input, select, textarea {
     font-size: 16px;
   }
 }
 
 @layer components {
-  /* Mobile-optimized Gradient Buttons */
+  /* Modern Gradient Buttons */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary to-accent text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 min-h-[44px];
+    @apply bg-gradient-to-r from-primary via-accent to-primary/80 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300 min-h-[56px] bg-[length:200%_100%] hover:bg-[position:100%_0];
   }
   
   .btn-secondary {
-    @apply border-2 border-accent text-accent bg-transparent font-medium px-6 py-3 rounded-xl hover:bg-accent hover:text-white active:scale-95 transition-all duration-200 min-h-[44px];
+    @apply border-2 border-primary/30 text-primary bg-card/50 backdrop-blur-sm font-semibold px-8 py-4 rounded-2xl hover:bg-primary hover:text-white hover:border-primary active:scale-95 transition-all duration-300 min-h-[56px];
   }
 
-  /* Mobile-optimized Soft Cards */
-  .card-soft {
-    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300;
+  /* Modern Glass Cards */
+  .card-glass {
+    @apply bg-card/60 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02];
   }
 
-  /* Mobile-friendly Animated Inputs */
-  .input-underline {
-    @apply bg-transparent border-0 border-b-2 border-muted-foreground/30 focus:border-accent rounded-none px-0 py-3 focus:ring-0 transition-colors duration-300 min-h-[44px];
+  /* Modern Input Style */
+  .input-modern {
+    @apply bg-card/50 backdrop-blur-sm border-2 border-border/50 focus:border-primary rounded-2xl px-6 py-4 focus:ring-0 transition-all duration-300 min-h-[56px] placeholder:text-muted-foreground/60;
   }
 
-  /* Mobile-optimized Romantic Quotes */
-  .quote-romantic {
-    @apply font-dancing text-lg text-accent/80 italic;
+  /* Modern Romantic Quote */
+  .quote-modern {
+    @apply font-dancing text-xl text-primary/90 italic text-center;
   }
 
-  /* Match Badge */
-  .badge-match {
-    @apply bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium;
+  /* Modern Match Badge */
+  .badge-modern {
+    @apply bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/20 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-sm;
   }
 }
 
-/* Custom animations */
-@keyframes fade-in-up {
+/* Modern animations */
+@keyframes float-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes gradient-flow {
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-glow {
   0%, 100% {
-    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(232, 121, 183, 0.3);
   }
   50% {
-    background-position: 100% 50%;
+    box-shadow: 0 0 40px rgba(232, 121, 183, 0.5);
   }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out;
+.animate-float-up {
+  animation: float-up 0.8s ease-out;
 }
 
-.animate-gradient-flow {
-  background-size: 200% 200%;
-  animation: gradient-flow 3s ease-in-out infinite;
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
-/* Mobile-specific optimizations */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Mobile optimizations */
 @media (max-width: 640px) {
   .container {
     @apply px-4;
   }
 }
 
-/* Safe area handling for mobile */
 @supports (padding: max(0px)) {
   body {
     padding-left: max(16px, env(safe-area-inset-left));
