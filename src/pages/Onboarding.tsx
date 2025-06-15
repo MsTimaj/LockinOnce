@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -91,7 +90,8 @@ const Onboarding = () => {
           await UserStateManager.saveReadinessScore(readinessScore);
         }
         
-        navigate('/ai-results-summary');
+        // Fixed: Navigate to the correct route
+        navigate('/ai-results');
       } else {
         setCurrentStep(nextStep);
       }
@@ -100,7 +100,7 @@ const Onboarding = () => {
       // Continue with UI update even if save fails
       const nextStep = currentStep + 1;
       if (nextStep >= assessments.length) {
-        navigate('/ai-results-summary');
+        navigate('/ai-results');
       } else {
         setCurrentStep(nextStep);
       }

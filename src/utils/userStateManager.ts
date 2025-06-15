@@ -75,6 +75,13 @@ export class UserStateManager {
 
   static clearUserData(): void {
     LocalStorageManager.clearData();
+    console.log('User data cleared - you can now test as a new user');
+  }
+
+  // Reset function for testing - clears all data and forces fresh start
+  static resetForTesting(): void {
+    LocalStorageManager.clearData();
+    console.log('Application reset for testing - refresh the page to start fresh');
   }
 
   static async hasCompletedOnboarding(): Promise<boolean> {
