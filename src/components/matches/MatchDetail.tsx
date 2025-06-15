@@ -1,7 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Heart, Brain, Users, Star, MessageCircle, CheckCircle, X, Sparkles } from "lucide-react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
+import { MessagingManager } from "@/utils/messaging/messagingManager";
+import { useNavigate } from "react-router-dom";
 
 interface MatchDetailProps {
   match: MatchProfile;
@@ -12,6 +15,7 @@ interface MatchDetailProps {
 
 const MatchDetail = ({ match, onBack, onConnect, onPass }: MatchDetailProps) => {
   const { compatibilityScore } = match;
+  const navigate = useNavigate();
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-emerald-600";
@@ -36,6 +40,15 @@ const MatchDetail = ({ match, onBack, onConnect, onPass }: MatchDetailProps) => 
     onBack();
   };
 
+  const handleStartConversation = async () => {
+    try {
+      const conversation = await MessagingManager.getOrCreateConversation(match.id, match.id);
+      navigate('/messages');
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
+  };
+
   const renderConnectionStatus = () => {
     switch (match.connectionStatus) {
       case 'mutual':
@@ -47,10 +60,7 @@ const MatchDetail = ({ match, onBack, onConnect, onPass }: MatchDetailProps) => 
               <p className="text-pink-600 text-sm mb-4">Both of you are interested - this could be the start of something special!</p>
               <Button 
                 className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white"
-                onClick={() => {
-                  // Future: Navigate to messaging
-                  alert('Messaging feature coming soon! 💕');
-                }}
+                onClick={handleStartConversation}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Start Conversation

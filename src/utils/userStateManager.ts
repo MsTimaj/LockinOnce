@@ -183,6 +183,16 @@ export class UserStateManager {
     const hasProfile = SessionStorageManager.hasValidData();
     return { sessionId, hasProfile };
   }
+
+  static getCurrentUserId(): string {
+    // For MVP, use a simple session-based user ID
+    let userId = sessionStorage.getItem('current_user_id');
+    if (!userId) {
+      userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('current_user_id', userId);
+    }
+    return userId;
+  }
 }
 
 export type { UserProfile };

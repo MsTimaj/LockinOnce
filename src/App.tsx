@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Onboarding from "./pages/Onboarding";
 import AIResultsSummary from "./pages/AIResultsSummary";
 import Dashboard from "./pages/Dashboard";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/ai-results" element={<AIResultsSummary />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/messages" element={<Messages />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

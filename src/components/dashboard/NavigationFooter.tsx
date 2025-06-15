@@ -1,29 +1,61 @@
 
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Heart, MessageCircle, User, Sparkles } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const NavigationFooter = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getButtonClass = (path: string) => {
+    const isActive = location.pathname === path;
+    return `flex-1 flex flex-col items-center space-y-1 py-3 px-2 rounded-xl transition-all ${
+      isActive 
+        ? 'bg-rose-100 text-rose-600' 
+        : 'text-gray-600 hover:text-rose-500 hover:bg-rose-50'
+    }`;
+  };
 
   return (
-    <div className="space-y-4 pb-8">
-      <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/30 shadow-sm">
-        <p className="text-sm text-gray-700 mb-3 font-medium">
-          Want to see more matches?
-        </p>
-        <Button 
-          onClick={() => navigate('/ai-results')}
-          variant="outline"
-          className="w-full mb-2 border-rose-200 hover:bg-rose-50"
-        >
-          View Your Analysis
-        </Button>
-        <Button 
-          onClick={() => navigate('/')}
+    <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-white/50 px-6 py-2">
+      <div className="max-w-md mx-auto flex items-center justify-around">
+        <Button
           variant="ghost"
-          className="w-full text-sm hover:bg-rose-50"
+          className={getButtonClass('/dashboard')}
+          onClick={() => navigate('/dashboard')}
         >
-          Back to Home
+          <Heart className="h-5 w-5" />
+          <span className="text-xs font-medium">Matches</span>
+        </Button>
+        
+        <Button
+          variant="ghost"
+          className={getButtonClass('/messages')}
+          onClick={() => navigate('/messages')}
+        >
+          <MessageCircle className="h-5 w-5" />
+          <span className="text-xs font-medium">Messages</span>
+        </Button>
+        
+        <Button
+          variant="ghost"
+          className={getButtonClass('/ai-results')}
+          onClick={() => navigate('/ai-results')}
+        >
+          <Sparkles className="h-5 w-5" />
+          <span className="text-xs font-medium">AI Results</span>
+        </Button>
+        
+        <Button
+          variant="ghost"
+          className={getButtonClass('/profile')}
+          onClick={() => {
+            // Future: Navigate to profile page
+            console.log('Profile page coming soon');
+          }}
+        >
+          <User className="h-5 w-5" />
+          <span className="text-xs font-medium">Profile</span>
         </Button>
       </div>
     </div>
