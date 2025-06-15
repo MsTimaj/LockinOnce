@@ -126,8 +126,10 @@ const Dashboard = () => {
 
   // Filter out passed matches from display
   const activeMatches = matches.filter(match => !passedMatches.has(match.id));
+  
+  // Show top 3 as featured, remaining as "More Matches"
   const topChoices = activeMatches.slice(0, 3);
-  const otherMatches = activeMatches.slice(3);
+  const remainingMatches = activeMatches.slice(3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
@@ -139,22 +141,31 @@ const Dashboard = () => {
       <div className="max-w-md mx-auto px-4 pb-20">
         <WelcomeSection />
         
-        <TopChoicesSection 
-          topChoices={topChoices}
-          onMatchClick={handleMatchClick}
-          onConnect={handleConnect}
-          getScoreColor={getScoreColor}
-          getScoreBackground={getScoreBackground}
-        />
+        {topChoices.length > 0 && (
+          <TopChoicesSection 
+            topChoices={topChoices}
+            onMatchClick={handleMatchClick}
+            onConnect={handleConnect}
+            getScoreColor={getScoreColor}
+            getScoreBackground={getScoreBackground}
+          />
+        )}
 
-        {otherMatches.length > 0 && (
+        {remainingMatches.length > 0 && (
           <OtherMatchesSection 
-            otherMatches={otherMatches}
+            otherMatches={remainingMatches}
             connectedMatches={connectedMatches}
             onMatchClick={handleMatchClick}
             getScoreColor={getScoreColor}
             getScoreBackground={getScoreBackground}
           />
+        )}
+
+        {activeMatches.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">No matches available right now.</p>
+            <p className="text-sm text-gray-500">Check back soon for new compatible profiles!</p>
+          </div>
         )}
 
         <NavigationFooter />

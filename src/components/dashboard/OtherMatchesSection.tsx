@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Star, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, Star, MessageCircle, MapPin } from "lucide-react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 
 interface OtherMatchesSectionProps {
@@ -18,20 +19,22 @@ const OtherMatchesSection = ({
   getScoreColor, 
   getScoreBackground 
 }: OtherMatchesSectionProps) => {
+  if (otherMatches.length === 0) return null;
+
   return (
     <div className="mb-8">
       <div className="flex items-center space-x-2 mb-6">
-        <Users className="h-5 w-5 text-rose-400" />
-        <h2 className="text-lg font-serif font-bold text-gray-800">
-          Other Close Matches
+        <Users className="h-5 w-5 text-blue-500" />
+        <h2 className="text-xl font-serif font-bold text-gray-800">
+          More Matches ({otherMatches.length})
         </h2>
       </div>
       
-      <div className="space-y-3">
+      <div className="grid gap-4">
         {otherMatches.map((match) => (
           <Card 
             key={match.id} 
-            className="bg-white/70 backdrop-blur-sm border border-white/30 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.01]"
+            className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.01]"
             onClick={() => onMatchClick(match)}
           >
             <CardContent className="p-4">
@@ -42,29 +45,47 @@ const OtherMatchesSection = ({
                   className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
                 />
                 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-serif font-semibold text-gray-800">
+                    <h3 className="text-base font-serif font-bold text-gray-800 truncate">
                       {match.name}, {match.age}
                     </h3>
-                    <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${getScoreBackground(match.compatibilityScore.overall)} ${getScoreColor(match.compatibilityScore.overall)}`}>
+                    <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${getScoreBackground(match.compatibilityScore.overall)} ${getScoreColor(match.compatibilityScore.overall)}`}>
                       <Star className="h-3 w-3 mr-1" />
                       {match.compatibilityScore.overall}%
                     </div>
                   </div>
                   
-                  <p className="text-xs text-gray-600 mb-1">{match.location}</p>
-                  <p className="text-xs text-gray-700 line-clamp-1 leading-relaxed">
+                  <div className="flex items-center text-xs text-gray-600 mb-2">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    <span>{match.location}</span>
+                  </div>
+                  
+                  <p className="text-xs text-gray-700 leading-relaxed line-clamp-2 mb-2">
                     {match.bio}
                   </p>
-                </div>
-                
-                <div className="text-right">
-                  {connectedMatches.has(match.id) ? (
-                    <span className="text-xs text-green-600 font-semibold">Connected ✓</span>
-                  ) : (
-                    <MessageCircle className="h-4 w-4 text-rose-400" />
-                  )}
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3 text-xs text-gray-600">
+                      <span>💖 {match.compatibilityScore.attachment}%</span>
+                      <span>🧠 {match.compatibilityScore.personality}%</span>
+                    </div>
+                    
+                    <Button 
+                      size="sm"
+                      variant={connectedMatches.has(match.id) ? "secondary" : "default"}
+                      className={`text-xs ${!connectedMatches.has(match.id) 
+                        ? "bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white" 
+                        : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onMatchClick(match);
+                      }}
+                    >
+                      <MessageCircle className="h-3 w-3 mr-1" />
+                      {connectedMatches.has(match.id) ? "View" : "Connect"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
