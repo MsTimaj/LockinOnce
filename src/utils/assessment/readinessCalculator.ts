@@ -1,4 +1,3 @@
-
 import { ComprehensiveAssessmentResults, RelationshipReadinessScore } from "./types";
 
 const getStrengthDescription = (area: string): string => {
@@ -139,7 +138,6 @@ const calculateCommunicationSkills = (results: ComprehensiveAssessmentResults): 
     let commScore = 0;
     let commFactors = 0;
 
-    // Use actual properties from CommunicationStyleResults
     if (cs.communicationStyle) {
       commScore += cs.communicationStyle === 'direct_and_kind' ? 90 :
                    cs.communicationStyle === 'gentle_and_indirect' ? 75 :
@@ -283,33 +281,32 @@ const calculateRelationshipGoals = (results: ComprehensiveAssessmentResults): nu
     let intentScore = 0;
     let intentFactors = 0;
 
-    // Use actual properties from RelationshipIntentResults
-    if (ri.timelineExpectation) {
-      intentScore += ri.timelineExpectation === 'within_6_months' ? 85 :
-                    ri.timelineExpectation === 'within_year' ? 90 :
-                    ri.timelineExpectation === 'within_2_years' ? 80 :
-                    ri.timelineExpectation === 'no_rush' ? 70 : 50;
+    // Use actual property names from RelationshipIntentResults
+    if (ri.timeline) {
+      intentScore += ri.timeline === 'within_year' ? 90 :
+                    ri.timeline === '1_2_years' ? 85 :
+                    ri.timeline === '2_3_years' ? 75 : 60;
       intentFactors++;
     }
 
-    if (ri.commitmentLevel) {
-      intentScore += ri.commitmentLevel === 'very_serious' ? 95 :
-                    ri.commitmentLevel === 'serious' ? 85 :
-                    ri.commitmentLevel === 'moderate' ? 65 : 40;
+    if (ri.commitment) {
+      intentScore += ri.commitment === 'marriage' ? 95 :
+                    ri.commitment === 'life_partnership' ? 85 :
+                    ri.commitment === 'long_term_exclusive' ? 70 : 50;
       intentFactors++;
     }
 
-    if (ri.priorityLevel) {
-      intentScore += ri.priorityLevel === 'top_priority' ? 90 :
-                    ri.priorityLevel === 'high_priority' ? 80 :
-                    ri.priorityLevel === 'moderate_priority' ? 65 : 45;
+    if (ri.familyPlanning) {
+      intentScore += ri.familyPlanning === 'want_children' ? 85 :
+                    ri.familyPlanning === 'maybe_children' ? 75 :
+                    ri.familyPlanning === 'no_children' ? 80 : 60;
       intentFactors++;
     }
 
-    if (ri.exclusivityPreference) {
-      intentScore += ri.exclusivityPreference === 'exclusive_from_start' ? 95 :
-                    ri.exclusivityPreference === 'exclusive_when_serious' ? 85 :
-                    ri.exclusivityPreference === 'open_to_dating_multiple' ? 60 : 40;
+    if (ri.relocatation) { // Note: using the actual property name with typo
+      intentScore += ri.relocatation === 'very_flexible' ? 85 :
+                    ri.relocatation === 'somewhat_flexible' ? 75 :
+                    ri.relocatation === 'location_committed' ? 65 : 50;
       intentFactors++;
     }
 
