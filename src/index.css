@@ -57,34 +57,48 @@
 
   body {
     @apply bg-background text-foreground font-inter;
+    /* Mobile-first optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-playfair;
   }
+
+  /* Mobile touch improvements */
+  button, [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Prevent zoom on input focus for iOS */
+  input, select, textarea {
+    font-size: 16px;
+  }
 }
 
 @layer components {
-  /* Gradient Buttons */
+  /* Mobile-optimized Gradient Buttons */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary to-accent text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200;
+    @apply bg-gradient-to-r from-primary to-accent text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 min-h-[44px];
   }
   
   .btn-secondary {
-    @apply border-2 border-accent text-accent bg-transparent font-medium px-6 py-3 rounded-xl hover:bg-accent hover:text-white transition-all duration-200;
+    @apply border-2 border-accent text-accent bg-transparent font-medium px-6 py-3 rounded-xl hover:bg-accent hover:text-white active:scale-95 transition-all duration-200 min-h-[44px];
   }
 
-  /* Soft Cards */
+  /* Mobile-optimized Soft Cards */
   .card-soft {
     @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300;
   }
 
-  /* Animated Inputs */
+  /* Mobile-friendly Animated Inputs */
   .input-underline {
-    @apply bg-transparent border-0 border-b-2 border-muted-foreground/30 focus:border-accent rounded-none px-0 py-2 focus:ring-0 transition-colors duration-300;
+    @apply bg-transparent border-0 border-b-2 border-muted-foreground/30 focus:border-accent rounded-none px-0 py-3 focus:ring-0 transition-colors duration-300 min-h-[44px];
   }
 
-  /* Romantic Quotes */
+  /* Mobile-optimized Romantic Quotes */
   .quote-romantic {
     @apply font-dancing text-lg text-accent/80 italic;
   }
@@ -123,4 +137,19 @@
 .animate-gradient-flow {
   background-size: 200% 200%;
   animation: gradient-flow 3s ease-in-out infinite;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  .container {
+    @apply px-4;
+  }
+}
+
+/* Safe area handling for mobile */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
 }
