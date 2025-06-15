@@ -23,7 +23,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     {
       id: '1',
       type: 'ai',
-      content: "Hi! I'm Love-vee, your AI dating coach. I'm here to help you with dating tips, match insights, conversation starters, and relationship advice. What would you like to know?",
+      content: "Hi there! 💕 I'm Love-vee, your personal AI dating coach. I've analyzed your compatibility profile and I'm here to support you through every step of your dating journey. Whether you're feeling excited, nervous, disappointed, or confused - I'm here to listen and help. What's on your mind today?",
       timestamp: new Date()
     }
   ]);
@@ -71,7 +71,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
       const redirectMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: "I'm specifically designed to help with dating and relationship topics! Let's focus on areas like dating tips, match compatibility, conversation starters, relationship advice, or safety tips. What dating question can I help you with?",
+        content: "I understand you might have other things on your mind, but I'm specifically designed to be your dating and relationship coach! 💕 I'm here to help with things like understanding your matches, dealing with dating anxiety, conversation tips, relationship advice, or even just processing feelings about your dating journey. What's happening in your love life that I can help with?",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, redirectMessage]);
@@ -96,7 +96,9 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
       'conversation', 'chat', 'message', 'flirt', 'attraction', 'compatibility',
       'attachment', 'communication', 'breakup', 'safety', 'meeting', 'profile',
       'bio', 'photo', 'swipe', 'connect', 'intimate', 'emotional', 'trust',
-      'commitment', 'marriage', 'serious', 'casual', 'first date', 'chemistry'
+      'commitment', 'marriage', 'serious', 'casual', 'first date', 'chemistry',
+      'stood up', 'ghosted', 'rejected', 'nervous', 'excited', 'disappointed',
+      'feelings', 'hurt', 'confused', 'anxious', 'hopeful', 'lonely'
     ];
     
     const lowerInput = input.toLowerCase();
@@ -104,67 +106,84 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
            lowerInput.includes('how to') || // Allow coaching questions
            lowerInput.includes('advice') ||
            lowerInput.includes('tips') ||
-           lowerInput.includes('help');
+           lowerInput.includes('help') ||
+           lowerInput.includes('feel') ||
+           lowerInput.includes('what should i');
   };
 
   const getTopicResponse = (topic: string): string => {
     switch (topic.toLowerCase()) {
       case 'relationship readiness':
-        return "Great question about relationship readiness! Your 87% score shows you're well-prepared for a meaningful relationship. This score factors in your emotional maturity, communication skills, and clear relationship goals. Would you like specific tips on maintaining this readiness or areas where you can grow even stronger?";
+        return "Your 87% relationship readiness score is fantastic! 🌟 This means you've done the inner work and you're emotionally prepared for a genuine connection. You have strong self-awareness, healthy boundaries, and clear intentions - these are rare qualities that will attract the right person. The fact that you're even thinking about readiness shows maturity. What specific aspect of being 'ready' feels most important to you right now?";
       
       case 'attachment style':
-        return "Your Secure Attachment style is fantastic for dating! This means you're comfortable with both intimacy and independence - you can get close without losing yourself. Secure attachment folks tend to have healthier relationships and better communication. Want to know how to leverage this strength in dating or how to connect well with other attachment styles?";
+        return "Having a Secure Attachment style is like having a superpower in dating! 💪 You naturally create safe spaces for emotional intimacy while maintaining your independence. This means you won't chase someone who's pulling away, and you won't run from someone getting close. Your dates will feel comfortable opening up to you because you're consistent and trustworthy. How does knowing this about yourself change how you approach dating?";
       
       case 'communication style':
-        return "Your Introverted Feeling communication style is a real asset! You process emotions deeply and value authentic connections. This means you're great at meaningful conversations and creating genuine bonds. Would you like tips on using this strength in dating conversations, or advice on connecting with different communication styles?";
+        return "Your Introverted Feeling style is such a gift! 💕 While others make small talk, you create soul connections. You process emotions deeply and speak from the heart - this attracts people who want real intimacy, not just surface-level fun. Your challenge might be that shallow daters won't 'get' you, but that's actually perfect filtering! The right person will be drawn to your authenticity like a magnet. What kind of conversations make you feel most connected?";
       
       case 'relationship strengths':
-        return "Your top strengths - Emotional Intelligence, Clear Communication, and Relationship Goals - are powerful dating assets! Emotional intelligence helps you understand both your feelings and your date's, clear communication prevents misunderstandings, and having relationship goals shows you're serious about finding the right person. Want specific ways to showcase these strengths on dates?";
+        return "Your emotional intelligence, clear communication, and relationship goals make you incredibly dateable! 🌟 Emotional intelligence means you can handle conflict maturely and understand your partner's needs. Clear communication prevents those awful misunderstandings that kill relationships. And having relationship goals? That shows you're not just dating for entertainment - you know what you want. These strengths will help you build something real. Which of these feels like your biggest superpower?";
       
       case 'relationship growth areas':
-        return "Growth areas like 'Opening Up Gradually' and 'Managing Expectations' are totally normal! Opening up gradually is actually healthy - it builds trust naturally. Managing expectations helps prevent disappointment and keeps you realistic. Would you like specific strategies for either of these areas, or tips on turning growth areas into strengths?";
+        return "Growth areas aren't weaknesses - they're your next level up! 📈 'Opening up gradually' is actually healthy - it builds trust naturally instead of trauma-dumping on date three. 'Managing expectations' saves you from fantasy relationships with people who don't exist. Your secure attachment gives you a great foundation to work on these areas without getting overwhelmed. What feels like the biggest challenge for you in these areas?";
       
       case 'personalized dating strategy':
-        return "Your dating strategy focuses on quality connections through shared activities and meaningful conversations - perfect for your secure attachment style! This approach helps you find genuine compatibility rather than surface-level attraction. Want specific date ideas that align with this strategy, or tips on having those meaningful conversations?";
+        return "Your strategy is so smart! 🎯 Quality over quantity, shared activities, meaningful conversations - this is how lasting relationships actually start. Your secure attachment style means you won't waste time with people who aren't genuinely interested. You'll connect through doing things you both love, which builds natural chemistry and compatibility. This approach might take longer, but it leads to much better relationships. What activities or conversation topics light you up most?";
       
       case 'matching algorithm':
-        return "Our matching algorithm prioritizes values alignment (30%) and communication style (25%) because these predict long-term compatibility! We also factor in life goals, emotional maturity, and lifestyle compatibility. This science-based approach finds you matches with real potential. Curious about what makes a high-percentage match, or how to interpret your compatibility scores?";
+        return "Our algorithm prioritizes what actually predicts relationship success! 💕 Values alignment (30%) because shared core beliefs prevent major conflicts. Communication style (25%) because you need to actually understand each other. Life goals, emotional maturity, and lifestyle compatibility round it out. We're not just matching you on surface attraction - we're finding people you could genuinely build a life with. What matters most to you in a potential partner?";
       
       default:
-        return `I'd love to dive deeper into ${topic}! This is such an important aspect of dating and relationships. What specific questions do you have about this topic? I can provide personalized advice based on your compatibility profile.`;
+        return `I'm so glad you want to explore ${topic} more deeply! 💕 This is such an important part of your dating journey. Based on your compatibility profile, you have so many strengths to work with. Tell me what's really on your mind about this - are you feeling excited, nervous, curious, or something else? I want to give you advice that actually fits your situation.`;
     }
   };
 
   const generateAIResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
+    // Handle being stood up or ghosted
+    if (input.includes('stood up') || input.includes('stood me up') || input.includes('ghosted') || input.includes('cancelled') || input.includes('no show')) {
+      return "Oh honey, I'm so sorry that happened to you. 💔 Being stood up feels awful and personal, but here's the truth: this says EVERYTHING about them and NOTHING about you. Someone who stands you up lacks basic respect and emotional maturity - do you really want to date someone like that? Your 95% match was clearly based on their fake persona, not who they really are. A genuinely compatible person would communicate, even if they needed to reschedule. This is actually the trash taking itself out. You deserve someone who's excited to show up for you. How are you feeling right now?";
+    }
+    
+    // Handle disappointment and hurt feelings
+    if (input.includes('disappointed') || input.includes('hurt') || input.includes('upset') || input.includes('sad') || input.includes('crying')) {
+      return "Your feelings are completely valid. 💕 Dating disappointment hits different because we invest hope and excitement in these connections. It's okay to feel hurt - that means you're opening your heart, which is brave. Take time to process this feeling, but don't let it close you off. Your secure attachment style is actually protecting you here - you're not chasing someone who showed you they're unreliable. This disappointment is redirecting you toward someone better. What would help you feel supported right now?";
+    }
+    
+    // Handle high compatibility scores that didn't work out
+    if (input.includes('95%') || input.includes('high match') || input.includes('perfect match') || input.includes('compatible')) {
+      return "High compatibility scores can make rejection feel extra confusing! 💔 But here's the thing - our algorithm measures potential compatibility, not guaranteed interest. Someone can be perfect for you on paper but not ready for what you offer, dealing with personal issues, or frankly, just not emotionally mature enough to recognize a good thing. Your 95% match standing you up actually proves they weren't as compatible as the score suggested - truly compatible people don't treat each other poorly. Focus on matches who show up consistently, regardless of their score. Character matters more than percentages. 💕";
+    }
+    
     // Safety-related responses
     if (input.includes('safety') || input.includes('safe') || input.includes('danger') || input.includes('red flag')) {
-      return "Safety is crucial in dating! Always meet in public places, tell someone your plans, trust your instincts, and video chat before meeting. Red flags include: rushing intimacy, inconsistent stories, avoiding video calls, or pressuring you. Your secure attachment style helps you recognize healthy vs unhealthy patterns. Want specific safety tips for your situation?";
+      return "Your safety is my top priority! 🛡️ Always trust your instincts - they're usually right. Meet in public places, tell someone your plans, video chat first, and watch for red flags like: rushing intimacy, inconsistent stories, avoiding video calls, or pressuring you in any way. Your secure attachment helps you spot healthy vs unhealthy patterns. If something feels off, it probably is. You're not being paranoid - you're being smart. What specific safety concerns do you have?";
     }
     
     // Match-related responses
     if (input.includes('match') || input.includes('compatible') || input.includes('score')) {
-      return "Based on your profile, focus on matches with 80%+ compatibility scores - these share your core values and communication style. Look for complementary attachment styles and similar life goals. Your secure attachment pairs well with other secure types, but can also help anxious types feel safe. Want help understanding specific match scores?";
+      return "Let's talk strategy! 🎯 Focus on matches 80%+ who also show genuine interest through their actions, not just their score. Look for people who ask thoughtful questions, suggest specific plans, and follow through consistently. Your secure attachment pairs beautifully with other secure types, but can also help anxious types feel safe. Pay attention to how they make you feel - excited and peaceful, or anxious and confused? The right match will feel both exciting AND calming. What patterns are you noticing in your matches?";
     }
     
     // Conversation responses
     if (input.includes('conversation') || input.includes('message') || input.includes('text') || input.includes('chat')) {
-      return "Your deep communication style is perfect for meaningful conversations! Try asking about their passions, values, or meaningful experiences rather than surface topics. Your emotional intelligence helps you read their responses well. Avoid generic 'hey' messages - reference something from their profile that genuinely interests you. Need specific conversation starters?";
+      return "Your deep communication style is perfect for creating real connections! 💕 Ask about their passions, childhood dreams, or what they're learning lately. Share stories that show your values and personality. Your emotional intelligence helps you read between the lines beautifully. Avoid generic messages - reference something specific from their profile that genuinely intrigued you. The right person will match your conversation depth naturally. What kind of conversations make you feel most excited about someone?";
     }
     
     // First date responses
     if (input.includes('first date') || input.includes('date idea') || input.includes('meeting')) {
-      return "For first dates, choose activities that allow natural conversation - coffee shops, museums, walking tours, or cooking classes. Your preference for meaningful connection works best in environments where you can actually talk! Avoid movies or loud bars initially. Your secure attachment helps you feel comfortable, so trust your instincts about what feels right.";
+      return "First dates should feel like fun, not job interviews! 😊 Choose activities where you can actually talk - coffee walks, museums, cooking classes, or mini golf. Your preference for meaningful connection shines in environments where you can be yourselves. Avoid movies or super loud places initially. Trust your secure attachment instincts about what feels right. The goal isn't to impress them - it's to see if you genuinely enjoy each other's company. What activities make you feel most like yourself?";
     }
     
     // Profile and bio responses
     if (input.includes('profile') || input.includes('bio') || input.includes('photo')) {
-      return "Your profile should reflect your authentic self! With your emotional intelligence and clear communication, write a bio that shows your depth - mention your values, interests, and what you're looking for. Use photos that show your personality, not just your appearance. Your secure attachment means you're comfortable being genuine, which attracts the right people.";
+      return "Your profile should feel like the real you! ✨ With your emotional intelligence and authentic communication style, write a bio that shows your depth - mention your values, what you're passionate about, and what kind of connection you're seeking. Use photos that capture your personality, not just your appearance. Your secure attachment means you're comfortable being genuine, which naturally attracts emotionally available people. What aspects of yourself do you most want a potential partner to see?";
     }
     
-    // Default dating coaching response
-    return "That's a thoughtful question! Based on your compatibility profile - secure attachment, strong emotional intelligence, and clear communication - you have great relationship foundations. Your authentic, depth-seeking approach is an asset in dating. Can you tell me more about your specific situation so I can give you more targeted advice?";
+    // Default empathetic response
+    return "I can hear that this is important to you. 💕 Based on your compatibility profile - your secure attachment, emotional intelligence, and authentic communication style - you have incredible relationship potential. Your approach to dating with depth and intentionality is exactly what leads to lasting love. Can you tell me more about what you're experiencing right now? I want to give you advice that actually fits your specific situation and feelings.";
   };
 
   if (!isOpen) return null;
@@ -229,7 +248,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask Love-vee about dating..."
+                  placeholder="Tell Love-vee what's happening..."
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   className="flex-1"
                 />
