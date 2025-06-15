@@ -1,9 +1,13 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+// Phase 1 Assessments
+import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
 import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
 import PersonalityAssessment, { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
@@ -14,8 +18,18 @@ import PhysicalProximityAssessment, { PhysicalProximityResults } from "@/compone
 import CommunicationStyleAssessment, { CommunicationStyleResults } from "@/components/assessments/CommunicationStyleAssessment";
 import LifeGoalsAssessment, { LifeGoalsResults } from "@/components/assessments/LifeGoalsAssessment";
 
+// Phase 2 Assessments
+import ProximityIntimacyAssessment from "@/components/assessments/ProximityIntimacyAssessment";
+import ValuesAssessment, { ValuesResults } from "@/components/assessments/ValuesAssessment";
+import LifestyleCompatibilityAssessment, { LifestyleCompatibilityResults } from "@/components/assessments/LifestyleCompatibilityAssessment";
+import LoveLanguagesAssessment, { LoveLanguagesResults } from "@/components/assessments/LoveLanguagesAssessment";
+import FinancialValuesAssessment, { FinancialValuesResults } from "@/components/assessments/FinancialValuesAssessment";
+
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [currentPhase, setCurrentPhase] = useState(1);
+  
+  // Phase 1 Results
   const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
   const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
   const [personalityResults, setPersonalityResults] = useState<PersonalityResults | null>(null);
@@ -25,13 +39,28 @@ const Onboarding = () => {
   const [physicalProximityResults, setPhysicalProximityResults] = useState<PhysicalProximityResults | null>(null);
   const [communicationStyleResults, setCommunicationStyleResults] = useState<CommunicationStyleResults | null>(null);
   const [lifeGoalsResults, setLifeGoalsResults] = useState<LifeGoalsResults | null>(null);
-  const totalSteps = 10;
+  
+  // Phase 2 Results
+  const [valuesResults, setValuesResults] = useState<ValuesResults | null>(null);
+  const [lifestyleResults, setLifestyleResults] = useState<LifestyleCompatibilityResults | null>(null);
+  const [loveLanguagesResults, setLoveLanguagesResults] = useState<LoveLanguagesResults | null>(null);
+  const [financialValuesResults, setFinancialValuesResults] = useState<FinancialValuesResults | null>(null);
+
+  const phase1Steps = 10;
+  const phase2Steps = 5;
+  const totalSteps = currentPhase === 1 ? phase1Steps : phase2Steps;
   const navigate = useNavigate();
 
   const progress = (currentStep / totalSteps) * 100;
 
   const nextStep = () => {
-    if (currentStep < totalSteps) {
+    if (currentPhase === 1 && currentStep < phase1Steps) {
+      setCurrentStep(currentStep + 1);
+    } else if (currentPhase === 1 && currentStep === phase1Steps) {
+      // Transition to Phase 2
+      setCurrentPhase(2);
+      setCurrentStep(1);
+    } else if (currentPhase === 2 && currentStep < phase2Steps) {
       setCurrentStep(currentStep + 1);
     } else {
       // Navigate to dashboard when all assessments are complete
@@ -42,9 +71,18 @@ const Onboarding = () => {
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    } else if (currentPhase === 2) {
+      // Go back to Phase 1
+      setCurrentPhase(1);
+      setCurrentStep(phase1Steps);
     }
   };
 
+  const handleWelcomeComplete = () => {
+    nextStep();
+  };
+
+  // Phase 1 Handlers
   const handleAttachmentComplete = (results: AttachmentStyleResults) => {
     setAttachmentResults(results);
     console.log('Attachment Style Results:', results);
@@ -99,42 +137,40 @@ const Onboarding = () => {
     nextStep();
   };
 
-  const renderStep = () => {
+  // Phase 2 Handlers
+  const handleProximityIntimacyComplete = () => {
+    console.log('Proximity Intimacy Assessment Complete');
+    nextStep();
+  };
+
+  const handleValuesComplete = (results: ValuesResults) => {
+    setValuesResults(results);
+    console.log('Values Results:', results);
+    nextStep();
+  };
+
+  const handleLifestyleComplete = (results: LifestyleCompatibilityResults) => {
+    setLifestyleResults(results);
+    console.log('Lifestyle Compatibility Results:', results);
+    nextStep();
+  };
+
+  const handleLoveLanguagesComplete = (results: LoveLanguagesResults) => {
+    setLoveLanguagesResults(results);
+    console.log('Love Languages Results:', results);
+    nextStep();
+  };
+
+  const handleFinancialValuesComplete = (results: FinancialValuesResults) => {
+    setFinancialValuesResults(results);
+    console.log('Financial Values Results:', results);
+    nextStep();
+  };
+
+  const renderPhase1Step = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Welcome to LockInOnce
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Let's create your profile based on proven relationship science. 
-              This will take about 18-22 minutes and help us find your most compatible matches.
-            </p>
-            <div className="card-glass p-6 border-l-4 border-accent">
-              <p className="text-accent font-medium mb-2">
-                For Serious Relationships Only
-              </p>
-              <p className="text-sm text-muted-foreground">
-                LockInOnce is designed exclusively for people seeking deep, lasting love. 
-                No casual dating - we focus on true compatibility for long-term partnerships.
-              </p>
-            </div>
-            <div className="card-glass p-6">
-              <h3 className="text-primary font-medium mb-3">Our Philosophy</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                "Deep compatibility isn't about finding someone identical to you—
-                it's about finding someone who complements your emotional patterns and shares your commitment to growth."
-              </p>
-              <div className="space-y-2 text-left">
-                <p className="text-xs text-muted-foreground">✓ Science-based compatibility matching</p>
-                <p className="text-xs text-muted-foreground">✓ Focus on emotional maturity and readiness</p>
-                <p className="text-xs text-muted-foreground">✓ Commitment to long-term partnership goals</p>
-                <p className="text-xs text-muted-foreground">✓ Comprehensive 9-assessment compatibility profile</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <WelcomePhilosophyAssessment onComplete={handleWelcomeComplete} />;
       case 2:
         return <AttachmentStyleAssessment onComplete={handleAttachmentComplete} />;
       case 3:
@@ -154,16 +190,58 @@ const Onboarding = () => {
       case 10:
         return <LifeGoalsAssessment onComplete={handleLifeGoalsComplete} />;
       default:
+        return null;
+    }
+  };
+
+  const renderPhase2Step = () => {
+    switch (currentStep) {
+      case 1:
         return (
           <div className="text-center space-y-6">
             <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Assessment Complete!
+              Phase 2: Deep Compatibility Suite
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Redirecting to your dashboard...
-            </p>
+            <div className="card-glass p-6">
+              <p className="text-lg text-muted-foreground mb-4">
+                Congratulations on completing Phase 1! You've shown serious commitment to finding lasting love.
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Phase 2 takes 20-25 minutes and unlocks enhanced matching capabilities based on deeper compatibility factors.
+              </p>
+              <div className="space-y-2 text-left">
+                <p className="text-xs text-muted-foreground">✓ Advanced intimacy and proximity preferences</p>
+                <p className="text-xs text-muted-foreground">✓ Core values and lifestyle compatibility</p>
+                <p className="text-xs text-muted-foreground">✓ Love languages and financial alignment</p>
+                <p className="text-xs text-muted-foreground">✓ Enhanced match quality and precision</p>
+              </div>
+            </div>
+            <Button onClick={nextStep} className="btn-gradient px-8">
+              Continue to Phase 2
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
           </div>
         );
+      case 2:
+        return <ProximityIntimacyAssessment onComplete={handleProximityIntimacyComplete} />;
+      case 3:
+        return <ValuesAssessment onComplete={handleValuesComplete} />;
+      case 4:
+        return <LifestyleCompatibilityAssessment onComplete={handleLifestyleComplete} />;
+      case 5:
+        return <LoveLanguagesAssessment onComplete={handleLoveLanguagesComplete} />;
+      case 6:
+        return <FinancialValuesAssessment onComplete={handleFinancialValuesComplete} />;
+      default:
+        return null;
+    }
+  };
+
+  const renderCurrentStep = () => {
+    if (currentPhase === 1) {
+      return renderPhase1Step();
+    } else {
+      return renderPhase2Step();
     }
   };
 
@@ -175,7 +253,7 @@ const Onboarding = () => {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => currentStep === 1 ? navigate('/') : prevStep()}
+            onClick={() => (currentStep === 1 && currentPhase === 1) ? navigate('/') : prevStep()}
             className="p-3 rounded-xl"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -183,7 +261,7 @@ const Onboarding = () => {
           <div className="flex-1 mx-4">
             <Progress value={progress} className="h-2" />
             <p className="text-sm text-muted-foreground text-center mt-2">
-              Step {currentStep} of {totalSteps}
+              Phase {currentPhase}: Step {currentStep} of {totalSteps}
             </p>
           </div>
           <div className="w-12" /> {/* Spacer for balance */}
@@ -192,22 +270,9 @@ const Onboarding = () => {
         {/* Content Card */}
         <Card className="card-glass p-8 mb-8">
           <CardContent className="pt-0">
-            {renderStep()}
+            {renderCurrentStep()}
           </CardContent>
         </Card>
-
-        {/* Navigation - Only show for welcome step */}
-        {currentStep === 1 && (
-          <div className="flex justify-center">
-            <Button 
-              onClick={nextStep}
-              className="btn-gradient px-8"
-            >
-              Start Assessment
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
