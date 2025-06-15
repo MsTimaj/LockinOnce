@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +16,7 @@ const AIResultsSummary = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(true);
-  const [redirectAttempts, setRedirectAttempts] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const insights = [
@@ -31,84 +32,61 @@ const AIResultsSummary = () => {
       try {
         console.log('Initializing AI Results Summary...');
         
-        // Prevent infinite redirect loops
-        if (redirectAttempts >= 3) {
-          console.log('Too many redirect attempts, forcing analysis to proceed...');
-          setIsInitializing(false);
-          return;
-        }
+        // Clear any stuck navigation flags first
+        UserStateManager.forceNavigationReset();
         
-        // Wait a moment for any navigation flags to clear
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        // Check if navigation is in progress with timeout
-        let attempts = 0;
-        const maxAttempts = 10;
-        while (UserStateManager.isNavigationInProgress() && attempts < maxAttempts) {
-          console.log(`Navigation in progress, waiting... (attempt ${attempts + 1})`);
-          await new Promise(resolve => setTimeout(resolve, 100));
-          attempts++;
-        }
+        // Small delay to ensure everything is settled
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        if (attempts >= maxAttempts) {
-          console.log('Navigation timeout reached, proceeding anyway...');
-        }
-
-        // Get user profile first
+        // Get user profile
         const userProfile = await UserStateManager.getUserProfile();
         if (!userProfile) {
           console.log('No user profile found, redirecting to onboarding...');
-          setRedirectAttempts(prev => prev + 1);
           navigate('/onboarding');
           return;
         }
 
+        // Check completion status
         const hasCompleted = await UserStateManager.hasCompletedOnboarding();
         const isAssessmentComplete = await UserStateManager.isAssessmentComplete();
         
-        console.log('AI Results validation:', { 
+        console.log('Validation results:', { 
           hasCompleted, 
           isAssessmentComplete,
-          redirectAttempts
+          hasAssessmentData: !!userProfile.assessmentResults
         });
 
-        // If we have a profile with assessment data, proceed even if validation fails
-        const hasAssessmentData = userProfile.assessmentResults && 
-          Object.keys(userProfile.assessmentResults).length > 0;
-
-        if (!hasCompleted && redirectAttempts < 2) {
+        // If user hasn't completed onboarding but we're here, redirect
+        if (!hasCompleted) {
           console.log('User has not completed onboarding, redirecting...');
-          setRedirectAttempts(prev => prev + 1);
           navigate('/onboarding');
           return;
         }
 
-        // Force proceed if we have any assessment data
-        if (!isAssessmentComplete && !hasAssessmentData && redirectAttempts < 2) {
-          console.log('No assessment data found, redirecting to onboarding...');
-          setRedirectAttempts(prev => prev + 1);
-          navigate('/onboarding');
-          return;
-        }
+        // Proceed with analysis even if assessment isn't "complete" but has data
+        console.log('Proceeding with analysis...');
 
-        console.log('Proceeding with analysis using available data...');
-
-        // Calculate real analysis
+        // Calculate or get cached readiness score
         let readinessScore = userProfile.readinessScore;
-        
-        // If no cached score, calculate it
-        if (!readinessScore) {
-          console.log('No cached readiness score, calculating...');
+        if (!readinessScore && userProfile.assessmentResults) {
+          console.log('Calculating readiness score from assessment data...');
           readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
-          // Save it for next time
           await UserStateManager.saveReadinessScore(readinessScore);
+        }
+
+        if (!readinessScore) {
+          throw new Error('No readiness score available and cannot calculate from assessment data');
         }
 
         const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
         const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
         const topStrengths = getTopStrengths(userProfile.assessmentResults);
 
-        console.log('Analysis complete:', { readinessScore, personalityType, dominantStyle });
+        console.log('Analysis data prepared:', { 
+          hasReadinessScore: !!readinessScore, 
+          personalityType, 
+          dominantStyle 
+        });
 
         setAnalysis({
           readinessScore,
@@ -120,16 +98,16 @@ const AIResultsSummary = () => {
         setIsInitializing(false);
       } catch (error) {
         console.error('Failed to initialize analysis:', error);
-        // Don't redirect on error, but log it
+        setError('Failed to load your analysis. Please try refreshing the page.');
         setIsInitializing(false);
       }
     };
 
     initializeAnalysis();
-  }, [navigate, redirectAttempts]);
+  }, [navigate]);
 
   useEffect(() => {
-    if (isInitializing) return;
+    if (isInitializing || error) return;
 
     const timer = setInterval(() => {
       setCurrentInsight((prev) => {
@@ -143,14 +121,28 @@ const AIResultsSummary = () => {
     }, 1500);
 
     return () => clearInterval(timer);
-  }, [isInitializing]);
+  }, [isInitializing, error]);
 
   const handleLearnMore = (topic: string) => {
     setChatTopic(topic);
     setIsChatOpen(true);
   };
 
-  // Show loading while initializing
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-6">
+        <div className="max-w-md w-full text-center space-y-6">
+          <div className="text-red-500 text-lg font-medium">{error}</div>
+          <Button onClick={() => window.location.reload()} className="bg-rose-500 hover:bg-rose-600">
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading states
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-6">
@@ -167,7 +159,7 @@ const AIResultsSummary = () => {
               Preparing your results...
             </h2>
             <p className="text-rose-600 font-medium animate-pulse">
-              Validating your assessment data...
+              Loading your profile data...
             </p>
           </div>
         </div>

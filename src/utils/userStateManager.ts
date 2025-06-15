@@ -7,47 +7,75 @@ import { ProfileFactory } from "./profile/profileFactory";
 
 export class UserStateManager {
   private static navigationInProgress = false;
+  private static syncInProgress = false;
 
   static async saveUserProfile(profile: UserProfile): Promise<void> {
     try {
-      // Clear any invalid profiles first
-      await this.clearInvalidProfiles();
+      // Prevent concurrent saves
+      if (this.syncInProgress) {
+        console.log('Sync already in progress, queuing save...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return this.saveUserProfile(profile);
+      }
 
-      // Sync to Supabase first to get the proper UUID
-      const updatedProfile = await SupabaseSyncManager.syncToSupabase(profile);
-      
-      // Save the updated profile (with UUID) to localStorage
-      LocalStorageManager.saveProfile(updatedProfile);
-      console.log('Profile saved with UUID:', updatedProfile.id);
+      this.syncInProgress = true;
+
+      // Always save to localStorage first for immediate persistence
+      LocalStorageManager.saveProfile(profile);
+      console.log('Profile saved to localStorage immediately');
+
+      // Then attempt Supabase sync in background
+      try {
+        const updatedProfile = await SupabaseSyncManager.syncToSupabase(profile);
+        // Only update localStorage if we got a different profile back (with new UUID)
+        if (updatedProfile.id !== profile.id) {
+          LocalStorageManager.saveProfile(updatedProfile);
+          console.log('Profile updated with new UUID from Supabase:', updatedProfile.id);
+        }
+      } catch (supabaseError) {
+        console.log('Supabase sync failed, but localStorage save succeeded:', supabaseError);
+        // Continue - we still have the data saved locally
+      }
     } catch (error) {
       console.error('Failed to save user profile:', error);
-      // Fallback: save to localStorage only
-      LocalStorageManager.saveProfile(profile);
+      throw error;
+    } finally {
+      this.syncInProgress = false;
     }
   }
 
   static async getUserProfile(): Promise<UserProfile | null> {
     try {
-      // Clear any invalid profiles first
-      await this.clearInvalidProfiles();
-
       const stored = LocalStorageManager.getProfile();
-      if (stored && this.isValidUUID(stored.id)) {
-        console.log('Profile loaded from localStorage with valid UUID');
-        SupabaseSyncManager.backgroundSyncCheck(stored.id).catch(error => {
-          console.log('Background sync check failed:', error);
-        });
+      
+      // If we have a valid stored profile, use it immediately
+      if (stored && this.isValidProfile(stored)) {
+        console.log('Profile loaded from localStorage');
+        
+        // Background sync check (don't await)
+        if (this.isValidUUID(stored.id)) {
+          SupabaseSyncManager.backgroundSyncCheck(stored.id).catch(error => {
+            console.log('Background sync check failed (non-critical):', error);
+          });
+        }
         return stored;
       }
 
-      console.log('No valid local profile found, attempting to restore from Supabase');
+      // Clear invalid data
+      if (stored && !this.isValidProfile(stored)) {
+        console.log('Clearing invalid profile data');
+        LocalStorageManager.clearData();
+      }
+
+      // Try to restore from Supabase only if no local data
+      console.log('No valid local profile, attempting Supabase restore...');
       const restored = await SupabaseSyncManager.restoreFromSupabase();
       if (restored) {
         console.log('Profile restored from Supabase');
         return restored;
       }
 
-      console.log('No profile found anywhere, user will need to start fresh');
+      console.log('No profile found, user needs to start onboarding');
       return null;
     } catch (error) {
       console.error('Failed to load user profile:', error);
@@ -62,7 +90,7 @@ export class UserStateManager {
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.assessmentResults[assessmentType] = result;
     profile.lastUpdated = new Date().toISOString();
-    console.log(`Updated assessment result for ${assessmentType}:`, result);
+    console.log(`Updated assessment result for ${assessmentType}`);
     await this.saveUserProfile(profile);
   }
 
@@ -83,17 +111,12 @@ export class UserStateManager {
     this.navigationInProgress = true;
     
     try {
-      console.log('Starting atomic onboarding completion...');
+      console.log('Completing onboarding with readiness score...');
       const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
       
       profile.onboardingCompleted = true;
       profile.readinessScore = readinessScore;
       profile.lastUpdated = new Date().toISOString();
-      
-      console.log('Saving completed profile with readiness score:', { 
-        completed: profile.onboardingCompleted, 
-        hasScore: !!profile.readinessScore 
-      });
       
       await this.saveUserProfile(profile);
       console.log('Onboarding completion saved successfully');
@@ -101,27 +124,19 @@ export class UserStateManager {
       console.error('Failed to complete onboarding:', error);
       throw error;
     } finally {
-      // Clear the navigation flag after a shorter delay
+      // Clear navigation flag quickly to prevent blocks
       setTimeout(() => {
         this.navigationInProgress = false;
         console.log('Navigation flag cleared');
-      }, 100);
+      }, 50);
     }
-  }
-
-  static async markOnboardingComplete(): Promise<void> {
-    console.log('WARNING: markOnboardingComplete called without readiness score - this should not happen');
-    const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
-    profile.onboardingCompleted = true;
-    profile.lastUpdated = new Date().toISOString();
-    await this.saveUserProfile(profile);
   }
 
   static async saveReadinessScore(score: RelationshipReadinessScore): Promise<void> {
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.readinessScore = score;
     profile.lastUpdated = new Date().toISOString();
-    console.log('Readiness score saved:', score);
+    console.log('Readiness score saved');
     await this.saveUserProfile(profile);
   }
 
@@ -132,28 +147,31 @@ export class UserStateManager {
   static clearUserData(): void {
     LocalStorageManager.clearData();
     this.navigationInProgress = false;
-    console.log('User data cleared - you can now test as a new user');
+    this.syncInProgress = false;
+    console.log('User data cleared completely');
   }
 
   static resetForTesting(): void {
-    LocalStorageManager.clearData();
-    this.navigationInProgress = false;
-    console.log('Application reset for testing - refresh the page to start fresh');
+    this.clearUserData();
+    console.log('Application reset for testing - refresh to start fresh');
   }
 
   static async hasCompletedOnboarding(): Promise<boolean> {
     try {
       const profile = await this.getUserProfile();
-      const hasCompleted = profile?.onboardingCompleted || false;
-      const hasReadinessScore = !!profile?.readinessScore;
+      if (!profile) return false;
+      
+      const hasCompleted = profile.onboardingCompleted || false;
+      const hasReadinessScore = !!profile.readinessScore;
+      const result = hasCompleted && hasReadinessScore;
       
       console.log('Onboarding completion check:', { 
         hasCompleted, 
         hasReadinessScore, 
-        overall: hasCompleted && hasReadinessScore 
+        result 
       });
       
-      return hasCompleted && hasReadinessScore;
+      return result;
     } catch (error) {
       console.error('Error checking onboarding completion:', error);
       return false;
@@ -168,35 +186,25 @@ export class UserStateManager {
   static async isAssessmentComplete(): Promise<boolean> {
     try {
       const profile = await this.getUserProfile();
-      if (!profile) {
-        console.log('No profile found for assessment completion check');
+      if (!profile?.assessmentResults) {
+        console.log('No assessment results found');
         return false;
       }
       
+      // Count valid assessment results
       const results = profile.assessmentResults;
-      console.log('Assessment results for completion check:', results);
-      
-      // Check if we have assessment results and at least a few key assessments
-      if (!results || typeof results !== 'object') {
-        console.log('No assessment results object found');
-        return false;
-      }
-      
-      // Count completed assessments instead of checking specific names
-      const assessmentKeys = Object.keys(results);
-      const completedCount = assessmentKeys.filter(key => 
-        results[key] && typeof results[key] === 'object'
+      const validAssessments = Object.values(results).filter(result => 
+        result && typeof result === 'object'
       ).length;
       
-      console.log('Assessment completion analysis:', { 
-        totalKeys: assessmentKeys.length,
-        completedCount,
-        assessmentKeys,
-        isComplete: completedCount >= 10 // At least 10 assessments completed
+      const isComplete = validAssessments >= 8; // Lowered threshold for more realistic completion
+      
+      console.log('Assessment completion check:', { 
+        validAssessments,
+        isComplete,
+        threshold: 8
       });
       
-      // We expect at least 10 completed assessments for a full profile
-      const isComplete = completedCount >= 10;
       return isComplete;
     } catch (error) {
       console.error('Error checking assessment completion:', error);
@@ -208,22 +216,26 @@ export class UserStateManager {
     return this.navigationInProgress;
   }
 
+  static forceNavigationReset(): void {
+    console.log('Force resetting navigation flags');
+    this.navigationInProgress = false;
+    this.syncInProgress = false;
+  }
+
   // Helper methods
   private static isValidUUID(str: string): boolean {
+    if (!str || typeof str !== 'string') return false;
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(str);
   }
 
-  private static async clearInvalidProfiles(): Promise<void> {
-    try {
-      const stored = LocalStorageManager.getProfile();
-      if (stored && !this.isValidUUID(stored.id)) {
-        console.log('Clearing invalid profile with ID:', stored.id);
-        LocalStorageManager.clearData();
-      }
-    } catch (error) {
-      console.log('Error checking for invalid profiles:', error);
-    }
+  private static isValidProfile(profile: any): boolean {
+    if (!profile || typeof profile !== 'object') return false;
+    if (!profile.id || typeof profile.id !== 'string') return false;
+    if (!profile.createdAt || typeof profile.createdAt !== 'string') return false;
+    if (!profile.lastUpdated || typeof profile.lastUpdated !== 'string') return false;
+    if (typeof profile.onboardingCompleted !== 'boolean') return false;
+    return true;
   }
 }
 
