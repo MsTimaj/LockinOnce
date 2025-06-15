@@ -1,7 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
 import { UserStateManager } from "@/utils/userStateManager";
+import { MatchStorageManager } from "@/utils/storage/matchStorageManager";
+import { MatchPoolManager } from "@/utils/compatibility/matchPoolManager";
 import MatchDetail from "@/components/matches/MatchDetail";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import WelcomeSection from "@/components/dashboard/WelcomeSection";
@@ -16,8 +19,6 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
-  const [connectedMatches, setConnectedMatches] = useState<Set<string>>(new Set());
-  const [passedMatches, setPassedMatches] = useState<Set<string>>(new Set());
   const [showChecklist, setShowChecklist] = useState(false);
   const [showProjectStatus, setShowProjectStatus] = useState(false);
   const [matches, setMatches] = useState<MatchProfile[]>([]);
@@ -37,7 +38,6 @@ const Dashboard = () => {
         // Ensure user has seen AI results first (proper flow validation)
         const profile = await UserStateManager.getUserProfile();
         if (!profile?.readinessScore) {
-          // If no readiness score, user hasn't completed the full flow including AI analysis
           navigate('/ai-results');
           return;
         }
@@ -45,7 +45,19 @@ const Dashboard = () => {
         // Generate matches based on user's assessment results
         const isComplete = await UserStateManager.isAssessmentComplete();
         if (isComplete && profile.assessmentResults) {
-          const generatedMatches = generateCompatibleMatches(profile.assessmentResults);
+          let generatedMatches = generateCompatibleMatches(profile.assessmentResults);
+          
+          // Update match statuses based on stored decisions
+          generatedMatches = MatchPoolManager.updateMatchStatuses(generatedMatches);
+          
+          // Check if we need fresh matches
+          const activeMatches = MatchPoolManager.getActiveMatches(generatedMatches);
+          if (MatchPoolManager.shouldRefreshPool(activeMatches)) {
+            const freshMatches = MatchPoolManager.generateFreshMatches(profile.assessmentResults, generatedMatches);
+            generatedMatches = [...generatedMatches, ...freshMatches];
+            generatedMatches = MatchPoolManager.updateMatchStatuses(generatedMatches);
+          }
+          
           setMatches(generatedMatches);
         }
       } catch (error) {
@@ -68,22 +80,31 @@ const Dashboard = () => {
   };
 
   const handleConnect = (matchId: string) => {
-    setConnectedMatches(prev => new Set([...prev, matchId]));
+    MatchStorageManager.saveDecision(matchId, 'interested');
+    
+    // Update the local state immediately
     setMatches(prev => prev.map(match => 
       match.id === matchId 
-        ? { ...match, connectionStatus: 'interested' as const }
+        ? { 
+            ...match, 
+            connectionStatus: MatchStorageManager.isMutualMatch(matchId) ? 'mutual' as const : 'interested' as const 
+          }
         : match
     ));
+    
     console.log(`Expressed interest in match ${matchId}`);
   };
 
   const handlePass = (matchId: string) => {
-    setPassedMatches(prev => new Set([...prev, matchId]));
+    MatchStorageManager.saveDecision(matchId, 'passed');
+    
+    // Update the local state immediately
     setMatches(prev => prev.map(match => 
       match.id === matchId 
         ? { ...match, connectionStatus: 'passed' as const }
         : match
     ));
+    
     console.log(`Passed on match ${matchId}`);
   };
 
@@ -125,11 +146,12 @@ const Dashboard = () => {
     );
   }
 
-  // Filter out passed matches from display
-  const activeMatches = matches.filter(match => !passedMatches.has(match.id));
+  // Filter active matches (not passed) for display
+  const activeMatches = MatchPoolManager.getActiveMatches(matches);
+  const mutualMatches = MatchPoolManager.getMutualMatches(matches);
   
-  // Show top 3 as featured, remaining as "More Matches"
-  const topChoices = activeMatches.slice(0, 3);
+  // Show mutual matches first, then top choices
+  const topChoices = [...mutualMatches, ...activeMatches.filter(m => !mutualMatches.includes(m))].slice(0, 3);
   const remainingMatches = activeMatches.slice(3);
 
   return (
@@ -144,30 +166,81 @@ const Dashboard = () => {
         
         <WelcomeSection />
         
+        {/* Show mutual matches section if any */}
+        {mutualMatches.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-playfair font-bold text-gray-800 mb-3">
+              🎉 Mutual Matches!
+            </h2>
+            <div className="space-y-3">
+              {mutualMatches.map(match => (
+                <div 
+                  key={match.id}
+                  className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => handleMatchClick(match)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={match.photo} 
+                      alt={match.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-800">{match.name}</h3>
+                      <p className="text-sm text-pink-600">Both interested! 💕</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-pink-600">
+                        {match.compatibilityScore.overall}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {topChoices.length > 0 && (
           <TopChoicesSection 
             topChoices={topChoices}
             onMatchClick={handleMatchClick}
             onConnect={handleConnect}
-            getScoreColor={getScoreColor}
-            getScoreBackground={getScoreBackground}
+            getScoreColor={(score: number) => {
+              if (score >= 80) return "text-emerald-600";
+              if (score >= 60) return "text-amber-600";
+              return "text-red-500";
+            }}
+            getScoreBackground={(score: number) => {
+              if (score >= 80) return "bg-emerald-50 border-emerald-200";
+              if (score >= 60) return "bg-amber-50 border-amber-200";
+              return "bg-red-50 border-red-200";
+            }}
           />
         )}
 
         {remainingMatches.length > 0 && (
           <OtherMatchesSection 
             otherMatches={remainingMatches}
-            connectedMatches={connectedMatches}
+            connectedMatches={new Set(MatchStorageManager.getInterestedMatches())}
             onMatchClick={handleMatchClick}
-            getScoreColor={getScoreColor}
-            getScoreBackground={getScoreBackground}
+            getScoreColor={(score: number) => {
+              if (score >= 80) return "text-emerald-600";
+              if (score >= 60) return "text-amber-600";
+              return "text-red-500";
+            }}
+            getScoreBackground={(score: number) => {
+              if (score >= 80) return "bg-emerald-50 border-emerald-200";
+              if (score >= 60) return "bg-amber-50 border-amber-200";
+              return "bg-red-50 border-red-200";
+            }}
           />
         )}
 
         {activeMatches.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No matches available right now.</p>
-            <p className="text-sm text-gray-500">Check back soon for new compatible profiles!</p>
+            <p className="text-gray-600 mb-4">You've seen all available matches!</p>
+            <p className="text-sm text-gray-500">New compatible profiles will appear soon.</p>
           </div>
         )}
 

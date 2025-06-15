@@ -34,7 +34,7 @@ export interface MatchProfile {
   photo: string;
   assessmentResults: ComprehensiveAssessmentResults;
   compatibilityScore: CompatibilityScore;
-  connectionStatus: 'none' | 'interested' | 'passed';
+  connectionStatus: 'none' | 'interested' | 'passed' | 'mutual';
   lastActive: string;
 }
 
