@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,11 +28,11 @@ const Profile = () => {
         if (userProfile) {
           setProfile(userProfile);
           setFormData({
-            name: userProfile.preferences?.personalInfo?.name || "",
-            age: userProfile.preferences?.personalInfo?.age?.toString() || "",
-            location: userProfile.preferences?.personalInfo?.location || "",
-            bio: userProfile.preferences?.personalInfo?.bio || "",
-            occupation: userProfile.preferences?.personalInfo?.occupation || ""
+            name: userProfile.basicInfo?.name || "",
+            age: userProfile.basicInfo?.age?.toString() || "",
+            location: userProfile.basicInfo?.location || "",
+            bio: userProfile.basicInfo?.bio || "",
+            occupation: userProfile.basicInfo?.occupation || ""
           });
         }
       } catch (error) {
@@ -49,20 +48,17 @@ const Profile = () => {
       // Update user profile with new information
       const updatedProfile = {
         ...profile,
-        preferences: {
-          ...profile.preferences,
-          personalInfo: {
-            ...profile.preferences?.personalInfo,
-            name: formData.name,
-            age: parseInt(formData.age),
-            location: formData.location,
-            bio: formData.bio,
-            occupation: formData.occupation
-          }
+        basicInfo: {
+          ...profile.basicInfo,
+          name: formData.name,
+          age: parseInt(formData.age),
+          location: formData.location,
+          bio: formData.bio,
+          occupation: formData.occupation
         }
       };
       
-      await UserStateManager.updateUserProfile(updatedProfile);
+      await UserStateManager.saveUserProfile(updatedProfile);
       setProfile(updatedProfile);
       setIsEditing(false);
     } catch (error) {

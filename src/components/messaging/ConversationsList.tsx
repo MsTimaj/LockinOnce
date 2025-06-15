@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,14 +24,14 @@ const ConversationsList = ({ onBack, onSelectConversation }: ConversationsListPr
         
         // Also create conversations for any mutual matches that don't have them yet
         const mutualMatches = MatchStorageManager.getMutualMatches();
-        for (const matchId of mutualMatches) {
+        for (const mutualMatch of mutualMatches) {
           const existingConversation = userConversations.find(conv => 
-            conv.participants.includes(matchId)
+            conv.participants.includes(mutualMatch.matchId)
           );
           
           if (!existingConversation) {
             // Create a new conversation for this mutual match
-            const newConversation = MessagingManager.createConversation([matchId]);
+            const newConversation = await MessagingManager.getOrCreateConversation(mutualMatch.matchId, mutualMatch.matchId);
             userConversations.push(newConversation);
           }
         }

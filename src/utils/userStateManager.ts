@@ -198,10 +198,10 @@ export class UserStateManager {
   static async updateUserProfile(updatedProfile: any): Promise<void> {
     try {
       console.log('Updating user profile:', updatedProfile);
-      await LocalStorageManager.setUserProfile(updatedProfile);
+      LocalStorageManager.saveProfile(updatedProfile);
       
       // Also sync to session storage for immediate access
-      SessionStorageManager.setCurrentProfile(updatedProfile);
+      SessionStorageManager.saveProfile(updatedProfile);
       
       console.log('User profile updated successfully');
     } catch (error) {
