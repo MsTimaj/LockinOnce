@@ -1,5 +1,4 @@
 
-
 import { supabase } from "@/integrations/supabase/client";
 import { UserProfile } from "../types/userProfile";
 import { LocalStorageManager } from "./localStorageManager";
@@ -105,4 +104,3 @@ export class SupabaseSyncManager {
     };
   }
 }
-
