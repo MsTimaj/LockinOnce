@@ -12,8 +12,8 @@ interface DatingPreferencesSectionProps {
   setAgeRange: (value: number[]) => void;
   locationRadius: number[];
   setLocationRadius: (value: number[]) => void;
-  wantsChildren: boolean | null;
-  setWantsChildren: (value: boolean | null) => void;
+  wantsChildren: boolean | null | string;
+  setWantsChildren: (value: boolean | null | string) => void;
   careerAmbition: string;
   setCareerAmbition: (value: string) => void;
 }
@@ -114,7 +114,7 @@ const DatingPreferencesSection = ({
           <Button
             type="button"
             variant={wantsChildren === "maybe" ? "default" : "outline"}
-            onClick={() => setWantsChildren("maybe" as any)}
+            onClick={() => setWantsChildren("maybe")}
           >
             Maybe/Unsure
           </Button>
