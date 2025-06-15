@@ -1,3 +1,4 @@
+
 import { ComprehensiveAssessmentResults, RelationshipReadinessScore } from "./assessmentScoring";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -45,7 +46,6 @@ export class UserStateManager {
       const { error } = await supabase
         .from('user_profiles')
         .upsert({
-          id: profile.id,
           created_at: profile.createdAt,
           last_updated: profile.lastUpdated,
           basic_info: profile.basicInfo,
