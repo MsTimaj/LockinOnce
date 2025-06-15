@@ -1,4 +1,5 @@
 
+
 import { supabase } from "@/integrations/supabase/client";
 import { UserProfile } from "../types/userProfile";
 import { LocalStorageManager } from "./localStorageManager";
@@ -100,7 +101,8 @@ export class SupabaseSyncManager {
       },
       readinessScore: data.readiness_score,
       onboardingCompleted: data.onboarding_completed || false,
-      current_step: data.current_step || { phase: 1, step: 1 }
+      currentStep: data.current_step || { phase: 1, step: 1 }
     };
   }
 }
+
