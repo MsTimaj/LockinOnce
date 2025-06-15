@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Target, Sparkles, ArrowRight, RotateCcw } from "lucide-react";
@@ -27,11 +26,12 @@ const Index = () => {
   const handleCheckDashboard = async () => {
     const hasCompleted = await UserStateManager.hasCompletedOnboarding();
     if (hasCompleted) {
-      navigate('/dashboard');
+      // Navigate to AI results first, then they can access dashboard from there
+      navigate('/ai-results');
     } else {
       toast({
-        title: "Complete Onboarding First",
-        description: "Please complete the assessment process to access your dashboard.",
+        title: "Complete Assessment First",
+        description: "Please complete the assessment process to see your results.",
       });
     }
   };
@@ -68,7 +68,7 @@ const Index = () => {
                 variant="outline"
                 className="border-rose-200 text-rose-600 hover:bg-rose-50"
               >
-                View Dashboard
+                View Results
               </Button>
             </div>
             
@@ -141,7 +141,7 @@ const Index = () => {
                 </h2>
                 <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
                   Complete our 13-part assessment covering attachment style, personality, values, and relationship goals. 
-                  Takes 18-22 minutes and creates your unique compatibility profile.
+                  Takes 15-20 minutes and creates your unique compatibility profile.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-600 mb-6">
                   <div>• Attachment Style</div>

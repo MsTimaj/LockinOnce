@@ -12,11 +12,11 @@ const NavigationFooter = () => {
           Want to see more matches?
         </p>
         <Button 
-          onClick={() => navigate('/onboarding')}
+          onClick={() => navigate('/ai-results')}
           variant="outline"
           className="w-full mb-2 border-rose-200 hover:bg-rose-50"
         >
-          Update Your Preferences
+          View Your Analysis
         </Button>
         <Button 
           onClick={() => navigate('/')}

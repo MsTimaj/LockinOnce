@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -24,12 +23,10 @@ const Onboarding = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Scroll to top when step changes - using both smooth scroll and immediate fallback
+  // Scroll to top when step changes
   useEffect(() => {
-    // Use requestAnimationFrame to ensure DOM is updated first
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: 'instant' });
-      // Also scroll the document element and body as fallback
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
     });
@@ -40,15 +37,14 @@ const Onboarding = () => {
       try {
         const hasCompleted = await UserStateManager.hasCompletedOnboarding();
         if (hasCompleted) {
-          // If onboarding is complete, go to AI results instead of dashboard
           navigate('/ai-results');
           return;
         }
 
         const progress = await UserStateManager.getOnboardingProgress();
-        // Convert phase/step to linear step index
-        const stepIndex = (progress.phase - 1) * 5 + (progress.step - 1);
-        setCurrentStep(stepIndex);
+        // Convert phase/step to linear step index more accurately
+        const stepIndex = Math.max(0, (progress.phase - 1) * 5 + (progress.step - 1));
+        setCurrentStep(Math.min(stepIndex, 13)); // Cap at 13 (0-13 = 14 steps)
       } catch (error) {
         console.error('Failed to initialize onboarding:', error);
         setCurrentStep(0);
@@ -64,22 +60,22 @@ const Onboarding = () => {
     try {
       console.log(`Step ${currentStep} completed with results:`, results);
       
-      // Save the assessment result based on current step
+      // Fixed assessment mapping - align with actual step indices
       const assessmentMap = [
-        null, // Welcome step
-        'attachmentStyle',
-        'personality', 
-        'birthOrder',
-        'relationshipIntent',
-        'emotionalCapacity',
-        'attractionLayer',
-        'physicalProximity',
-        'communicationStyle',
-        'lifeGoals',
-        'values',
-        'lifestyle',
-        'loveLanguages',
-        'financialValues'
+        null, // Step 0: Welcome step
+        'attachmentStyle', // Step 1
+        'personality', // Step 2
+        'birthOrder', // Step 3
+        'relationshipIntent', // Step 4
+        'emotionalCapacity', // Step 5
+        'attractionLayer', // Step 6
+        'physicalProximity', // Step 7
+        'communicationStyle', // Step 8
+        'lifeGoals', // Step 9
+        'values', // Step 10
+        'lifestyle', // Step 11
+        'loveLanguages', // Step 12
+        'financialValues' // Step 13
       ] as const;
 
       const assessmentType = assessmentMap[currentStep + 1];
@@ -89,7 +85,7 @@ const Onboarding = () => {
 
       const nextStep = currentStep + 1;
       
-      // Update progress
+      // Update progress with simplified system
       const phase = Math.floor(nextStep / 5) + 1;
       const step = (nextStep % 5) + 1;
       await UserStateManager.updateOnboardingProgress(phase, step);
@@ -104,7 +100,6 @@ const Onboarding = () => {
           await UserStateManager.saveReadinessScore(readinessScore);
         }
         
-        // Navigate to AI results page to show analysis
         navigate('/ai-results');
       } else {
         setCurrentStep(nextStep);
@@ -247,4 +242,3 @@ const Onboarding = () => {
 };
 
 export default Onboarding;
-

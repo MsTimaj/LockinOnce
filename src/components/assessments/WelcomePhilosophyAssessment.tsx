@@ -17,7 +17,7 @@ const WelcomePhilosophyAssessment = ({ onComplete }: WelcomePhilosophyAssessment
         </h2>
         <p className="text-lg text-muted-foreground leading-relaxed">
           Let's create your profile based on proven relationship science. 
-          This will take about 18-22 minutes and help us find your most compatible matches.
+          This will take about 15-20 minutes and help us find your most compatible matches.
         </p>
       </div>
 
@@ -45,7 +45,7 @@ const WelcomePhilosophyAssessment = ({ onComplete }: WelcomePhilosophyAssessment
               <p className="text-xs text-muted-foreground">✓ Science-based compatibility matching</p>
               <p className="text-xs text-muted-foreground">✓ Focus on emotional maturity and readiness</p>
               <p className="text-xs text-muted-foreground">✓ Commitment to long-term partnership goals</p>
-              <p className="text-xs text-muted-foreground">✓ Comprehensive 9-assessment compatibility profile</p>
+              <p className="text-xs text-muted-foreground">✓ Comprehensive 13-assessment compatibility profile</p>
             </div>
           </CardContent>
         </Card>

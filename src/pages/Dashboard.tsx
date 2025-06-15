@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
@@ -33,17 +32,18 @@ const Dashboard = () => {
           return;
         }
 
-        // Get user profile
-        const userProfile = await UserStateManager.getUserProfile();
-        if (!userProfile) {
-          navigate('/onboarding');
+        // Ensure user has seen AI results first (proper flow validation)
+        const profile = await UserStateManager.getUserProfile();
+        if (!profile?.readinessScore) {
+          // If no readiness score, user hasn't completed the full flow including AI analysis
+          navigate('/ai-results');
           return;
         }
 
         // Generate matches based on user's assessment results
         const isComplete = await UserStateManager.isAssessmentComplete();
-        if (isComplete && userProfile.assessmentResults) {
-          const generatedMatches = generateCompatibleMatches(userProfile.assessmentResults);
+        if (isComplete && profile.assessmentResults) {
+          const generatedMatches = generateCompatibleMatches(profile.assessmentResults);
           setMatches(generatedMatches);
         }
       } catch (error) {
