@@ -27,7 +27,8 @@ const Onboarding = () => {
       try {
         const hasCompleted = await UserStateManager.hasCompletedOnboarding();
         if (hasCompleted) {
-          navigate('/dashboard');
+          // If onboarding is complete, go to AI results instead of dashboard
+          navigate('/ai-results');
           return;
         }
 
@@ -90,7 +91,7 @@ const Onboarding = () => {
           await UserStateManager.saveReadinessScore(readinessScore);
         }
         
-        // Fixed: Navigate to the correct route
+        // Navigate to AI results page to show analysis
         navigate('/ai-results');
       } else {
         setCurrentStep(nextStep);
