@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +10,9 @@ import PersonalityAssessment, { PersonalityResults } from "@/components/assessme
 import RelationshipIntentAssessment, { RelationshipIntentResults } from "@/components/assessments/RelationshipIntentAssessment";
 import EmotionalCapacityAssessment, { EmotionalCapacityResults } from "@/components/assessments/EmotionalCapacityAssessment";
 import AttractionLayerAssessment, { AttractionLayerResults } from "@/components/assessments/AttractionLayerAssessment";
+import PhysicalProximityAssessment, { PhysicalProximityResults } from "@/components/assessments/PhysicalProximityAssessment";
+import CommunicationStyleAssessment, { CommunicationStyleResults } from "@/components/assessments/CommunicationStyleAssessment";
+import LifeGoalsAssessment, { LifeGoalsResults } from "@/components/assessments/LifeGoalsAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -20,7 +22,10 @@ const Onboarding = () => {
   const [relationshipIntentResults, setRelationshipIntentResults] = useState<RelationshipIntentResults | null>(null);
   const [emotionalCapacityResults, setEmotionalCapacityResults] = useState<EmotionalCapacityResults | null>(null);
   const [attractionLayerResults, setAttractionLayerResults] = useState<AttractionLayerResults | null>(null);
-  const totalSteps = 7;
+  const [physicalProximityResults, setPhysicalProximityResults] = useState<PhysicalProximityResults | null>(null);
+  const [communicationStyleResults, setCommunicationStyleResults] = useState<CommunicationStyleResults | null>(null);
+  const [lifeGoalsResults, setLifeGoalsResults] = useState<LifeGoalsResults | null>(null);
+  const totalSteps = 10;
   const navigate = useNavigate();
 
   const progress = (currentStep / totalSteps) * 100;
@@ -76,6 +81,24 @@ const Onboarding = () => {
     nextStep();
   };
 
+  const handlePhysicalProximityComplete = (results: PhysicalProximityResults) => {
+    setPhysicalProximityResults(results);
+    console.log('Physical Proximity Results:', results);
+    nextStep();
+  };
+
+  const handleCommunicationStyleComplete = (results: CommunicationStyleResults) => {
+    setCommunicationStyleResults(results);
+    console.log('Communication Style Results:', results);
+    nextStep();
+  };
+
+  const handleLifeGoalsComplete = (results: LifeGoalsResults) => {
+    setLifeGoalsResults(results);
+    console.log('Life Goals Results:', results);
+    nextStep();
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -86,7 +109,7 @@ const Onboarding = () => {
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Let's create your profile based on proven relationship science. 
-              This will take about 10-12 minutes and help us find your most compatible matches.
+              This will take about 18-22 minutes and help us find your most compatible matches.
             </p>
             <div className="card-glass p-6 border-l-4 border-accent">
               <p className="text-accent font-medium mb-2">
@@ -107,6 +130,7 @@ const Onboarding = () => {
                 <p className="text-xs text-muted-foreground">✓ Science-based compatibility matching</p>
                 <p className="text-xs text-muted-foreground">✓ Focus on emotional maturity and readiness</p>
                 <p className="text-xs text-muted-foreground">✓ Commitment to long-term partnership goals</p>
+                <p className="text-xs text-muted-foreground">✓ Comprehensive 9-assessment compatibility profile</p>
               </div>
             </div>
           </div>
@@ -123,6 +147,12 @@ const Onboarding = () => {
         return <EmotionalCapacityAssessment onComplete={handleEmotionalCapacityComplete} />;
       case 7:
         return <AttractionLayerAssessment onComplete={handleAttractionLayerComplete} />;
+      case 8:
+        return <PhysicalProximityAssessment onComplete={handlePhysicalProximityComplete} />;
+      case 9:
+        return <CommunicationStyleAssessment onComplete={handleCommunicationStyleComplete} />;
+      case 10:
+        return <LifeGoalsAssessment onComplete={handleLifeGoalsComplete} />;
       default:
         return (
           <div className="text-center space-y-6">
