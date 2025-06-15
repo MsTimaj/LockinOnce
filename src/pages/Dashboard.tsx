@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
   const [connectedMatches, setConnectedMatches] = useState<Set<string>>(new Set());
+  const [passedMatches, setPassedMatches] = useState<Set<string>>(new Set());
   const [showChecklist, setShowChecklist] = useState(false);
   const [showProjectStatus, setShowProjectStatus] = useState(false);
   const [matches, setMatches] = useState<MatchProfile[]>([]);
@@ -67,7 +68,22 @@ const Dashboard = () => {
 
   const handleConnect = (matchId: string) => {
     setConnectedMatches(prev => new Set([...prev, matchId]));
-    console.log(`Connected with match ${matchId}`);
+    setMatches(prev => prev.map(match => 
+      match.id === matchId 
+        ? { ...match, connectionStatus: 'interested' as const }
+        : match
+    ));
+    console.log(`Expressed interest in match ${matchId}`);
+  };
+
+  const handlePass = (matchId: string) => {
+    setPassedMatches(prev => new Set([...prev, matchId]));
+    setMatches(prev => prev.map(match => 
+      match.id === matchId 
+        ? { ...match, connectionStatus: 'passed' as const }
+        : match
+    ));
+    console.log(`Passed on match ${matchId}`);
   };
 
   const getScoreColor = (score: number) => {
@@ -101,15 +117,17 @@ const Dashboard = () => {
           match={selectedMatch}
           onBack={handleBackToMatches}
           onConnect={handleConnect}
+          onPass={handlePass}
         />
         <LoveVeeChatButton />
       </>
     );
   }
 
-  // Split matches into top 3 and others
-  const topChoices = matches.slice(0, 3);
-  const otherMatches = matches.slice(3);
+  // Filter out passed matches from display
+  const activeMatches = matches.filter(match => !passedMatches.has(match.id));
+  const topChoices = activeMatches.slice(0, 3);
+  const otherMatches = activeMatches.slice(3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">

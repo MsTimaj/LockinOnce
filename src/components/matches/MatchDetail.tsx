@@ -1,28 +1,40 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Heart, Brain, Users, Star, MessageCircle } from "lucide-react";
+import { ArrowLeft, Heart, Brain, Users, Star, MessageCircle, CheckCircle, X } from "lucide-react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 
 interface MatchDetailProps {
   match: MatchProfile;
   onBack: () => void;
   onConnect: (matchId: string) => void;
+  onPass?: (matchId: string) => void;
 }
 
-const MatchDetail = ({ match, onBack, onConnect }: MatchDetailProps) => {
+const MatchDetail = ({ match, onBack, onConnect, onPass }: MatchDetailProps) => {
   const { compatibilityScore } = match;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-emerald-600";
+    if (score >= 60) return "text-amber-600";
+    return "text-red-500";
   };
 
   const getScoreBackground = (score: number) => {
-    if (score >= 80) return "bg-green-100";
-    if (score >= 60) return "bg-yellow-100";
-    return "bg-red-100";
+    if (score >= 80) return "bg-emerald-50 border-emerald-200";
+    if (score >= 60) return "bg-amber-50 border-amber-200";
+    return "bg-red-50 border-red-200";
+  };
+
+  const handleInterested = () => {
+    onConnect(match.id);
+  };
+
+  const handlePass = () => {
+    if (onPass) {
+      onPass(match.id);
+    }
+    onBack();
   };
 
   return (
@@ -117,7 +129,7 @@ const MatchDetail = ({ match, onBack, onConnect }: MatchDetailProps) => {
         </Card>
 
         {/* Why This Match */}
-        <Card className="card-glass mb-8">
+        <Card className="card-glass mb-6">
           <CardContent className="p-6">
             <h3 className="text-lg font-playfair font-bold text-foreground mb-4 flex items-center">
               <Heart className="h-5 w-5 mr-2 text-accent" />
@@ -125,31 +137,79 @@ const MatchDetail = ({ match, onBack, onConnect }: MatchDetailProps) => {
             </h3>
             
             <div className="space-y-3 text-sm text-muted-foreground">
-              <p>• Complementary attachment styles create emotional balance</p>
-              <p>• Your personalities bring out the best in each other</p>
-              <p>• Similar life goals and relationship timeline</p>
-              <p>• Strong foundation for long-term compatibility</p>
+              {compatibilityScore.explanations.why_compatible.map((reason, index) => (
+                <p key={index} className="flex items-start">
+                  <span className="text-emerald-500 mr-2">•</span>
+                  {reason}
+                </p>
+              ))}
+              
+              {compatibilityScore.explanations.relationship_strengths.map((strength, index) => (
+                <p key={index} className="flex items-start">
+                  <span className="text-emerald-500 mr-2">•</span>
+                  {strength}
+                </p>
+              ))}
             </div>
+
+            {compatibilityScore.explanations.potential_challenges.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">Areas for Growth:</h4>
+                {compatibilityScore.explanations.potential_challenges.map((challenge, index) => (
+                  <p key={index} className="text-sm text-amber-600 flex items-start">
+                    <span className="mr-2">•</span>
+                    {challenge}
+                  </p>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Action Buttons */}
         <div className="space-y-4">
-          <Button 
-            onClick={() => onConnect(match.id)}
-            className="btn-gradient w-full"
-          >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            Send Connection Request
-          </Button>
-          
-          <Button 
-            onClick={onBack}
-            variant="outline"
-            className="w-full"
-          >
-            Back to Matches
-          </Button>
+          {match.connectionStatus === 'none' ? (
+            <>
+              <Button 
+                onClick={handleInterested}
+                className="btn-gradient w-full"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                I'm Interested
+              </Button>
+              
+              <Button 
+                onClick={handlePass}
+                variant="outline"
+                className="w-full"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Pass for Now
+              </Button>
+            </>
+          ) : match.connectionStatus === 'interested' ? (
+            <div className="text-center">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+                <p className="text-emerald-800 font-semibold">Interest Expressed! ✨</p>
+                <p className="text-emerald-600 text-sm">We'll notify you if they're interested too</p>
+              </div>
+              <Button 
+                onClick={onBack}
+                variant="outline"
+                className="w-full"
+              >
+                Back to Matches
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              onClick={onBack}
+              variant="outline"
+              className="w-full"
+            >
+              Back to Matches
+            </Button>
+          )}
         </div>
       </div>
     </div>
