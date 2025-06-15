@@ -1,5 +1,5 @@
 
-import { MatchProfile, calculateOverallCompatibility } from "@/utils/compatibilityCalculator";
+import { MatchProfile } from "@/utils/compatibilityCalculator";
 
 const createMatch = (
   id: string, 
@@ -16,7 +16,14 @@ const createMatch = (
     birthOrder: baseScores.birthOrder || Math.floor(Math.random() * 30) + 70,
     values: Math.floor(Math.random() * 30) + 70,
     lifestyle: Math.floor(Math.random() * 30) + 70,
-    overall: 0
+    overall: 0,
+    breakdown: {
+      emotional: Math.floor(Math.random() * 30) + 70,
+      communication: Math.floor(Math.random() * 30) + 70,
+      lifestyle: Math.floor(Math.random() * 30) + 70,
+      goals: Math.floor(Math.random() * 30) + 70,
+      intimacy: Math.floor(Math.random() * 30) + 70
+    }
   };
   
   compatibilityScore.overall = Math.round(
@@ -34,7 +41,24 @@ const createMatch = (
     location,
     bio,
     photo,
-    compatibilityScore
+    compatibilityScore,
+    assessmentResults: {
+      attachmentStyle: null,
+      personality: null,
+      birthOrder: null,
+      relationshipIntent: null,
+      emotionalCapacity: null,
+      attractionLayer: null,
+      physicalProximity: null,
+      communicationStyle: null,
+      lifeGoals: null,
+      values: null,
+      lifestyle: null,
+      loveLanguages: null,
+      financialValues: null,
+    },
+    connectionStatus: 'none' as const,
+    lastActive: "2 hours ago"
   };
 };
 
