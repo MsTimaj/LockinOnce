@@ -110,8 +110,8 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
     onComplete(results);
   };
 
-  const isValid = genderPreference && careerAmbition && wantsChildren !== null && 
-                  politicalLeaning && religiousLeaning && background;
+  // Simplified validation - only require the essential fields
+  const isValid = genderPreference && careerAmbition && wantsChildren !== null;
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -158,13 +158,18 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
           handleLifestyleDealBreaker={handleLifestyleDealBreaker}
         />
 
-        <Button 
-          onClick={handleSubmit} 
-          disabled={!isValid}
-          className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600"
-        >
-          Complete Assessment
-        </Button>
+        <div className="border-t pt-6">
+          <div className="mb-4 text-sm text-muted-foreground">
+            * Required fields to continue
+          </div>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={!isValid}
+            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600"
+          >
+            Complete Assessment
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

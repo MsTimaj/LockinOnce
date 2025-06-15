@@ -55,14 +55,21 @@ const DatingPreferencesSection = ({
         <Label className="text-base font-medium">
           Age Range: {ageRange[0]} - {ageRange[1]} years old
         </Label>
-        <Slider
-          value={ageRange}
-          onValueChange={setAgeRange}
-          min={18}
-          max={65}
-          step={1}
-          className="w-full"
-        />
+        <div className="px-3">
+          <Slider
+            value={ageRange}
+            onValueChange={setAgeRange}
+            min={18}
+            max={65}
+            step={1}
+            className="w-full"
+            minStepsBetweenThumbs={1}
+          />
+        </div>
+        <div className="flex justify-between text-sm text-muted-foreground px-3">
+          <span>18</span>
+          <span>65</span>
+        </div>
       </div>
 
       {/* Location Radius */}
@@ -70,19 +77,25 @@ const DatingPreferencesSection = ({
         <Label className="text-base font-medium">
           Maximum Distance: {locationRadius[0]} miles
         </Label>
-        <Slider
-          value={locationRadius}
-          onValueChange={setLocationRadius}
-          min={5}
-          max={100}
-          step={5}
-          className="w-full"
-        />
+        <div className="px-3">
+          <Slider
+            value={locationRadius}
+            onValueChange={setLocationRadius}
+            min={5}
+            max={100}
+            step={5}
+            className="w-full"
+          />
+        </div>
+        <div className="flex justify-between text-sm text-muted-foreground px-3">
+          <span>5 miles</span>
+          <span>100 miles</span>
+        </div>
       </div>
 
       {/* Children Preference */}
       <div className="space-y-3 mb-6">
-        <Label className="text-base font-medium">Do you want children?</Label>
+        <Label className="text-base font-medium">Do you want children? *</Label>
         <div className="flex space-x-4">
           <Button
             type="button"
@@ -110,7 +123,7 @@ const DatingPreferencesSection = ({
 
       {/* Career Ambition */}
       <div className="space-y-3 mb-6">
-        <Label className="text-base font-medium">Career Ambition Level:</Label>
+        <Label className="text-base font-medium">Career Ambition Level: *</Label>
         <Select value={careerAmbition} onValueChange={setCareerAmbition}>
           <SelectTrigger>
             <SelectValue placeholder="Select ambition level" />
