@@ -30,6 +30,9 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
   const [inputValue, setInputValue] = useState("");
   const [isMinimized, setIsMinimized] = useState(false);
   const [heartTrigger, setHeartTrigger] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -43,7 +46,6 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
   // Handle initial topic when chat opens
   useEffect(() => {
     if (initialTopic && isOpen && messages.length === 1) {
-      // Add the topic-specific AI response
       const topicMessage: Message = {
         id: (Date.now()).toString(),
         type: 'ai',
@@ -54,10 +56,85 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     }
   }, [initialTopic, isOpen]);
 
-  const handleSendMessage = () => {
+  // Check for API key in localStorage
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('anthropic_api_key');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    } else {
+      setShowApiKeyInput(true);
+    }
+  }, []);
+
+  const handleApiKeySubmit = () => {
+    if (apiKey.trim()) {
+      localStorage.setItem('anthropic_api_key', apiKey);
+      setShowApiKeyInput(false);
+    }
+  };
+
+  const callAnthropicAPI = async (userMessage: string): Promise<string> => {
+    if (!apiKey) {
+      return "Please set your Anthropic API key to use Love-vee's AI features.";
+    }
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 1000,
+          temperature: 0.7,
+          system: `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice. 
+
+Your user has these traits based on their compatibility assessment:
+- 87% relationship readiness score
+- Secure attachment style 
+- Introverted Feeling communication style
+- Strong emotional intelligence
+- Clear relationship goals
+
+Guidelines for your responses:
+- Be warm, supportive, and use heart emojis occasionally 💕
+- Give practical, actionable dating advice
+- Address their emotions and validate their feelings
+- Ask follow-up questions to understand their situation better
+- Keep responses concise but meaningful (2-4 sentences)
+- Focus on building their confidence and helping them find genuine connections
+- If they mention being stood up, ghosted, or disappointed, provide emotional support first
+- Help them see patterns and make better choices in dating
+
+Remember: You're their personal dating coach who cares about their wellbeing and success in love.`,
+          messages: [
+            {
+              role: 'user',
+              content: userMessage
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API call failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.content[0].text;
+    } catch (error) {
+      console.error('Anthropic API error:', error);
+      return "I'm having trouble connecting right now. Can you try again? 💕";
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    setHeartTrigger(prev => prev + 1); // Trigger hearts on user interaction
+    setHeartTrigger(prev => prev + 1);
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -67,31 +144,34 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue("");
+    setIsLoading(true);
 
-    // Check if message is completely unrelated to dating/relationships
-    if (isCompletelyOffTopic(inputValue)) {
-      const redirectMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: "I understand you might have other things on your mind, but I'm specifically designed to be your dating and relationship coach! 💕 I'm here to help with things like understanding your matches, dealing with dating anxiety, conversation tips, relationship advice, or even just processing feelings about your dating journey. What's happening in your love life that I can help with?",
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, redirectMessage]);
-      return;
-    }
-
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const aiResponse = await callAnthropicAPI(currentInput);
+      
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: generateAIResponse(inputValue),
+        content: aiResponse,
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, aiMessage]);
-      setHeartTrigger(prev => prev + 1); // Trigger hearts on AI response
-    }, 1000);
+      setHeartTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content: "I'm sorry, I'm having trouble responding right now. Please try again! 💕",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isCompletelyOffTopic = (input: string): boolean => {
@@ -160,68 +240,6 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     }
   };
 
-  const generateAIResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-    
-    // Handle attachment and fear of coming on too strong
-    if (input.includes('attached') || input.includes('attachment') || input.includes('too strong') || input.includes('scare') || input.includes('clingy') || input.includes('needy')) {
-      return "This is such a common and valid concern! 💕 The fact that you're aware of this shows great emotional intelligence. With your secure attachment style, you naturally balance connection with independence. Here's the key: genuine interest is attractive, desperation is not. Share your authentic self gradually, maintain your own life and interests, and let the relationship develop naturally. Ask yourself - are you trying to fill a void or genuinely excited about this person? The right person will appreciate your enthusiasm, not be scared by it. What specifically are you worried about doing that might seem 'too much'?";
-    }
-    
-    // Handle being stood up or ghosted
-    if (input.includes('stood up') || input.includes('stood me up') || input.includes('ghosted') || input.includes('cancelled') || input.includes('no show')) {
-      return "Oh honey, I'm so sorry that happened to you. 💔 Being stood up feels awful and personal, but here's the truth: this says EVERYTHING about them and NOTHING about you. Someone who stands you up lacks basic respect and emotional maturity - do you really want to date someone like that? Your 95% match was clearly based on their fake persona, not who they really are. A genuinely compatible person would communicate, even if they needed to reschedule. This is actually the trash taking itself out. You deserve someone who's excited to show up for you. How are you feeling right now?";
-    }
-    
-    // Handle disappointment and hurt feelings
-    if (input.includes('disappointed') || input.includes('hurt') || input.includes('upset') || input.includes('sad') || input.includes('crying')) {
-      return "Your feelings are completely valid. 💕 Dating disappointment hits different because we invest hope and excitement in these connections. It's okay to feel hurt - that means you're opening your heart, which is brave. Take time to process this feeling, but don't let it close you off. Your secure attachment style is actually protecting you here - you're not chasing someone who showed you they're unreliable. This disappointment is redirecting you toward someone better. What would help you feel supported right now?";
-    }
-    
-    // Handle pacing and taking things slow
-    if (input.includes('slow') || input.includes('pace') || input.includes('rush') || input.includes('time') || input.includes('gradual')) {
-      return "Taking your time is actually a sign of wisdom! 💕 Your secure attachment style naturally wants to build trust gradually, which creates stronger foundations. There's no universal 'right' pace - it should feel natural for both of you. Pay attention to how she responds to your current pace. Is she matching your energy? Asking questions back? Suggesting plans? Let her actions guide you more than overthinking the timeline. Quality connection matters more than speed. What feels like the right next step for you two?";
-    }
-    
-    // Handle nervousness and anxiety
-    if (input.includes('nervous') || input.includes('anxiety') || input.includes('worried') || input.includes('scared') || input.includes('afraid')) {
-      return "Those butterflies are totally normal! 💕 Your nervous system is just responding to something important to you. The difference between excitement and anxiety is often just how we interpret the feeling. Your secure attachment gives you tools to manage this - take deep breaths, remind yourself of your worth, and focus on getting to know HER rather than trying to impress her. Nerves can actually be endearing when you're authentic about them. What's the biggest thing you're nervous about?";
-    }
-    
-    // Handle high compatibility scores that didn't work out
-    if (input.includes('95%') || input.includes('high match') || input.includes('perfect match') || input.includes('compatible')) {
-      return "High compatibility scores can make rejection feel extra confusing! 💔 But here's the thing - our algorithm measures potential compatibility, not guaranteed interest. Someone can be perfect for you on paper but not ready for what you offer, dealing with personal issues, or frankly, just not emotionally mature enough to recognize a good thing. Your 95% match standing you up actually proves they weren't as compatible as the score suggested - truly compatible people don't treat each other poorly. Focus on matches who show up consistently, regardless of their score. Character matters more than percentages. 💕";
-    }
-    
-    // Safety-related responses
-    if (input.includes('safety') || input.includes('safe') || input.includes('danger') || input.includes('red flag')) {
-      return "Your safety is my top priority! 🛡️ Always trust your instincts - they're usually right. Meet in public places, tell someone your plans, video chat first, and watch for red flags like: rushing intimacy, inconsistent stories, avoiding video calls, or pressuring you in any way. Your secure attachment helps you spot healthy vs unhealthy patterns. If something feels off, it probably is. You're not being paranoid - you're being smart. What specific safety concerns do you have?";
-    }
-    
-    // Match-related responses
-    if (input.includes('match') || input.includes('compatible') || input.includes('score')) {
-      return "Let's talk strategy! 🎯 Focus on matches 80%+ who also show genuine interest through their actions, not just their score. Look for people who ask thoughtful questions, suggest specific plans, and follow through consistently. Your secure attachment pairs beautifully with other secure types, but can also help anxious types feel safe. Pay attention to how they make you feel - excited and peaceful, or anxious and confused? The right match will feel both exciting AND calming. What patterns are you noticing in your matches?";
-    }
-    
-    // Conversation responses
-    if (input.includes('conversation') || input.includes('message') || input.includes('text') || input.includes('chat')) {
-      return "Your deep communication style is perfect for creating real connections! 💕 Ask about their passions, childhood dreams, or what they're learning lately. Share stories that show your values and personality. Your emotional intelligence helps you read between the lines beautifully. Avoid generic messages - reference something specific from their profile that genuinely intrigued you. The right person will match your conversation depth naturally. What kind of conversations make you feel most excited about someone?";
-    }
-    
-    // First date responses
-    if (input.includes('first date') || input.includes('date idea') || input.includes('meeting')) {
-      return "First dates should feel like fun, not job interviews! 😊 Choose activities where you can actually talk - coffee walks, museums, cooking classes, or mini golf. Your preference for meaningful connection shines in environments where you can be yourselves. Avoid movies or super loud places initially. Trust your secure attachment instincts about what feels right. The goal isn't to impress them - it's to see if you genuinely enjoy each other's company. What activities make you feel most like yourself?";
-    }
-    
-    // Profile and bio responses
-    if (input.includes('profile') || input.includes('bio') || input.includes('photo')) {
-      return "Your profile should feel like the real you! ✨ With your emotional intelligence and authentic communication style, write a bio that shows your depth - mention your values, what you're passionate about, and what kind of connection you're seeking. Use photos that capture your personality, not just your appearance. Your secure attachment means you're comfortable being genuine, which naturally attracts emotionally available people. What aspects of yourself do you most want a potential partner to see?";
-    }
-    
-    // Default empathetic response
-    return "I can hear that this is important to you. 💕 Based on your compatibility profile - your secure attachment, emotional intelligence, and authentic communication style - you have incredible relationship potential. Your approach to dating with depth and intentionality is exactly what leads to lasting love. Can you tell me more about what you're experiencing right now? I want to give you advice that actually fits your specific situation and feelings.";
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -264,6 +282,24 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
           
           {!isMinimized && (
             <CardContent className="p-0 flex flex-col h-80">
+              {showApiKeyInput && (
+                <div className="p-4 bg-amber-50 border-b border-amber-200">
+                  <p className="text-sm text-amber-800 mb-2">Enter your Anthropic API key to enable AI responses:</p>
+                  <div className="flex space-x-2">
+                    <Input
+                      type="password"
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      placeholder="sk-ant-..."
+                      className="flex-1 text-xs"
+                    />
+                    <Button size="sm" onClick={handleApiKeySubmit}>
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {messages.map((message) => (
@@ -282,6 +318,19 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
                     </div>
                   </div>
                 ))}
+                
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 text-gray-800 p-3 rounded-lg text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <div ref={messagesEndRef} />
               </div>
               
@@ -292,13 +341,15 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Tell Love-vee what's happening..."
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
                     className="flex-1 border-rose-200/50 focus:border-rose-400"
+                    disabled={isLoading}
                   />
                   <Button
                     onClick={handleSendMessage}
                     size="sm"
                     className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600"
+                    disabled={isLoading}
                   >
                     <Send className="h-4 w-4" />
                   </Button>
