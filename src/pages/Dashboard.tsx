@@ -9,10 +9,12 @@ import TopChoicesSection from "@/components/dashboard/TopChoicesSection";
 import OtherMatchesSection from "@/components/dashboard/OtherMatchesSection";
 import NavigationFooter from "@/components/dashboard/NavigationFooter";
 import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
+import UpdateChecklist from "@/components/dashboard/UpdateChecklist";
 
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
   const [connectedMatches, setConnectedMatches] = useState<Set<string>>(new Set());
+  const [showChecklist, setShowChecklist] = useState(false);
 
   const handleMatchClick = (match: MatchProfile) => {
     setSelectedMatch(match);
@@ -28,15 +30,15 @@ const Dashboard = () => {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-emerald-600";
+    if (score >= 60) return "text-amber-600";
+    return "text-red-500";
   };
 
   const getScoreBackground = (score: number) => {
-    if (score >= 80) return "bg-green-100";
-    if (score >= 60) return "bg-yellow-100";
-    return "bg-red-100";
+    if (score >= 80) return "bg-emerald-50 border-emerald-200";
+    if (score >= 60) return "bg-amber-50 border-amber-200";
+    return "bg-red-50 border-red-200";
   };
 
   // Show match detail if a match is selected
@@ -58,10 +60,10 @@ const Dashboard = () => {
   const otherMatches = mockMatches.slice(3, 10);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-      <DashboardHeader />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
+      <DashboardHeader onShowChecklist={() => setShowChecklist(true)} />
 
-      <div className="max-w-md mx-auto px-6">
+      <div className="max-w-md mx-auto px-4 pb-20">
         <WelcomeSection />
         
         <TopChoicesSection 
@@ -84,6 +86,10 @@ const Dashboard = () => {
       </div>
 
       <LoveVeeChatButton />
+      
+      {showChecklist && (
+        <UpdateChecklist onClose={() => setShowChecklist(false)} />
+      )}
     </div>
   );
 };

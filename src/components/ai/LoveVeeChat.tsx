@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Send, X, Minimize2, Maximize2 } from "lucide-react";
+import HeartAnimation from "@/components/ui/heart-animation";
 
 interface Message {
   id: string;
@@ -28,6 +29,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isMinimized, setIsMinimized] = useState(false);
+  const [heartTrigger, setHeartTrigger] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -54,6 +56,8 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
+
+    setHeartTrigger(prev => prev + 1); // Trigger hearts on user interaction
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -86,6 +90,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
+      setHeartTrigger(prev => prev + 1); // Trigger hearts on AI response
     }, 1000);
   };
 
@@ -221,80 +226,90 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Card className={`bg-white shadow-2xl border-2 border-rose-200 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'}`}>
-        <CardHeader className="p-4 bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-t-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <MessageSquare className="h-5 w-5" />
-              <span className="font-serif font-bold">Love-vee</span>
-              <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white hover:bg-white/20 p-1 h-6 w-6"
-              >
-                {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onToggle}
-                className="text-white hover:bg-white/20 p-1 h-6 w-6"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        
-        {!isMinimized && (
-          <CardContent className="p-0 flex flex-col h-80">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[75%] p-3 rounded-lg text-sm ${
-                      message.type === 'user'
-                        ? 'bg-rose-500 text-white'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-            
-            {/* Input */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex space-x-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Tell Love-vee what's happening..."
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className="flex-1"
-                />
+      <div className="relative">
+        <Card className={`bg-white/95 backdrop-blur-xl shadow-2xl border-2 border-rose-200/50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'}`}>
+          <CardHeader className="p-4 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-400 text-white rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <MessageSquare className="h-5 w-5" />
+                <span className="font-serif font-bold">Love-vee</span>
+                <div className="w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></div>
+              </div>
+              <div className="flex items-center space-x-2">
                 <Button
-                  onClick={handleSendMessage}
                   size="sm"
-                  className="bg-rose-500 hover:bg-rose-600"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsMinimized(!isMinimized);
+                    setHeartTrigger(prev => prev + 1);
+                  }}
+                  className="text-white hover:bg-white/20 p-1 h-6 w-6"
                 >
-                  <Send className="h-4 w-4" />
+                  {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setHeartTrigger(prev => prev + 1);
+                    onToggle();
+                  }}
+                  className="text-white hover:bg-white/20 p-1 h-6 w-6"
+                >
+                  <X className="h-3 w-3" />
                 </Button>
               </div>
             </div>
-          </CardContent>
-        )}
-      </Card>
+          </CardHeader>
+          
+          {!isMinimized && (
+            <CardContent className="p-0 flex flex-col h-80">
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[75%] p-3 rounded-lg text-sm ${
+                        message.type === 'user'
+                          ? 'bg-rose-500 text-white'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+              
+              {/* Input */}
+              <div className="p-4 border-t border-gray-200/50 bg-gray-50/50">
+                <div className="flex space-x-2">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Tell Love-vee what's happening..."
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    className="flex-1 border-rose-200/50 focus:border-rose-400"
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    size="sm"
+                    className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+        
+        <HeartAnimation trigger={heartTrigger} className="rounded-lg" />
+      </div>
     </div>
   );
 };
