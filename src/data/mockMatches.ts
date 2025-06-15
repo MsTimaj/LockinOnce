@@ -53,6 +53,7 @@ const createMatch = (
       birthOrder: null,
       relationshipIntent: null,
       emotionalCapacity: null,
+      preferences: null,
       attractionLayer: null,
       physicalProximity: null,
       communicationStyle: null,

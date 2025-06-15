@@ -1,3 +1,4 @@
+
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
 import { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
@@ -8,7 +9,7 @@ import { PhysicalProximityResults } from "@/components/assessments/PhysicalProxi
 import { CommunicationStyleResults } from "@/components/assessments/CommunicationStyleAssessment";
 import { LifeGoalsResults } from "@/components/assessments/LifeGoalsAssessment";
 import { ValuesResults } from "@/components/assessments/ValuesAssessment";
-import { LifestyleResults } from "@/components/assessments/LifestyleResults";
+import { LifestyleResults } from "@/components/assessments/LifestyleCompatibilityAssessment";
 import { LoveLanguagesResults } from "@/components/assessments/LoveLanguagesAssessment";
 import { FinancialValuesResults } from "@/components/assessments/FinancialValuesAssessment";
 
