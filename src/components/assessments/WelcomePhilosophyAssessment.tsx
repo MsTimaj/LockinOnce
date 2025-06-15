@@ -2,13 +2,20 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface WelcomePhilosophyAssessmentProps {
   onComplete: () => void;
 }
 
 const WelcomePhilosophyAssessment = ({ onComplete }: WelcomePhilosophyAssessmentProps) => {
+  const navigate = useNavigate();
+
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
@@ -51,13 +58,23 @@ const WelcomePhilosophyAssessment = ({ onComplete }: WelcomePhilosophyAssessment
         </Card>
       </div>
 
-      <Button 
-        onClick={onComplete}
-        className="btn-gradient w-full"
-      >
-        Start Assessment
-        <ArrowRight className="h-4 w-4 ml-2" />
-      </Button>
+      <div className="flex gap-3">
+        <Button 
+          onClick={handleBackToHome}
+          variant="outline"
+          className="flex-1"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Button>
+        <Button 
+          onClick={onComplete}
+          className="btn-gradient flex-1"
+        >
+          Start Assessment
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
+      </div>
     </div>
   );
 };
