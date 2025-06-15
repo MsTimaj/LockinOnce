@@ -136,6 +136,7 @@ const AIResultsSummary = () => {
         initialTopic={chatTopic}
         isOpen={isChatOpen}
         onToggle={() => setIsChatOpen(!isChatOpen)}
+        analysisData={analysis}
       />
     </>
   );

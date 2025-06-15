@@ -12,13 +12,26 @@ interface Message {
   timestamp: Date;
 }
 
+interface AnalysisData {
+  readinessScore: {
+    overall: number;
+    isReady: boolean;
+    growthAreas: string[];
+    personalizedStrategy: string;
+  };
+  personalityType: string;
+  dominantStyle: string;
+  topStrengths: string[];
+}
+
 interface LoveVeeChatProps {
   isOpen: boolean;
   onToggle: () => void;
   initialTopic?: string | null;
+  analysisData?: AnalysisData;
 }
 
-const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
+const LoveVeeChat = ({ isOpen, onToggle, initialTopic, analysisData }: LoveVeeChatProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -73,6 +86,39 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     }
   };
 
+  const getSystemPrompt = () => {
+    if (!analysisData) {
+      return `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice.`;
+    }
+
+    const { readinessScore, personalityType, dominantStyle, topStrengths } = analysisData;
+    const readinessDescription = readinessScore.isReady 
+      ? "highly prepared for a meaningful relationship" 
+      : "working on building readiness for a healthy relationship";
+
+    return `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice. 
+
+Your user has these traits based on their compatibility assessment:
+- ${readinessScore.overall}% relationship readiness score - they are ${readinessDescription}
+- ${dominantStyle} attachment style 
+- ${personalityType} communication style
+- Top strengths: ${topStrengths.join(', ')}
+- Growth areas: ${readinessScore.growthAreas.join(', ')}
+
+Guidelines for your responses:
+- Be warm, supportive, and use heart emojis occasionally 💕
+- Give practical, actionable dating advice
+- Address their emotions and validate their feelings
+- Ask follow-up questions to understand their situation better
+- Keep responses concise but meaningful (2-4 sentences)
+- Focus on building their confidence and helping them find genuine connections
+- If they mention being stood up, ghosted, or disappointed, provide emotional support first
+- Help them see patterns and make better choices in dating
+- Reference their specific readiness score (${readinessScore.overall}%) and traits when relevant
+
+Remember: You're their personal dating coach who cares about their wellbeing and success in love.`;
+  };
+
   const callAnthropicAPI = async (userMessage: string): Promise<string> => {
     if (!apiKey) {
       return "Please set your Anthropic API key to use Love-vee's AI features.";
@@ -90,26 +136,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
           model: 'claude-3-5-haiku-20241022',
           max_tokens: 1000,
           temperature: 0.7,
-          system: `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice. 
-
-Your user has these traits based on their compatibility assessment:
-- 87% relationship readiness score
-- Secure attachment style 
-- Introverted Feeling communication style
-- Strong emotional intelligence
-- Clear relationship goals
-
-Guidelines for your responses:
-- Be warm, supportive, and use heart emojis occasionally 💕
-- Give practical, actionable dating advice
-- Address their emotions and validate their feelings
-- Ask follow-up questions to understand their situation better
-- Keep responses concise but meaningful (2-4 sentences)
-- Focus on building their confidence and helping them find genuine connections
-- If they mention being stood up, ghosted, or disappointed, provide emotional support first
-- Help them see patterns and make better choices in dating
-
-Remember: You're their personal dating coach who cares about their wellbeing and success in love.`,
+          system: getSystemPrompt(),
           messages: [
             {
               role: 'user',
@@ -213,30 +240,40 @@ Remember: You're their personal dating coach who cares about their wellbeing and
   };
 
   const getTopicResponse = (topic: string): string => {
+    if (!analysisData) {
+      return `I'm so glad you want to explore ${topic} more deeply! 💕 Tell me what's really on your mind about this.`;
+    }
+
+    const { readinessScore, personalityType, dominantStyle } = analysisData;
+    const scoreText = `${readinessScore.overall}%`;
+    const readinessDescription = readinessScore.isReady 
+      ? "fantastic! 🌟 This means you've done the inner work and you're emotionally prepared for a genuine connection."
+      : "shows you're on a great path! 🌱 You're building the foundation for a healthy relationship.";
+
     switch (topic.toLowerCase()) {
       case 'relationship readiness':
-        return "Your 87% relationship readiness score is fantastic! 🌟 This means you've done the inner work and you're emotionally prepared for a genuine connection. You have strong self-awareness, healthy boundaries, and clear intentions - these are rare qualities that will attract the right person. The fact that you're even thinking about readiness shows maturity. What specific aspect of being 'ready' feels most important to you right now?";
+        return `Your ${scoreText} relationship readiness score is ${readinessDescription} You have strong self-awareness and clear intentions - these are valuable qualities. ${readinessScore.isReady ? "The fact that you're even thinking about readiness shows maturity." : "Focus on your growth areas and you'll continue building that readiness."} What specific aspect of being 'ready' feels most important to you right now?`;
       
       case 'attachment style':
-        return "Having a Secure Attachment style is like having a superpower in dating! 💪 You naturally create safe spaces for emotional intimacy while maintaining your independence. This means you won't chase someone who's pulling away, and you won't run from someone getting close. Your dates will feel comfortable opening up to you because you're consistent and trustworthy. How does knowing this about yourself change how you approach dating?";
+        return `Having a ${dominantStyle} attachment style is important to understand! 💪 ${dominantStyle === 'secure' ? "You naturally create safe spaces for emotional intimacy while maintaining your independence. This means you won't chase someone who's pulling away, and you won't run from someone getting close." : "Understanding your attachment patterns helps you build healthier relationships and recognize what you need from a partner."} How does knowing this about yourself change how you approach dating?`;
       
       case 'communication style':
-        return "Your Introverted Feeling style is such a gift! 💕 While others make small talk, you create soul connections. You process emotions deeply and speak from the heart - this attracts people who want real intimacy, not just surface-level fun. Your challenge might be that shallow daters won't 'get' you, but that's actually perfect filtering! The right person will be drawn to your authenticity like a magnet. What kind of conversations make you feel most connected?";
+        return `Your ${personalityType} communication style is such a gift! 💕 This affects how you connect with others and express your feelings. Your challenge might be that some people won't immediately 'get' your style, but that's actually perfect filtering! The right person will be drawn to your authenticity. What kind of conversations make you feel most connected?`;
       
       case 'relationship strengths':
-        return "Your emotional intelligence, clear communication, and relationship goals make you incredibly dateable! 🌟 Emotional intelligence means you can handle conflict maturely and understand your partner's needs. Clear communication prevents those awful misunderstandings that kill relationships. And having relationship goals? That shows you're not just dating for entertainment - you know what you want. These strengths will help you build something real. Which of these feels like your biggest superpower?";
+        return `Your strengths include ${analysisData.topStrengths.join(', ')} - these make you incredibly dateable! 🌟 These strengths will help you build something real and meaningful. Which of these feels like your biggest superpower in relationships?`;
       
       case 'relationship growth areas':
-        return "Growth areas aren't weaknesses - they're your next level up! 📈 'Opening up gradually' is actually healthy - it builds trust naturally instead of trauma-dumping on date three. 'Managing expectations' saves you from fantasy relationships with people who don't exist. Your secure attachment gives you a great foundation to work on these areas without getting overwhelmed. What feels like the biggest challenge for you in these areas?";
+        return `Your growth areas (${readinessScore.growthAreas.join(', ')}) aren't weaknesses - they're your next level up! 📈 With your ${scoreText} readiness score, you have a great foundation to work on these areas. What feels like the biggest challenge for you in these areas?`;
       
       case 'personalized dating strategy':
-        return "Your strategy is so smart! 🎯 Quality over quantity, shared activities, meaningful conversations - this is how lasting relationships actually start. Your secure attachment style means you won't waste time with people who aren't genuinely interested. You'll connect through doing things you both love, which builds natural chemistry and compatibility. This approach might take longer, but it leads to much better relationships. What activities or conversation topics light you up most?";
+        return `Based on your ${dominantStyle} attachment style and ${personalityType} communication style, your personalized strategy is so smart! 🎯 ${readinessScore.personalizedStrategy} This approach might take longer, but it leads to much better relationships. What activities or conversation topics light you up most?`;
       
       case 'matching algorithm':
-        return "Our algorithm prioritizes what actually predicts relationship success! 💕 Values alignment (30%) because shared core beliefs prevent major conflicts. Communication style (25%) because you need to actually understand each other. Life goals, emotional maturity, and lifestyle compatibility round it out. We're not just matching you on surface attraction - we're finding people you could genuinely build a life with. What matters most to you in a potential partner?";
+        return `Our algorithm prioritizes what actually predicts relationship success! 💕 Values alignment, communication compatibility, attachment styles, and life goals. We're not just matching you on surface attraction - we're finding people you could genuinely build a life with based on your ${scoreText} readiness score and ${dominantStyle} attachment style. What matters most to you in a potential partner?`;
       
       default:
-        return `I'm so glad you want to explore ${topic} more deeply! 💕 This is such an important part of your dating journey. Based on your compatibility profile, you have so many strengths to work with. Tell me what's really on your mind about this - are you feeling excited, nervous, curious, or something else? I want to give you advice that actually fits your situation.`;
+        return `I'm so glad you want to explore ${topic} more deeply! 💕 Based on your ${scoreText} readiness score and ${dominantStyle} attachment style, you have so many strengths to work with. Tell me what's really on your mind about this - are you feeling excited, nervous, curious, or something else?`;
     }
   };
 

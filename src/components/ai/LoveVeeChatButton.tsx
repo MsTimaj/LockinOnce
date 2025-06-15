@@ -5,13 +5,26 @@ import { MessageSquare } from "lucide-react";
 import LoveVeeChat from "./LoveVeeChat";
 import HeartAnimation from "@/components/ui/heart-animation";
 
+interface AnalysisData {
+  readinessScore: {
+    overall: number;
+    isReady: boolean;
+    growthAreas: string[];
+    personalizedStrategy: string;
+  };
+  personalityType: string;
+  dominantStyle: string;
+  topStrengths: string[];
+}
+
 interface LoveVeeChatButtonProps {
   initialTopic?: string | null;
   isOpen?: boolean;
   onToggle?: () => void;
+  analysisData?: AnalysisData;
 }
 
-const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle }: LoveVeeChatButtonProps) => {
+const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle, analysisData }: LoveVeeChatButtonProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [heartTrigger, setHeartTrigger] = useState(0);
   
@@ -60,6 +73,7 @@ const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle }: L
         isOpen={isChatOpen}
         onToggle={handleToggle}
         initialTopic={initialTopic}
+        analysisData={analysisData}
       />
     </>
   );
