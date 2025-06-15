@@ -20,7 +20,7 @@ interface PreferencesData {
     lifestyle: string[];
   };
   mustHaves: {
-    wantsChildren: boolean | null;
+    wantsChildren: boolean | null | string;
     education: string[];
     careerAmbition: string;
   };
@@ -42,7 +42,7 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
   const [religionDealBreakers, setReligionDealBreakers] = useState<string[]>([]);
   const [politicsDealBreakers, setPoliticsDealBreakers] = useState<string[]>([]);
   const [lifestyleDealBreakers, setLifestyleDealBreakers] = useState<string[]>([]);
-  const [wantsChildren, setWantsChildren] = useState<boolean | null>(null);
+  const [wantsChildren, setWantsChildren] = useState<boolean | null | string>(null);
   const [educationRequirements, setEducationRequirements] = useState<string[]>([]);
   const [careerAmbition, setCareerAmbition] = useState<string>("");
   
@@ -110,8 +110,8 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
     onComplete(results);
   };
 
-  // Simplified validation - only require the essential fields
-  const isValid = genderPreference && careerAmbition && wantsChildren !== null;
+  // Fixed validation - treat "maybe" as a valid selection
+  const isValid = genderPreference && careerAmbition && (wantsChildren === true || wantsChildren === false || wantsChildren === "maybe");
 
   // Debug logging to help identify the issue
   useEffect(() => {
@@ -173,7 +173,7 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
             * Required fields: Gender preference, Career ambition, Children preference
           </div>
           <div className="mb-2 text-xs text-muted-foreground">
-            Debug: Gender={genderPreference ? '✓' : '✗'} Career={careerAmbition ? '✓' : '✗'} Children={wantsChildren !== null ? '✓' : '✗'}
+            Debug: Gender={genderPreference ? '✓' : '✗'} Career={careerAmbition ? '✓' : '✗'} Children={(wantsChildren === true || wantsChildren === false || wantsChildren === "maybe") ? '✓' : '✗'}
           </div>
           <Button 
             onClick={handleSubmit} 

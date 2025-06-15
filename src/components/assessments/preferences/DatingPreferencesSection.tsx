@@ -113,8 +113,8 @@ const DatingPreferencesSection = ({
           </Button>
           <Button
             type="button"
-            variant={wantsChildren === null ? "default" : "outline"}
-            onClick={() => setWantsChildren(null)}
+            variant={wantsChildren === "maybe" ? "default" : "outline"}
+            onClick={() => setWantsChildren("maybe" as any)}
           >
             Maybe/Unsure
           </Button>
