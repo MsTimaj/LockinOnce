@@ -38,7 +38,7 @@ export const calculateAttachmentCompatibility = (
     disorganized: { secure: 60, anxious: 55, avoidant: 50, disorganized: 45 }
   };
 
-  return compatibilityMatrix[user.primaryStyle]?.[match.primaryStyle] || 50;
+  return compatibilityMatrix[user.dominantStyle]?.[match.dominantStyle] || 50;
 };
 
 export const calculatePersonalityCompatibility = (
@@ -49,16 +49,22 @@ export const calculatePersonalityCompatibility = (
 
   let score = 50;
   
-  // Complementary introversion/extroversion gets bonus
-  if (user.orientation !== match.orientation) {
-    score += 20;
-  } else if (user.orientation === match.orientation && user.orientation === 'ambivert') {
-    score += 15;
+  // Check for complementary introversion/extroversion
+  const userIsIntrovert = user.introversion > user.extroversion;
+  const matchIsIntrovert = match.introversion > match.extroversion;
+  
+  if (userIsIntrovert !== matchIsIntrovert) {
+    score += 20; // Complementary types get bonus
+  } else if (userIsIntrovert === matchIsIntrovert) {
+    score += 10; // Same types still work but less bonus
   }
 
-  // Similar decision-making styles get bonus
-  if (user.decisionMaking === match.decisionMaking) {
-    score += 15;
+  // Check for thinking/feeling balance
+  const userIsThinking = user.thinking > user.feeling;
+  const matchIsThinking = match.thinking > match.feeling;
+  
+  if (userIsThinking === matchIsThinking) {
+    score += 15; // Similar decision-making styles get bonus
   }
 
   return Math.min(score, 100);
@@ -71,13 +77,13 @@ export const calculateBirthOrderCompatibility = (
   if (!user || !match) return 50;
 
   const compatibilityMatrix: Record<string, Record<string, number>> = {
-    eldest: { youngest: 90, middle: 75, only: 70, eldest: 60 },
-    middle: { middle: 85, eldest: 75, youngest: 70, only: 65 },
-    youngest: { eldest: 90, only: 75, middle: 70, youngest: 55 },
-    only: { only: 80, youngest: 75, eldest: 70, middle: 65 }
+    oldest: { youngest: 90, middle: 75, only: 70, oldest: 60 },
+    middle: { middle: 85, oldest: 75, youngest: 70, only: 65 },
+    youngest: { oldest: 90, only: 75, middle: 70, youngest: 55 },
+    only: { only: 80, youngest: 75, oldest: 70, middle: 65 }
   };
 
-  return compatibilityMatrix[user.position]?.[match.position] || 50;
+  return compatibilityMatrix[user.birthOrder]?.[match.birthOrder] || 50;
 };
 
 export const calculateOverallCompatibility = (match: MatchProfile): CompatibilityScore => {
