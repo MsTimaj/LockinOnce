@@ -1,4 +1,3 @@
-
 import { Bell, Settings, CheckSquare, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHead
   const navigate = useNavigate();
 
   const handleSettingsClick = () => {
-    navigate('/profile');
+    navigate('/settings');
   };
 
   const handleNotificationClick = () => {
