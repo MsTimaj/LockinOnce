@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, Brain, Users, Target, ArrowRight, Sparkles, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
+import { UserStateManager } from "@/utils/userStateManager";
+import { calculateRelationshipReadiness, getDominantPersonalityType, getTopStrengths } from "@/utils/assessmentScoring";
 
 const AIResultsSummary = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
@@ -13,6 +15,31 @@ const AIResultsSummary = () => {
   const [chatTopic, setChatTopic] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Get real user data
+  const userProfile = UserStateManager.getUserProfile();
+  const [analysis, setAnalysis] = useState<any>(null);
+
+  useEffect(() => {
+    // Check if user has completed assessments
+    if (!userProfile || !UserStateManager.isAssessmentComplete()) {
+      navigate('/onboarding');
+      return;
+    }
+
+    // Calculate real analysis
+    const readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
+    const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
+    const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
+    const topStrengths = getTopStrengths(userProfile.assessmentResults);
+
+    setAnalysis({
+      readinessScore,
+      personalityType,
+      dominantStyle,
+      topStrengths
+    });
+  }, [userProfile, navigate]);
 
   const insights = [
     "Analyzing your attachment style patterns...",
@@ -42,17 +69,7 @@ const AIResultsSummary = () => {
     setIsChatOpen(true);
   };
 
-  const mockAnalysis = {
-    dominantStyle: "Secure Attachment",
-    personalityType: "Introverted Feeling",
-    readinessScore: 87,
-    topStrengths: ["Emotional Intelligence", "Clear Communication", "Relationship Goals"],
-    growthAreas: ["Opening Up Gradually", "Managing Expectations"],
-    datingStrategy: "Focus on quality connections through shared activities and meaningful conversations. Your secure attachment style is a major asset.",
-    matchingFactors: ["Values alignment (30%)", "Communication style (25%)", "Life goals (20%)", "Emotional maturity (15%)", "Lifestyle compatibility (10%)"]
-  };
-
-  if (isAnalyzing) {
+  if (isAnalyzing || !analysis) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-6">
         <div className="max-w-md w-full text-center space-y-6">
@@ -75,6 +92,8 @@ const AIResultsSummary = () => {
       </div>
     );
   }
+
+  const { readinessScore, personalityType, dominantStyle, topStrengths } = analysis;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 px-6 py-8">
@@ -101,8 +120,10 @@ const AIResultsSummary = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <div className="text-4xl font-bold text-rose-600 mb-2">{mockAnalysis.readinessScore}%</div>
-            <p className="text-sm text-gray-600 mb-3">You're highly prepared for a meaningful relationship</p>
+            <div className="text-4xl font-bold text-rose-600 mb-2">{readinessScore.overall}%</div>
+            <p className="text-sm text-gray-600 mb-3">
+              {readinessScore.isReady ? "You're highly prepared for a meaningful relationship" : "Focus on growth areas to enhance your relationship readiness"}
+            </p>
             <Button 
               variant="outline" 
               size="sm"
@@ -124,12 +145,23 @@ const AIResultsSummary = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge variant="secondary" className="mb-3 bg-green-100 text-green-800">
-                {mockAnalysis.dominantStyle}
+              <Badge variant="secondary" className={`mb-3 ${
+                dominantStyle === 'secure' ? 'bg-green-100 text-green-800' :
+                dominantStyle === 'anxious' ? 'bg-yellow-100 text-yellow-800' :
+                dominantStyle === 'avoidant' ? 'bg-orange-100 text-orange-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {dominantStyle.charAt(0).toUpperCase() + dominantStyle.slice(1)} Attachment
               </Badge>
               <p className="text-sm text-gray-600 mb-3">
-                Your secure attachment style means you're comfortable with intimacy and independence. 
-                This is your biggest relationship asset - you naturally create safe, stable connections.
+                {dominantStyle === 'secure' 
+                  ? "Your secure attachment style means you're comfortable with intimacy and independence. This is your biggest relationship asset - you naturally create safe, stable connections."
+                  : dominantStyle === 'anxious'
+                  ? "You value close relationships but sometimes worry about your partner's feelings. Learning to self-soothe and communicate needs clearly will strengthen your connections."
+                  : dominantStyle === 'avoidant'
+                  ? "You value independence but may struggle with intimacy. Gradually opening up and recognizing the value of emotional connection will enhance your relationships."
+                  : "You may experience conflicting needs for closeness and distance. Developing emotional awareness and communication skills will help create more stable relationships."
+                }
               </p>
               <Button 
                 variant="outline" 
@@ -151,11 +183,13 @@ const AIResultsSummary = () => {
             </CardHeader>
             <CardContent>
               <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-800">
-                {mockAnalysis.personalityType}
+                {personalityType}
               </Badge>
               <p className="text-sm text-gray-600 mb-3">
-                You process emotions deeply and value authentic connections. You prefer meaningful 
-                conversations over small talk, which helps you build genuine relationships.
+                {personalityType.includes('Introverted') 
+                  ? "You process emotions deeply and prefer meaningful one-on-one conversations. You build trust gradually but form very deep connections."
+                  : "You're energized by social interaction and tend to think out loud. You're naturally warm and expressive in relationships."
+                }
               </p>
               <Button 
                 variant="outline" 
@@ -177,7 +211,7 @@ const AIResultsSummary = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 mb-3">
-                {mockAnalysis.topStrengths.map((strength, index) => (
+                {topStrengths.map((strength, index) => (
                   <li key={index} className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-sm">{strength}</span>
@@ -201,7 +235,7 @@ const AIResultsSummary = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 mb-3">
-                {mockAnalysis.growthAreas.map((area, index) => (
+                {readinessScore.growthAreas.map((area, index) => (
                   <li key={index} className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
                     <span className="text-sm">{area}</span>
@@ -229,38 +263,11 @@ const AIResultsSummary = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700 italic mb-3">"{mockAnalysis.datingStrategy}"</p>
+            <p className="text-gray-700 italic mb-3">"{readinessScore.personalizedStrategy}"</p>
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => handleLearnMore("personalized dating strategy")}
-              className="text-rose-600 border-rose-200 hover:bg-rose-50"
-            >
-              Learn More
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Matching Factors */}
-        <Card className="bg-white/70 backdrop-blur-sm border border-white/50">
-          <CardHeader>
-            <CardTitle className="text-rose-700">How We'll Match You</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 mb-3">
-              {mockAnalysis.matchingFactors.map((factor, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
-                  <span className="text-gray-700">{factor.split(' (')[0]}</span>
-                  <Badge variant="outline" className="text-xs">
-                    {factor.split(' (')[1].replace(')', '')}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleLearnMore("matching algorithm")}
               className="text-rose-600 border-rose-200 hover:bg-rose-50"
             >
               Learn More

@@ -1,9 +1,12 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { UserStateManager } from "@/utils/userStateManager";
+import { calculateRelationshipReadiness } from "@/utils/assessmentScoring";
 
 // Phase 1 Assessments
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -27,53 +30,61 @@ import FinancialValuesAssessment, { FinancialValuesResults } from "@/components/
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [currentPhase, setCurrentPhase] = useState(1);
-  
-  // Phase 1 Results
-  const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
-  const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
-  const [personalityResults, setPersonalityResults] = useState<PersonalityResults | null>(null);
-  const [relationshipIntentResults, setRelationshipIntentResults] = useState<RelationshipIntentResults | null>(null);
-  const [emotionalCapacityResults, setEmotionalCapacityResults] = useState<EmotionalCapacityResults | null>(null);
-  const [attractionLayerResults, setAttractionLayerResults] = useState<AttractionLayerResults | null>(null);
-  const [physicalProximityResults, setPhysicalProximityResults] = useState<PhysicalProximityResults | null>(null);
-  const [communicationStyleResults, setCommunicationStyleResults] = useState<CommunicationStyleResults | null>(null);
-  const [lifeGoalsResults, setLifeGoalsResults] = useState<LifeGoalsResults | null>(null);
-  
-  // Phase 2 Results
-  const [valuesResults, setValuesResults] = useState<ValuesResults | null>(null);
-  const [lifestyleResults, setLifestyleResults] = useState<LifestyleCompatibilityResults | null>(null);
-  const [loveLanguagesResults, setLoveLanguagesResults] = useState<LoveLanguagesResults | null>(null);
-  const [financialValuesResults, setFinancialValuesResults] = useState<FinancialValuesResults | null>(null);
+  const navigate = useNavigate();
+
+  // Load existing progress on component mount
+  useEffect(() => {
+    const progress = UserStateManager.getOnboardingProgress();
+    setCurrentPhase(progress.phase);
+    setCurrentStep(progress.step);
+  }, []);
 
   const phase1Steps = 10;
   const phase2Steps = 5;
   const totalSteps = currentPhase === 1 ? phase1Steps : phase2Steps;
-  const navigate = useNavigate();
 
   const progress = (currentStep / totalSteps) * 100;
 
   const nextStep = () => {
     if (currentPhase === 1 && currentStep < phase1Steps) {
-      setCurrentStep(currentStep + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
     } else if (currentPhase === 1 && currentStep === phase1Steps) {
       // Transition to Phase 2
       setCurrentPhase(2);
       setCurrentStep(1);
+      UserStateManager.updateOnboardingProgress(2, 1);
     } else if (currentPhase === 2 && currentStep < phase2Steps) {
-      setCurrentStep(currentStep + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
     } else {
-      // Navigate to AI Results Summary when all assessments are complete
-      navigate('/ai-results');
+      // Complete onboarding and calculate final scores
+      completeOnboarding();
     }
+  };
+
+  const completeOnboarding = () => {
+    const profile = UserStateManager.getUserProfile();
+    if (profile) {
+      const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
+      UserStateManager.saveReadinessScore(readinessScore);
+      UserStateManager.markOnboardingComplete();
+    }
+    navigate('/ai-results');
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const newStep = currentStep - 1;
+      setCurrentStep(newStep);
+      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
     } else if (currentPhase === 2) {
       // Go back to Phase 1
       setCurrentPhase(1);
       setCurrentStep(phase1Steps);
+      UserStateManager.updateOnboardingProgress(1, phase1Steps);
     }
   };
 
@@ -83,55 +94,55 @@ const Onboarding = () => {
 
   // Phase 1 Handlers
   const handleAttachmentComplete = (results: AttachmentStyleResults) => {
-    setAttachmentResults(results);
+    UserStateManager.updateAssessmentResult('attachmentStyle', results);
     console.log('Attachment Style Results:', results);
     nextStep();
   };
 
   const handleBirthOrderComplete = (results: BirthOrderResults) => {
-    setBirthOrderResults(results);
+    UserStateManager.updateAssessmentResult('birthOrder', results);
     console.log('Birth Order Results:', results);
     nextStep();
   };
 
   const handlePersonalityComplete = (results: PersonalityResults) => {
-    setPersonalityResults(results);
+    UserStateManager.updateAssessmentResult('personality', results);
     console.log('Personality Results:', results);
     nextStep();
   };
 
   const handleRelationshipIntentComplete = (results: RelationshipIntentResults) => {
-    setRelationshipIntentResults(results);
+    UserStateManager.updateAssessmentResult('relationshipIntent', results);
     console.log('Relationship Intent Results:', results);
     nextStep();
   };
 
   const handleEmotionalCapacityComplete = (results: EmotionalCapacityResults) => {
-    setEmotionalCapacityResults(results);
+    UserStateManager.updateAssessmentResult('emotionalCapacity', results);
     console.log('Emotional Capacity Results:', results);
     nextStep();
   };
 
   const handleAttractionLayerComplete = (results: AttractionLayerResults) => {
-    setAttractionLayerResults(results);
+    UserStateManager.updateAssessmentResult('attractionLayer', results);
     console.log('Attraction Layer Results:', results);
     nextStep();
   };
 
   const handlePhysicalProximityComplete = (results: PhysicalProximityResults) => {
-    setPhysicalProximityResults(results);
+    UserStateManager.updateAssessmentResult('physicalProximity', results);
     console.log('Physical Proximity Results:', results);
     nextStep();
   };
 
   const handleCommunicationStyleComplete = (results: CommunicationStyleResults) => {
-    setCommunicationStyleResults(results);
+    UserStateManager.updateAssessmentResult('communicationStyle', results);
     console.log('Communication Style Results:', results);
     nextStep();
   };
 
   const handleLifeGoalsComplete = (results: LifeGoalsResults) => {
-    setLifeGoalsResults(results);
+    UserStateManager.updateAssessmentResult('lifeGoals', results);
     console.log('Life Goals Results:', results);
     nextStep();
   };
@@ -143,25 +154,25 @@ const Onboarding = () => {
   };
 
   const handleValuesComplete = (results: ValuesResults) => {
-    setValuesResults(results);
+    UserStateManager.updateAssessmentResult('values', results);
     console.log('Values Results:', results);
     nextStep();
   };
 
   const handleLifestyleComplete = (results: LifestyleCompatibilityResults) => {
-    setLifestyleResults(results);
+    UserStateManager.updateAssessmentResult('lifestyle', results);
     console.log('Lifestyle Compatibility Results:', results);
     nextStep();
   };
 
   const handleLoveLanguagesComplete = (results: LoveLanguagesResults) => {
-    setLoveLanguagesResults(results);
+    UserStateManager.updateAssessmentResult('loveLanguages', results);
     console.log('Love Languages Results:', results);
     nextStep();
   };
 
   const handleFinancialValuesComplete = (results: FinancialValuesResults) => {
-    setFinancialValuesResults(results);
+    UserStateManager.updateAssessmentResult('financialValues', results);
     console.log('Financial Values Results:', results);
     nextStep();
   };
