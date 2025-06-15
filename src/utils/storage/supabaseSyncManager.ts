@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { UserProfile } from "../types/userProfile";
 import { LocalStorageManager } from "./localStorageManager";
@@ -9,9 +10,11 @@ export class SupabaseSyncManager {
         .from('user_profiles')
         .upsert({
           id: profile.id,
-          readiness_score: profile.readinessScore,
+          assessment_results: profile.assessmentResults as any,
+          readiness_score: profile.readinessScore as any,
           onboarding_completed: profile.onboardingCompleted,
-          current_step: profile.currentStep
+          current_step: profile.currentStep as any,
+          last_updated: profile.lastUpdated
         });
 
       if (error) throw error;
@@ -27,6 +30,7 @@ export class SupabaseSyncManager {
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
+        .eq('id', profileId)
         .order('last_updated', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -36,7 +40,7 @@ export class SupabaseSyncManager {
       const localProfile = LocalStorageManager.getProfile();
       if (!localProfile) return;
 
-      const supabaseLastUpdated = new Date(data.last_updated);
+      const supabaseLastUpdated = new Date(data.last_updated || data.created_at || '');
       const localLastUpdated = new Date(localProfile.lastUpdated);
 
       // If Supabase has newer data, update localStorage
@@ -77,7 +81,7 @@ export class SupabaseSyncManager {
     return {
       id: data.id,
       createdAt: data.created_at,
-      lastUpdated: data.last_updated,
+      lastUpdated: data.last_updated || data.created_at,
       basicInfo: data.basic_info || {},
       assessmentResults: data.assessment_results || {
         attachmentStyle: null,
@@ -96,7 +100,7 @@ export class SupabaseSyncManager {
       },
       readinessScore: data.readiness_score,
       onboardingCompleted: data.onboarding_completed || false,
-      currentStep: data.current_step || { phase: 1, step: 1 }
+      current_step: data.current_step || { phase: 1, step: 1 }
     };
   }
 }
