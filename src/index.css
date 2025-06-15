@@ -1,34 +1,33 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* LockInOnce Design System - Modern Pink Romance Theme */
+/* LockInOnce Design System - Modern Blue Romance Theme */
 
 @layer base {
   :root {
-    /* LockInOnce Modern Pink Romance Colors */
-    --primary: 330 81% 60%; /* Rose Pink #E879B7 */
-    --secondary: 316 44% 75%; /* Soft Mauve #D4A5C4 */
-    --accent: 342 90% 65%; /* Coral Pink #F96B8B */
-    --background-light: 320 100% 98%; /* Soft Pink White #FFF7FC */
-    --background-dark: 240 15% 15%; /* Deep Charcoal #1F1F23 */
-    --foreground-dark: 240 15% 8%; /* Rich Black #14141A */
-    --foreground-light: 320 50% 98%; /* Pearl Pink #FCF7F9 */
+    /* LockInOnce Modern Blue Romance Colors */
+    --primary: 217 91% 60%; /* Modern Blue #3B82F6 */
+    --secondary: 213 27% 84%; /* Soft Blue Gray #CBD5E1 */
+    --accent: 212 95% 68%; /* Bright Blue #60A5FA */
+    --background-light: 210 40% 98%; /* Soft Blue White #F8FAFC */
+    --background-dark: 222 84% 5%; /* Deep Navy #0F172A */
+    --foreground-dark: 222 84% 5%; /* Rich Navy #0F172A */
+    --foreground-light: 210 40% 98%; /* Light Blue White #F8FAFC */
     
     /* Default light theme */
     --background: var(--background-light);
     --foreground: var(--foreground-dark);
-    --card: 320 50% 99%;
+    --card: 210 40% 99%;
     --card-foreground: var(--foreground-dark);
-    --popover: 320 50% 99%;
+    --popover: 210 40% 99%;
     --popover-foreground: var(--foreground-dark);
     --primary-foreground: 0 0% 100%;
     --secondary-foreground: var(--foreground-dark);
-    --muted: 320 40% 95%;
-    --muted-foreground: 240 15% 40%;
-    --border: 320 40% 90%;
-    --input: 320 40% 90%;
+    --muted: 210 40% 95%;
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: var(--primary);
     --radius: 1rem;
   }
@@ -37,16 +36,16 @@
     /* Dark theme */
     --background: var(--background-dark);
     --foreground: var(--foreground-light);
-    --card: 240 15% 18%;
+    --card: 222 84% 8%;
     --card-foreground: var(--foreground-light);
-    --popover: 240 15% 18%;
+    --popover: 222 84% 8%;
     --popover-foreground: var(--foreground-light);
     --primary-foreground: var(--foreground-dark);
     --secondary-foreground: var(--foreground-light);
-    --muted: 240 15% 12%;
-    --muted-foreground: 240 15% 60%;
-    --border: 240 15% 25%;
-    --input: 240 15% 25%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
   }
 }
 
@@ -92,7 +91,7 @@
   }
   
   .card-glass:hover {
-    box-shadow: 0 35px 60px -12px rgba(232, 121, 183, 0.4), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 35px 60px -12px rgba(59, 130, 246, 0.3), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   /* Modern Input Style */
