@@ -35,67 +35,364 @@ const generatePersonalizedStrategy = (results: ComprehensiveAssessmentResults, o
   }
 };
 
-export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentResults): RelationshipReadinessScore => {
-  // Emotional Readiness (30% weight) - using available properties from EmotionalCapacityResults
-  let emotionalReadiness = 60;
+const calculateEmotionalReadiness = (results: ComprehensiveAssessmentResults): number => {
+  let score = 50; // Base score
+  let factors = 0;
+
+  // Emotional Capacity Assessment (40% weight)
   if (results.emotionalCapacity) {
-    // EmotionalCapacityResults has: stressManagement, emotionalSupport, selfAwareness, empathy, resilience (all strings)
-    // We'll score based on the quality of responses
-    const scores = [
-      results.emotionalCapacity.stressManagement === 'healthy_coping' ? 90 : 
-      results.emotionalCapacity.stressManagement === 'mostly_manage' ? 75 : 60,
-      
-      results.emotionalCapacity.emotionalSupport === 'natural_supporter' ? 90 :
-      results.emotionalCapacity.emotionalSupport === 'care_but_unsure' ? 70 : 50,
-      
-      results.emotionalCapacity.selfAwareness === 'highly_aware' ? 90 :
-      results.emotionalCapacity.selfAwareness === 'moderately_aware' ? 70 : 50,
-      
-      results.emotionalCapacity.empathy === 'highly_empathetic' ? 90 :
-      results.emotionalCapacity.empathy === 'moderate_empathy' ? 70 : 50,
-      
-      results.emotionalCapacity.resilience === 'strong_resilience' ? 90 :
-      results.emotionalCapacity.resilience === 'moderate_resilience' ? 70 : 50
-    ];
-    emotionalReadiness = scores.reduce((a, b) => a + b, 0) / scores.length;
-  }
-  
-  if (results.attachmentStyle) {
-    const attachmentBonus = results.attachmentStyle.dominantStyle === 'secure' ? 20 : 
-                           results.attachmentStyle.dominantStyle === 'anxious' ? -5 :
-                           results.attachmentStyle.dominantStyle === 'avoidant' ? -10 : -15;
-    emotionalReadiness = Math.max(0, Math.min(100, emotionalReadiness + attachmentBonus));
+    const ec = results.emotionalCapacity;
+    let emotionalScore = 0;
+    let emotionalFactors = 0;
+
+    if (ec.stressManagement) {
+      emotionalScore += ec.stressManagement === 'healthy_coping' ? 95 : 
+                       ec.stressManagement === 'mostly_manage' ? 75 : 
+                       ec.stressManagement === 'some_difficulty' ? 55 : 35;
+      emotionalFactors++;
+    }
+
+    if (ec.emotionalSupport) {
+      emotionalScore += ec.emotionalSupport === 'natural_supporter' ? 90 :
+                       ec.emotionalSupport === 'care_but_unsure' ? 70 : 
+                       ec.emotionalSupport === 'struggle_supporting' ? 45 : 30;
+      emotionalFactors++;
+    }
+
+    if (ec.selfAwareness) {
+      emotionalScore += ec.selfAwareness === 'highly_aware' ? 95 :
+                       ec.selfAwareness === 'moderately_aware' ? 75 : 
+                       ec.selfAwareness === 'somewhat_aware' ? 55 : 35;
+      emotionalFactors++;
+    }
+
+    if (ec.empathy) {
+      emotionalScore += ec.empathy === 'highly_empathetic' ? 90 :
+                       ec.empathy === 'moderate_empathy' ? 70 : 
+                       ec.empathy === 'low_empathy' ? 40 : 25;
+      emotionalFactors++;
+    }
+
+    if (ec.resilience) {
+      emotionalScore += ec.resilience === 'strong_resilience' ? 90 :
+                       ec.resilience === 'moderate_resilience' ? 70 : 
+                       ec.resilience === 'low_resilience' ? 45 : 25;
+      emotionalFactors++;
+    }
+
+    if (emotionalFactors > 0) {
+      score += (emotionalScore / emotionalFactors) * 0.4;
+      factors += 0.4;
+    }
   }
 
-  // Communication Skills (25% weight)
-  let communicationSkills = 65;
+  // Attachment Style (35% weight)
+  if (results.attachmentStyle) {
+    const attachmentScore = results.attachmentStyle.dominantStyle === 'secure' ? 95 : 
+                           results.attachmentStyle.dominantStyle === 'anxious' ? 60 :
+                           results.attachmentStyle.dominantStyle === 'avoidant' ? 50 : 40;
+    score += attachmentScore * 0.35;
+    factors += 0.35;
+  }
+
+  // Love Languages awareness (15% weight) - indicates emotional intelligence
+  if (results.loveLanguages) {
+    const ll = results.loveLanguages;
+    let loveLanguageScore = 70; // Base for having awareness
+    
+    // Higher score if they understand multiple languages
+    const languageCount = Object.values(ll).filter(val => val && val !== 'not_important').length;
+    loveLanguageScore += Math.min(languageCount * 5, 25);
+    
+    score += loveLanguageScore * 0.15;
+    factors += 0.15;
+  }
+
+  // Values clarity (10% weight) - clear values indicate emotional maturity
+  if (results.values) {
+    const values = results.values;
+    let valuesScore = 60;
+    
+    // Score based on how defined their values are
+    const definedValues = Object.values(values).filter(val => val && val !== 'neutral').length;
+    valuesScore += Math.min(definedValues * 4, 30);
+    
+    score += valuesScore * 0.1;
+    factors += 0.1;
+  }
+
+  // Normalize score if we have partial data
+  if (factors > 0 && factors < 1) {
+    score = score / factors;
+  }
+
+  return Math.max(20, Math.min(100, Math.round(score)));
+};
+
+const calculateCommunicationSkills = (results: ComprehensiveAssessmentResults): number => {
+  let score = 50;
+  let factors = 0;
+
+  // Communication Style Assessment (50% weight)
   if (results.communicationStyle) {
-    // Use default scoring since we don't know the exact properties
-    communicationSkills = 75;
+    const cs = results.communicationStyle;
+    let commScore = 0;
+    let commFactors = 0;
+
+    if (cs.conflictStyle) {
+      commScore += cs.conflictStyle === 'collaborative' ? 95 :
+                   cs.conflictStyle === 'compromise' ? 80 :
+                   cs.conflictStyle === 'accommodating' ? 65 :
+                   cs.conflictStyle === 'competing' ? 45 : 35;
+      commFactors++;
+    }
+
+    if (cs.expressionStyle) {
+      commScore += cs.expressionStyle === 'direct_kind' ? 90 :
+                   cs.expressionStyle === 'gentle_indirect' ? 75 :
+                   cs.expressionStyle === 'very_direct' ? 60 : 40;
+      commFactors++;
+    }
+
+    if (cs.listeningStyle) {
+      commScore += cs.listeningStyle === 'active_empathetic' ? 95 :
+                   cs.listeningStyle === 'good_listener' ? 80 :
+                   cs.listeningStyle === 'selective_listener' ? 55 : 35;
+      commFactors++;
+    }
+
+    if (commFactors > 0) {
+      score += (commScore / commFactors) * 0.5;
+      factors += 0.5;
+    }
   }
 
-  // Self Awareness (20% weight)
-  let selfAwareness = 70;
+  // Emotional Capacity - Communication aspects (30% weight)
+  if (results.emotionalCapacity?.emotionalSupport) {
+    const supportScore = results.emotionalCapacity.emotionalSupport === 'natural_supporter' ? 90 :
+                        results.emotionalCapacity.emotionalSupport === 'care_but_unsure' ? 70 : 45;
+    score += supportScore * 0.3;
+    factors += 0.3;
+  }
+
+  // Love Languages - indicates communication awareness (20% weight)
+  if (results.loveLanguages) {
+    let langScore = 65;
+    const wordsOfAffirmation = results.loveLanguages.wordsOfAffirmation;
+    if (wordsOfAffirmation === 'extremely_important' || wordsOfAffirmation === 'very_important') {
+      langScore += 15; // Values verbal communication
+    }
+    
+    score += langScore * 0.2;
+    factors += 0.2;
+  }
+
+  // Normalize score if we have partial data
+  if (factors > 0 && factors < 1) {
+    score = score / factors;
+  }
+
+  return Math.max(25, Math.min(100, Math.round(score)));
+};
+
+const calculateSelfAwareness = (results: ComprehensiveAssessmentResults): number => {
+  let score = 50;
+  let factors = 0;
+
+  // Emotional Capacity - Self Awareness (30% weight)
+  if (results.emotionalCapacity?.selfAwareness) {
+    const awarenessScore = results.emotionalCapacity.selfAwareness === 'highly_aware' ? 95 :
+                          results.emotionalCapacity.selfAwareness === 'moderately_aware' ? 75 : 50;
+    score += awarenessScore * 0.3;
+    factors += 0.3;
+  }
+
+  // Personality Assessment completion indicates self-reflection (25% weight)
   if (results.personality) {
-    const intro = results.personality.introversion || 50;
-    const extro = results.personality.extroversion || 50;
-    selfAwareness = Math.abs(intro - extro) > 20 ? 80 : 70;
+    let personalityScore = 70; // Base for completing personality assessment
+    
+    // Balanced personality traits often indicate better self-awareness
+    const traits = [
+      results.personality.introversion || 50,
+      results.personality.extroversion || 50,
+      results.personality.thinking || 50,
+      results.personality.feeling || 50,
+      results.personality.judging || 50,
+      results.personality.perceiving || 50
+    ];
+    
+    // Less extreme scores often indicate better self-understanding
+    const extremeness = traits.reduce((sum, trait) => sum + Math.abs(trait - 50), 0) / traits.length;
+    personalityScore += Math.max(0, 25 - extremeness * 0.5);
+    
+    score += personalityScore * 0.25;
+    factors += 0.25;
   }
 
-  // Relationship Goals (15% weight)
-  let relationshipGoals = 75;
+  // Values clarity (20% weight)
+  if (results.values) {
+    let valuesScore = 60;
+    const definedValues = Object.values(results.values).filter(val => val && val !== 'neutral').length;
+    valuesScore += Math.min(definedValues * 5, 35);
+    
+    score += valuesScore * 0.2;
+    factors += 0.2;
+  }
+
+  // Life Goals clarity (15% weight)
+  if (results.lifeGoals) {
+    let goalsScore = 65;
+    const definedGoals = Object.values(results.lifeGoals).filter(val => val && val !== 'neutral').length;
+    goalsScore += Math.min(definedGoals * 4, 30);
+    
+    score += goalsScore * 0.15;
+    factors += 0.15;
+  }
+
+  // Financial Values awareness (10% weight)
+  if (results.financialValues) {
+    let financialScore = 70;
+    const definedFinancial = Object.values(results.financialValues).filter(val => val && val !== 'neutral').length;
+    financialScore += Math.min(definedFinancial * 3, 25);
+    
+    score += financialScore * 0.1;
+    factors += 0.1;
+  }
+
+  // Normalize score if we have partial data
+  if (factors > 0 && factors < 1) {
+    score = score / factors;
+  }
+
+  return Math.max(30, Math.min(100, Math.round(score)));
+};
+
+const calculateRelationshipGoals = (results: ComprehensiveAssessmentResults): number => {
+  let score = 50;
+  let factors = 0;
+
+  // Relationship Intent (40% weight)
   if (results.relationshipIntent) {
-    relationshipGoals = 80;
+    const ri = results.relationshipIntent;
+    let intentScore = 0;
+    let intentFactors = 0;
+
+    if (ri.lookingFor) {
+      intentScore += ri.lookingFor === 'long_term_relationship' ? 95 :
+                    ri.lookingFor === 'marriage_partnership' ? 100 :
+                    ri.lookingFor === 'casual_dating' ? 60 :
+                    ri.lookingFor === 'not_sure' ? 40 : 30;
+      intentFactors++;
+    }
+
+    if (ri.timeline) {
+      intentScore += ri.timeline === 'ready_now' ? 90 :
+                    ri.timeline === 'within_year' ? 85 :
+                    ri.timeline === 'few_years' ? 70 :
+                    ri.timeline === 'no_timeline' ? 50 : 40;
+      intentFactors++;
+    }
+
+    if (ri.commitment) {
+      intentScore += ri.commitment === 'very_ready' ? 95 :
+                    ri.commitment === 'mostly_ready' ? 80 :
+                    ri.commitment === 'somewhat_ready' ? 60 : 35;
+      intentFactors++;
+    }
+
+    if (intentFactors > 0) {
+      score += (intentScore / intentFactors) * 0.4;
+      factors += 0.4;
+    }
   }
 
-  // Attachment Security (10% weight)
-  let attachmentSecurity = 70;
+  // Life Goals alignment (30% weight)
+  if (results.lifeGoals) {
+    let goalsScore = 60;
+    const definedGoals = Object.values(results.lifeGoals).filter(val => val && val !== 'neutral').length;
+    goalsScore += Math.min(definedGoals * 5, 35);
+    
+    score += goalsScore * 0.3;
+    factors += 0.3;
+  }
+
+  // Preferences clarity (20% weight) - shows intentionality
+  if (results.preferences) {
+    let prefScore = 70;
+    
+    // Having clear preferences shows intentionality
+    if (results.preferences.mustHaves?.wantsChildren !== null) prefScore += 10;
+    if (results.preferences.dealBreakers?.religion?.length > 0) prefScore += 5;
+    if (results.preferences.dealBreakers?.lifestyle?.length > 0) prefScore += 5;
+    if (results.preferences.mustHaves?.education?.length > 0) prefScore += 5;
+    
+    score += Math.min(prefScore, 95) * 0.2;
+    factors += 0.2;
+  }
+
+  // Financial Values (10% weight) - indicates future planning
+  if (results.financialValues) {
+    let financialScore = 65;
+    const definedFinancial = Object.values(results.financialValues).filter(val => val && val !== 'neutral').length;
+    financialScore += Math.min(definedFinancial * 4, 30);
+    
+    score += financialScore * 0.1;
+    factors += 0.1;
+  }
+
+  // Normalize score if we have partial data
+  if (factors > 0 && factors < 1) {
+    score = score / factors;
+  }
+
+  return Math.max(25, Math.min(100, Math.round(score)));
+};
+
+const calculateAttachmentSecurity = (results: ComprehensiveAssessmentResults): number => {
+  let score = 50;
+
   if (results.attachmentStyle) {
-    attachmentSecurity = results.attachmentStyle.dominantStyle === 'secure' ? 90 :
-                        results.attachmentStyle.dominantStyle === 'anxious' ? 65 :
-                        results.attachmentStyle.dominantStyle === 'avoidant' ? 55 : 45;
+    score = results.attachmentStyle.dominantStyle === 'secure' ? 90 :
+            results.attachmentStyle.dominantStyle === 'anxious' ? 65 :
+            results.attachmentStyle.dominantStyle === 'avoidant' ? 55 : 45;
+
+    // Boost score based on emotional capacity
+    if (results.emotionalCapacity?.resilience === 'strong_resilience') {
+      score += 10;
+    } else if (results.emotionalCapacity?.resilience === 'moderate_resilience') {
+      score += 5;
+    }
+
+    // Factor in empathy for relationship security
+    if (results.emotionalCapacity?.empathy === 'highly_empathetic') {
+      score += 8;
+    } else if (results.emotionalCapacity?.empathy === 'moderate_empathy') {
+      score += 4;
+    }
   }
 
+  return Math.max(20, Math.min(100, Math.round(score)));
+};
+
+export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentResults): RelationshipReadinessScore => {
+  console.log('Calculating comprehensive relationship readiness from assessment results...');
+
+  // Calculate each dimension with proper weighting
+  const emotionalReadiness = calculateEmotionalReadiness(results);
+  const communicationSkills = calculateCommunicationSkills(results);
+  const selfAwareness = calculateSelfAwareness(results);
+  const relationshipGoals = calculateRelationshipGoals(results);
+  const attachmentSecurity = calculateAttachmentSecurity(results);
+
+  console.log('Individual scores:', {
+    emotionalReadiness,
+    communicationSkills,
+    selfAwareness,
+    relationshipGoals,
+    attachmentSecurity
+  });
+
+  // Weighted overall score
   const overall = Math.round(
     (emotionalReadiness * 0.3) +
     (communicationSkills * 0.25) +
@@ -117,6 +414,8 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
   });
 
   const personalizedStrategy = generatePersonalizedStrategy(results, overall);
+
+  console.log('Final readiness calculation:', { overall, scores, strengths: strengths.length, growthAreas: growthAreas.length });
 
   return {
     overall,
