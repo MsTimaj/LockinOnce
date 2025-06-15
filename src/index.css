@@ -19,18 +19,20 @@
     /* Default light theme */
     --background: var(--background-light);
     --foreground: var(--foreground-dark);
-    --card: 23 100% 98%;
+    --card: 215 74% 92%; /* Slightly darker sky blue for cards */
     --card-foreground: var(--foreground-dark);
-    --popover: 23 100% 98%;
+    --popover: 215 74% 92%;
     --popover-foreground: var(--foreground-dark);
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: var(--foreground-dark);
     --secondary-foreground: var(--foreground-dark);
-    --muted: 215 60% 92%;
+    --muted: 215 60% 88%; /* Softer blue for muted elements */
     --muted-foreground: 210 18% 47%;
-    --border: 215 50% 88%;
+    --border: 215 50% 80%; /* Lighter border for better contrast */
     --input: 215 50% 88%;
     --ring: var(--primary);
     --radius: 0.75rem;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
   }
 
   .dark {
@@ -55,11 +57,26 @@
     @apply border-border;
   }
 
+  html {
+    @apply bg-background;
+  }
+
   body {
     @apply bg-background text-foreground font-inter;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
+    min-height: 100vh;
+    background: linear-gradient(135deg, hsl(var(--background-light)) 0%, hsl(var(--primary))/20% 50%, hsl(var(--secondary))/15% 100%);
+  }
+
+  .dark body {
+    background: linear-gradient(135deg, hsl(var(--background-dark)) 0%, hsl(var(--primary))/10% 50%, hsl(var(--secondary))/10% 100%);
+  }
+
+  #root {
+    @apply bg-transparent;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -72,17 +89,18 @@
 
   input, select, textarea {
     font-size: 16px;
+    @apply bg-card/80 backdrop-blur-sm;
   }
 }
 
 @layer components {
   /* Sunset Harmony Gradient Buttons */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary via-accent to-primary/90 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300 min-h-[56px] bg-[length:200%_100%] hover:bg-[position:100%_0];
+    @apply bg-gradient-to-r from-primary via-accent to-primary/90 text-primary-foreground font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300 min-h-[56px] bg-[length:200%_100%] hover:bg-[position:100%_0];
   }
   
   .btn-secondary {
-    @apply border-2 border-accent/60 text-accent bg-transparent backdrop-blur-sm font-semibold px-8 py-4 rounded-xl hover:bg-accent hover:text-white hover:border-accent active:scale-95 transition-all duration-300 min-h-[56px];
+    @apply border-2 border-accent/60 text-accent bg-card/60 backdrop-blur-sm font-semibold px-8 py-4 rounded-xl hover:bg-accent hover:text-white hover:border-accent active:scale-95 transition-all duration-300 min-h-[56px];
   }
 
   /* Emotional Glass Cards */
@@ -97,7 +115,7 @@
 
   /* Romantic Input Style */
   .input-modern {
-    @apply bg-card/60 backdrop-blur-sm border-b-2 border-border/50 focus:border-accent rounded-t-xl px-6 py-4 focus:ring-0 transition-all duration-300 min-h-[56px] placeholder:text-muted-foreground/60;
+    @apply bg-card/80 backdrop-blur-sm border-b-2 border-border/50 focus:border-accent rounded-t-xl px-6 py-4 focus:ring-0 transition-all duration-300 min-h-[56px] placeholder:text-muted-foreground/60;
   }
 
   /* Romantic Quote Style */
@@ -141,6 +159,15 @@
   }
 }
 
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 123, 109, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 123, 109, 0.8), 0 0 30px rgba(246, 175, 163, 0.6);
+  }
+}
+
 .animate-float-up {
   animation: float-up 0.8s ease-out;
 }
@@ -153,6 +180,10 @@
 
 .animate-sunset-glow {
   animation: sunset-glow 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Mobile optimizations */
