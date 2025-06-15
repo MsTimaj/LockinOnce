@@ -17,8 +17,11 @@ export class SupabaseSyncManager {
           last_updated: profile.lastUpdated
         });
 
-      if (error) throw error;
-      console.log('Profile synced to Supabase');
+      if (error) {
+        console.error('Supabase sync error:', error);
+        throw error;
+      }
+      console.log('Profile synced to Supabase successfully');
     } catch (error) {
       console.error('Failed to sync to Supabase:', error);
       // Don't block the user flow - localStorage still works
@@ -35,10 +38,22 @@ export class SupabaseSyncManager {
         .limit(1)
         .maybeSingle();
 
-      if (error || !data) return;
+      // Handle case where profile doesn't exist yet (normal for new users)
+      if (error) {
+        console.log('Background sync check - profile not found in Supabase yet:', profileId);
+        return;
+      }
+
+      if (!data) {
+        console.log('Background sync check - no data found for profile:', profileId);
+        return;
+      }
 
       const localProfile = LocalStorageManager.getProfile();
-      if (!localProfile) return;
+      if (!localProfile) {
+        console.log('Background sync check - no local profile found');
+        return;
+      }
 
       const supabaseLastUpdated = new Date(data.last_updated || data.created_at || '');
       const localLastUpdated = new Date(localProfile.lastUpdated);
@@ -48,9 +63,12 @@ export class SupabaseSyncManager {
         const updatedProfile = this.convertFromSupabase(data);
         LocalStorageManager.saveProfile(updatedProfile);
         console.log('Updated localStorage from Supabase');
+      } else {
+        console.log('Local profile is up to date');
       }
     } catch (error) {
-      console.error('Background sync check failed:', error);
+      console.log('Background sync check skipped due to error:', error);
+      // Silently fail - this is a background operation
     }
   }
 
@@ -64,7 +82,15 @@ export class SupabaseSyncManager {
         .limit(1)
         .maybeSingle();
 
-      if (error || !data) return null;
+      if (error) {
+        console.log('No profile found in Supabase to restore:', error);
+        return null;
+      }
+
+      if (!data) {
+        console.log('No profile data found in Supabase');
+        return null;
+      }
 
       const profile = this.convertFromSupabase(data);
       // Save to localStorage for next time
@@ -72,7 +98,7 @@ export class SupabaseSyncManager {
       console.log('Profile restored from Supabase');
       return profile;
     } catch (error) {
-      console.error('Failed to restore from Supabase:', error);
+      console.log('Failed to restore from Supabase, starting fresh:', error);
       return null;
     }
   }

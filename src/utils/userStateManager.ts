@@ -1,4 +1,3 @@
-
 import { ComprehensiveAssessmentResults, RelationshipReadinessScore } from "./assessmentScoring";
 import { UserProfile } from "./types/userProfile";
 import { LocalStorageManager } from "./storage/localStorageManager";
@@ -11,11 +10,14 @@ export class UserStateManager {
     try {
       // Always save to localStorage first (immediate)
       LocalStorageManager.saveProfile(profile);
+      console.log('Profile saved to localStorage');
 
-      // Then sync to Supabase (background)
-      await SupabaseSyncManager.syncToSupabase(profile);
+      // Then sync to Supabase (background) - don't await to avoid blocking UI
+      SupabaseSyncManager.syncToSupabase(profile).catch(error => {
+        console.log('Background sync to Supabase failed, but localStorage saved:', error);
+      });
     } catch (error) {
-      console.error('Failed to save user profile:', error);
+      console.error('Failed to save user profile to localStorage:', error);
     }
   }
 
@@ -25,13 +27,24 @@ export class UserStateManager {
       // First try localStorage (fast)
       const stored = LocalStorageManager.getProfile();
       if (stored) {
-        // Background sync check with Supabase
-        SupabaseSyncManager.backgroundSyncCheck(stored.id);
+        console.log('Profile loaded from localStorage');
+        // Background sync check with Supabase (don't await)
+        SupabaseSyncManager.backgroundSyncCheck(stored.id).catch(error => {
+          console.log('Background sync check failed:', error);
+        });
         return stored;
       }
 
       // If no localStorage, try to restore from Supabase
-      return await SupabaseSyncManager.restoreFromSupabase();
+      console.log('No local profile found, attempting to restore from Supabase');
+      const restored = await SupabaseSyncManager.restoreFromSupabase();
+      if (restored) {
+        console.log('Profile restored from Supabase');
+        return restored;
+      }
+
+      console.log('No profile found anywhere, user will need to start fresh');
+      return null;
     } catch (error) {
       console.error('Failed to load user profile:', error);
       return null;
