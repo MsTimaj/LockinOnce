@@ -1,10 +1,13 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Brain, Users, Sparkles, Moon, Sun } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [currentTheme, setCurrentTheme] = useState("light");
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     const newTheme = currentTheme === "light" ? "dark" : "light";
@@ -59,11 +62,17 @@ const Index = () => {
           </blockquote>
 
           <div className="space-y-4 mb-16">
-            <Button className="btn-gradient w-full text-lg font-semibold">
+            <Button 
+              onClick={() => navigate('/onboarding')}
+              className="btn-gradient w-full text-lg font-semibold"
+            >
               Start Your Journey
             </Button>
-            <Button className="btn-secondary w-full text-lg">
-              Learn More
+            <Button 
+              onClick={() => navigate('/dashboard')}
+              className="btn-secondary w-full text-lg"
+            >
+              View Dashboard
             </Button>
           </div>
 
@@ -152,7 +161,10 @@ const Index = () => {
           <p className="text-lg text-muted-foreground mb-8 font-medium">
             Join thousands who've found love through science, not chance
           </p>
-          <Button className="btn-gradient w-full text-lg font-semibold">
+          <Button 
+            onClick={() => navigate('/onboarding')}
+            className="btn-gradient w-full text-lg font-semibold"
+          >
             Begin Your Journey
           </Button>
         </div>
