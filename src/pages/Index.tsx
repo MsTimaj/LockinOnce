@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,9 +49,14 @@ const Index = () => {
             psychology, and proven relationship science.
           </p>
 
-          <div className="quote-modern mb-12 py-6 px-4 card-glass">
+          <blockquote 
+            className="quote-modern mb-12 py-6 px-4 card-glass"
+            role="complementary"
+            aria-label="Inspirational quote about finding calm connections"
+          >
+            <span className="sr-only">Quote: </span>
             "You're both calm in a world that rushes."
-          </div>
+          </blockquote>
 
           <div className="space-y-4 mb-16">
             <Button className="btn-gradient w-full text-lg font-semibold">
