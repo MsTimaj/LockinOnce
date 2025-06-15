@@ -8,6 +8,7 @@ import WelcomeSection from "@/components/dashboard/WelcomeSection";
 import TopChoicesSection from "@/components/dashboard/TopChoicesSection";
 import OtherMatchesSection from "@/components/dashboard/OtherMatchesSection";
 import NavigationFooter from "@/components/dashboard/NavigationFooter";
+import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
 
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
@@ -41,11 +42,14 @@ const Dashboard = () => {
   // Show match detail if a match is selected
   if (selectedMatch) {
     return (
-      <MatchDetail 
-        match={selectedMatch}
-        onBack={handleBackToMatches}
-        onConnect={handleConnect}
-      />
+      <>
+        <MatchDetail 
+          match={selectedMatch}
+          onBack={handleBackToMatches}
+          onConnect={handleConnect}
+        />
+        <LoveVeeChatButton />
+      </>
     );
   }
 
@@ -78,6 +82,8 @@ const Dashboard = () => {
 
         <NavigationFooter />
       </div>
+
+      <LoveVeeChatButton />
     </div>
   );
 };

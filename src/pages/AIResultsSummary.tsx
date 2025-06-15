@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Brain, Users, Target, ArrowRight, Sparkles } from "lucide-react";
+import { Heart, Brain, Users, Target, ArrowRight, Sparkles, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const AIResultsSummary = () => {
@@ -57,7 +57,7 @@ const AIResultsSummary = () => {
           
           <div className="space-y-2">
             <h2 className="text-2xl font-serif font-bold text-gray-800 mb-2">
-              Love-vie is analyzing your results...
+              Love-vee is analyzing your results...
             </h2>
             <p className="text-rose-600 font-medium animate-pulse">
               {insights[currentInsight]}
@@ -78,7 +78,7 @@ const AIResultsSummary = () => {
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-3xl font-serif font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-              Love-vie's Analysis
+              Love-vee's Analysis
             </h1>
           </div>
           <p className="text-gray-600">Your personalized relationship compatibility profile</p>
@@ -177,7 +177,7 @@ const AIResultsSummary = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2 text-rose-700">
               <Users className="h-5 w-5" />
-              <span>Love-vie's Dating Strategy for You</span>
+              <span>Love-vee's Dating Strategy for You</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -204,6 +204,22 @@ const AIResultsSummary = () => {
           </CardContent>
         </Card>
 
+        {/* Love-vee Chat Intro */}
+        <Card className="bg-gradient-to-r from-purple-100 to-rose-100 border-purple-200">
+          <CardContent className="p-6">
+            <div className="text-center space-y-3">
+              <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-purple-400 to-rose-400 flex items-center justify-center">
+                <MessageSquare className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-lg font-serif font-bold text-gray-800">Meet Love-vee</h3>
+              <p className="text-sm text-gray-600">
+                Your AI dating coach is now available 24/7! Ask Love-vee about dating tips, 
+                match insights, conversation starters, or relationship advice anytime.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* CTA */}
         <div className="text-center pt-4">
           <Button 
@@ -214,7 +230,7 @@ const AIResultsSummary = () => {
             <ArrowRight className="h-5 w-5 ml-2" />
           </Button>
           <p className="text-xs text-gray-500 mt-2">
-            Love-vie will be available in your dashboard for ongoing coaching
+            Love-vee will be available in your dashboard for ongoing coaching
           </p>
         </div>
       </div>
