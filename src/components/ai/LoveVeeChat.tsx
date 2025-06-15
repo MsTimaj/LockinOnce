@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -66,8 +65,8 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
 
-    // Check if message is appropriate for dating coaching
-    if (!isDatingRelated(inputValue)) {
+    // Check if message is completely unrelated to dating/relationships
+    if (isCompletelyOffTopic(inputValue)) {
       const redirectMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
@@ -88,6 +87,23 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
       };
       setMessages(prev => [...prev, aiMessage]);
     }, 1000);
+  };
+
+  const isCompletelyOffTopic = (input: string): boolean => {
+    const completelyOffTopicKeywords = [
+      'weather', 'sports', 'politics', 'cooking recipe', 'math problem', 
+      'homework', 'job interview', 'car repair', 'medical advice', 
+      'legal advice', 'tax help', 'programming', 'technology support',
+      'vacation planning', 'investment', 'stock market', 'cryptocurrency'
+    ];
+    
+    const lowerInput = input.toLowerCase();
+    
+    // Only redirect if it's clearly about non-dating topics AND doesn't contain any relationship words
+    const hasOffTopicKeywords = completelyOffTopicKeywords.some(keyword => lowerInput.includes(keyword));
+    const hasRelationshipWords = ['relationship', 'dating', 'love', 'partner', 'feel', 'emotion', 'heart', 'like', 'attraction', 'connect'].some(word => lowerInput.includes(word));
+    
+    return hasOffTopicKeywords && !hasRelationshipWords;
   };
 
   const isDatingRelated = (input: string): boolean => {
@@ -142,6 +158,11 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
   const generateAIResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
+    // Handle attachment and fear of coming on too strong
+    if (input.includes('attached') || input.includes('attachment') || input.includes('too strong') || input.includes('scare') || input.includes('clingy') || input.includes('needy')) {
+      return "This is such a common and valid concern! 💕 The fact that you're aware of this shows great emotional intelligence. With your secure attachment style, you naturally balance connection with independence. Here's the key: genuine interest is attractive, desperation is not. Share your authentic self gradually, maintain your own life and interests, and let the relationship develop naturally. Ask yourself - are you trying to fill a void or genuinely excited about this person? The right person will appreciate your enthusiasm, not be scared by it. What specifically are you worried about doing that might seem 'too much'?";
+    }
+    
     // Handle being stood up or ghosted
     if (input.includes('stood up') || input.includes('stood me up') || input.includes('ghosted') || input.includes('cancelled') || input.includes('no show')) {
       return "Oh honey, I'm so sorry that happened to you. 💔 Being stood up feels awful and personal, but here's the truth: this says EVERYTHING about them and NOTHING about you. Someone who stands you up lacks basic respect and emotional maturity - do you really want to date someone like that? Your 95% match was clearly based on their fake persona, not who they really are. A genuinely compatible person would communicate, even if they needed to reschedule. This is actually the trash taking itself out. You deserve someone who's excited to show up for you. How are you feeling right now?";
@@ -150,6 +171,16 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic }: LoveVeeChatProps) => {
     // Handle disappointment and hurt feelings
     if (input.includes('disappointed') || input.includes('hurt') || input.includes('upset') || input.includes('sad') || input.includes('crying')) {
       return "Your feelings are completely valid. 💕 Dating disappointment hits different because we invest hope and excitement in these connections. It's okay to feel hurt - that means you're opening your heart, which is brave. Take time to process this feeling, but don't let it close you off. Your secure attachment style is actually protecting you here - you're not chasing someone who showed you they're unreliable. This disappointment is redirecting you toward someone better. What would help you feel supported right now?";
+    }
+    
+    // Handle pacing and taking things slow
+    if (input.includes('slow') || input.includes('pace') || input.includes('rush') || input.includes('time') || input.includes('gradual')) {
+      return "Taking your time is actually a sign of wisdom! 💕 Your secure attachment style naturally wants to build trust gradually, which creates stronger foundations. There's no universal 'right' pace - it should feel natural for both of you. Pay attention to how she responds to your current pace. Is she matching your energy? Asking questions back? Suggesting plans? Let her actions guide you more than overthinking the timeline. Quality connection matters more than speed. What feels like the right next step for you two?";
+    }
+    
+    // Handle nervousness and anxiety
+    if (input.includes('nervous') || input.includes('anxiety') || input.includes('worried') || input.includes('scared') || input.includes('afraid')) {
+      return "Those butterflies are totally normal! 💕 Your nervous system is just responding to something important to you. The difference between excitement and anxiety is often just how we interpret the feeling. Your secure attachment gives you tools to manage this - take deep breaths, remind yourself of your worth, and focus on getting to know HER rather than trying to impress her. Nerves can actually be endearing when you're authentic about them. What's the biggest thing you're nervous about?";
     }
     
     // Handle high compatibility scores that didn't work out
