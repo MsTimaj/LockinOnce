@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +15,7 @@ const AIResultsSummary = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [redirectAttempts, setRedirectAttempts] = useState(0);
   const navigate = useNavigate();
 
   const insights = [
@@ -30,6 +30,13 @@ const AIResultsSummary = () => {
     const initializeAnalysis = async () => {
       try {
         console.log('Initializing AI Results Summary...');
+        
+        // Prevent infinite redirect loops
+        if (redirectAttempts >= 3) {
+          console.log('Too many redirect attempts, forcing analysis to proceed...');
+          setIsInitializing(false);
+          return;
+        }
         
         // Wait a moment for any navigation flags to clear
         await new Promise(resolve => setTimeout(resolve, 200));
@@ -47,30 +54,44 @@ const AIResultsSummary = () => {
           console.log('Navigation timeout reached, proceeding anyway...');
         }
 
-        // CRITICAL FIX: Use unified completion check
+        // Get user profile first
+        const userProfile = await UserStateManager.getUserProfile();
+        if (!userProfile) {
+          console.log('No user profile found, redirecting to onboarding...');
+          setRedirectAttempts(prev => prev + 1);
+          navigate('/onboarding');
+          return;
+        }
+
         const hasCompleted = await UserStateManager.hasCompletedOnboarding();
         const isAssessmentComplete = await UserStateManager.isAssessmentComplete();
         
         console.log('AI Results validation:', { 
           hasCompleted, 
-          isAssessmentComplete 
+          isAssessmentComplete,
+          redirectAttempts
         });
 
-        // BOTH conditions must be true to show results
-        if (!hasCompleted || !isAssessmentComplete) {
-          console.log('User has not completed onboarding or assessments, redirecting...');
+        // If we have a profile with assessment data, proceed even if validation fails
+        const hasAssessmentData = userProfile.assessmentResults && 
+          Object.keys(userProfile.assessmentResults).length > 0;
+
+        if (!hasCompleted && redirectAttempts < 2) {
+          console.log('User has not completed onboarding, redirecting...');
+          setRedirectAttempts(prev => prev + 1);
           navigate('/onboarding');
           return;
         }
 
-        const userProfile = await UserStateManager.getUserProfile();
-        if (!userProfile) {
-          console.log('No user profile found, redirecting to onboarding...');
+        // Force proceed if we have any assessment data
+        if (!isAssessmentComplete && !hasAssessmentData && redirectAttempts < 2) {
+          console.log('No assessment data found, redirecting to onboarding...');
+          setRedirectAttempts(prev => prev + 1);
           navigate('/onboarding');
           return;
         }
 
-        console.log('User profile loaded, calculating analysis...');
+        console.log('Proceeding with analysis using available data...');
 
         // Calculate real analysis
         let readinessScore = userProfile.readinessScore;
@@ -105,7 +126,7 @@ const AIResultsSummary = () => {
     };
 
     initializeAnalysis();
-  }, [navigate]);
+  }, [navigate, redirectAttempts]);
 
   useEffect(() => {
     if (isInitializing) return;

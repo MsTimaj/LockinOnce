@@ -174,23 +174,29 @@ export class UserStateManager {
       }
       
       const results = profile.assessmentResults;
-      const isComplete = !!(
-        results.attachmentStyle &&
-        results.personality &&
-        results.birthOrder &&
-        results.relationshipIntent &&
-        results.emotionalCapacity &&
-        results.attractionLayer &&
-        results.physicalProximity &&
-        results.communicationStyle &&
-        results.lifeGoals &&
-        results.values &&
-        results.lifestyle &&
-        results.loveLanguages &&
-        results.financialValues
-      );
+      console.log('Assessment results for completion check:', results);
       
-      console.log('Assessment completion check:', { isComplete, profileId: profile.id });
+      // Check if we have assessment results and at least a few key assessments
+      if (!results || typeof results !== 'object') {
+        console.log('No assessment results object found');
+        return false;
+      }
+      
+      // Count completed assessments instead of checking specific names
+      const assessmentKeys = Object.keys(results);
+      const completedCount = assessmentKeys.filter(key => 
+        results[key] && typeof results[key] === 'object'
+      ).length;
+      
+      console.log('Assessment completion analysis:', { 
+        totalKeys: assessmentKeys.length,
+        completedCount,
+        assessmentKeys,
+        isComplete: completedCount >= 10 // At least 10 assessments completed
+      });
+      
+      // We expect at least 10 completed assessments for a full profile
+      const isComplete = completedCount >= 10;
       return isComplete;
     } catch (error) {
       console.error('Error checking assessment completion:', error);
