@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +14,7 @@ const AIResultsSummary = () => {
   const [chatTopic, setChatTopic] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const navigate = useNavigate();
 
   const insights = [
@@ -28,20 +28,55 @@ const AIResultsSummary = () => {
   useEffect(() => {
     const initializeAnalysis = async () => {
       try {
-        // Check if user has completed assessments
-        const userProfile = await UserStateManager.getUserProfile();
-        const isComplete = await UserStateManager.isAssessmentComplete();
+        console.log('Initializing AI Results Summary...');
         
-        if (!userProfile || !isComplete) {
+        // Check if navigation is in progress
+        if (UserStateManager.isNavigationInProgress()) {
+          console.log('Navigation in progress, waiting...');
+          return;
+        }
+
+        // CRITICAL FIX: Use unified completion check
+        const hasCompleted = await UserStateManager.hasCompletedOnboarding();
+        const isAssessmentComplete = await UserStateManager.isAssessmentComplete();
+        
+        console.log('AI Results validation:', { 
+          hasCompleted, 
+          isAssessmentComplete 
+        });
+
+        // BOTH conditions must be true to show results
+        if (!hasCompleted || !isAssessmentComplete) {
+          console.log('User has not completed onboarding or assessments, redirecting...');
           navigate('/onboarding');
           return;
         }
 
+        const userProfile = await UserStateManager.getUserProfile();
+        if (!userProfile) {
+          console.log('No user profile found, redirecting to onboarding...');
+          navigate('/onboarding');
+          return;
+        }
+
+        console.log('User profile loaded, calculating analysis...');
+
         // Calculate real analysis
-        const readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
+        let readinessScore = userProfile.readinessScore;
+        
+        // If no cached score, calculate it
+        if (!readinessScore) {
+          console.log('No cached readiness score, calculating...');
+          readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
+          // Save it for next time
+          await UserStateManager.saveReadinessScore(readinessScore);
+        }
+
         const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
         const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
         const topStrengths = getTopStrengths(userProfile.assessmentResults);
+
+        console.log('Analysis complete:', { readinessScore, personalityType, dominantStyle });
 
         setAnalysis({
           readinessScore,
@@ -49,9 +84,12 @@ const AIResultsSummary = () => {
           dominantStyle,
           topStrengths
         });
+
+        setIsInitializing(false);
       } catch (error) {
         console.error('Failed to initialize analysis:', error);
-        navigate('/onboarding');
+        // Don't redirect on error, but log it
+        setIsInitializing(false);
       }
     };
 
@@ -59,6 +97,8 @@ const AIResultsSummary = () => {
   }, [navigate]);
 
   useEffect(() => {
+    if (isInitializing) return;
+
     const timer = setInterval(() => {
       setCurrentInsight((prev) => {
         if (prev >= insights.length - 1) {
@@ -71,12 +111,37 @@ const AIResultsSummary = () => {
     }, 1500);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isInitializing]);
 
   const handleLearnMore = (topic: string) => {
     setChatTopic(topic);
     setIsChatOpen(true);
   };
+
+  // Show loading while initializing
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-6">
+        <div className="max-w-md w-full text-center space-y-6">
+          <div className="relative">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center">
+              <Brain className="h-10 w-10 text-white animate-pulse" />
+            </div>
+            <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full border-4 border-rose-200 animate-spin border-t-transparent"></div>
+          </div>
+          
+          <div className="space-y-2">
+            <h2 className="text-2xl font-serif font-bold text-gray-800 mb-2">
+              Preparing your results...
+            </h2>
+            <p className="text-rose-600 font-medium animate-pulse">
+              Validating your assessment data...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isAnalyzing || !analysis) {
     return (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -23,6 +22,7 @@ import { Button } from "@/components/ui/button";
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCompleting, setIsCompleting] = useState(false);
   const navigate = useNavigate();
 
   // Scroll to top when step changes
@@ -37,16 +37,31 @@ const Onboarding = () => {
   useEffect(() => {
     const initializeOnboarding = async () => {
       try {
+        console.log('Initializing onboarding...');
+        
+        // Check if navigation is already in progress
+        if (UserStateManager.isNavigationInProgress()) {
+          console.log('Navigation in progress, waiting...');
+          return;
+        }
+
         const hasCompleted = await UserStateManager.hasCompletedOnboarding();
+        console.log('Has completed onboarding:', hasCompleted);
+        
         if (hasCompleted) {
+          console.log('User has completed onboarding, redirecting to AI results...');
           navigate('/ai-results');
           return;
         }
 
         const progress = await UserStateManager.getOnboardingProgress();
+        console.log('Onboarding progress:', progress);
+        
         // Convert phase/step to linear step index more accurately
         const stepIndex = Math.max(0, (progress.phase - 1) * 5 + (progress.step - 1));
-        setCurrentStep(Math.min(stepIndex, 13)); // Cap at 13 (0-13 = 14 steps)
+        const finalStep = Math.min(stepIndex, 13); // Cap at 13 (0-13 = 14 steps)
+        console.log('Setting current step to:', finalStep);
+        setCurrentStep(finalStep);
       } catch (error) {
         console.error('Failed to initialize onboarding:', error);
         setCurrentStep(0);
@@ -59,6 +74,11 @@ const Onboarding = () => {
   }, [navigate]);
 
   const handleStepComplete = async (results: any) => {
+    if (isCompleting) {
+      console.log('Already completing, ignoring duplicate call');
+      return;
+    }
+
     try {
       console.log(`Step ${currentStep} completed with results:`, results);
       
@@ -82,10 +102,12 @@ const Onboarding = () => {
 
       const assessmentType = assessmentMap[currentStep + 1];
       if (assessmentType) {
+        console.log(`Saving assessment result for ${assessmentType}`);
         await UserStateManager.updateAssessmentResult(assessmentType, results);
       }
 
       const nextStep = currentStep + 1;
+      console.log('Next step will be:', nextStep);
       
       // Update progress with simplified system
       const phase = Math.floor(nextStep / 5) + 1;
@@ -93,21 +115,40 @@ const Onboarding = () => {
       await UserStateManager.updateOnboardingProgress(phase, step);
 
       if (nextStep >= assessments.length) {
-        // Complete onboarding and calculate readiness score
-        console.log('Assessment complete, marking onboarding as complete...');
-        await UserStateManager.markOnboardingComplete();
+        console.log('All assessments complete, starting final completion process...');
+        setIsCompleting(true);
         
-        const profile = await UserStateManager.getUserProfile();
-        console.log('Profile after onboarding:', profile);
-        if (profile) {
-          const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
-          console.log('Calculated readiness score:', readinessScore);
-          await UserStateManager.saveReadinessScore(readinessScore);
-          console.log('Readiness score saved, navigating to AI results...');
+        try {
+          // CRITICAL FIX: Get the most up-to-date profile
+          const profile = await UserStateManager.getUserProfile();
+          console.log('Profile for completion:', profile?.id);
+          
+          if (profile) {
+            // Calculate readiness score from the complete assessment results
+            console.log('Calculating readiness score...');
+            const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
+            console.log('Calculated readiness score:', readinessScore);
+            
+            // CRITICAL FIX: Use atomic completion method
+            console.log('Completing onboarding atomically...');
+            await UserStateManager.completeOnboardingWithReadinessScore(readinessScore);
+            console.log('Onboarding completed successfully, navigating to AI results...');
+            
+            // Navigate after a brief delay to ensure state is saved
+            setTimeout(() => {
+              navigate('/ai-results');
+            }, 500);
+          } else {
+            console.error('No profile found during completion');
+            navigate('/ai-results');
+          }
+        } catch (completionError) {
+          console.error('Failed to complete onboarding:', completionError);
+          // Still navigate to prevent user being stuck
+          navigate('/ai-results');
         }
-        
-        navigate('/ai-results');
       } else {
+        console.log('Moving to next step:', nextStep);
         setCurrentStep(nextStep);
       }
     } catch (error) {
@@ -201,6 +242,17 @@ const Onboarding = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading your progress...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isCompleting) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Completing your assessment...</p>
         </div>
       </div>
     );

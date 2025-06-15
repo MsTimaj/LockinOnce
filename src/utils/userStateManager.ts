@@ -1,3 +1,4 @@
+
 import { ComprehensiveAssessmentResults, RelationshipReadinessScore } from "./assessmentScoring";
 import { UserProfile } from "./types/userProfile";
 import { LocalStorageManager } from "./storage/localStorageManager";
@@ -5,6 +6,8 @@ import { SupabaseSyncManager } from "./storage/supabaseSyncManager";
 import { ProfileFactory } from "./profile/profileFactory";
 
 export class UserStateManager {
+  private static navigationInProgress = false;
+
   // Save to both localStorage and Supabase
   static async saveUserProfile(profile: UserProfile): Promise<void> {
     try {
@@ -58,6 +61,7 @@ export class UserStateManager {
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.assessmentResults[assessmentType] = result;
     profile.lastUpdated = new Date().toISOString();
+    console.log(`Updated assessment result for ${assessmentType}:`, result);
     await this.saveUserProfile(profile);
   }
 
@@ -65,10 +69,49 @@ export class UserStateManager {
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.currentStep = { phase, step };
     profile.lastUpdated = new Date().toISOString();
+    console.log(`Updated onboarding progress: phase ${phase}, step ${step}`);
     await this.saveUserProfile(profile);
   }
 
+  // CRITICAL FIX: Complete onboarding with readiness score atomically
+  static async completeOnboardingWithReadinessScore(readinessScore: RelationshipReadinessScore): Promise<void> {
+    if (this.navigationInProgress) {
+      console.log('Navigation already in progress, skipping completion');
+      return;
+    }
+
+    this.navigationInProgress = true;
+    
+    try {
+      console.log('Starting atomic onboarding completion...');
+      const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
+      
+      // Set both completion flag AND readiness score atomically
+      profile.onboardingCompleted = true;
+      profile.readinessScore = readinessScore;
+      profile.lastUpdated = new Date().toISOString();
+      
+      console.log('Saving completed profile with readiness score:', { 
+        completed: profile.onboardingCompleted, 
+        hasScore: !!profile.readinessScore 
+      });
+      
+      await this.saveUserProfile(profile);
+      console.log('Onboarding completion saved successfully');
+    } catch (error) {
+      console.error('Failed to complete onboarding:', error);
+      throw error;
+    } finally {
+      // Reset navigation lock after a delay
+      setTimeout(() => {
+        this.navigationInProgress = false;
+      }, 1000);
+    }
+  }
+
+  // Legacy method - now just delegates to the atomic version
   static async markOnboardingComplete(): Promise<void> {
+    console.log('WARNING: markOnboardingComplete called without readiness score - this should not happen');
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.onboardingCompleted = true;
     profile.lastUpdated = new Date().toISOString();
@@ -79,6 +122,7 @@ export class UserStateManager {
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
     profile.readinessScore = score;
     profile.lastUpdated = new Date().toISOString();
+    console.log('Readiness score saved:', score);
     await this.saveUserProfile(profile);
   }
 
@@ -88,18 +132,36 @@ export class UserStateManager {
 
   static clearUserData(): void {
     LocalStorageManager.clearData();
+    this.navigationInProgress = false;
     console.log('User data cleared - you can now test as a new user');
   }
 
   // Reset function for testing - clears all data and forces fresh start
   static resetForTesting(): void {
     LocalStorageManager.clearData();
+    this.navigationInProgress = false;
     console.log('Application reset for testing - refresh the page to start fresh');
   }
 
+  // CRITICAL FIX: Unified completion check
   static async hasCompletedOnboarding(): Promise<boolean> {
-    const profile = await this.getUserProfile();
-    return profile?.onboardingCompleted || false;
+    try {
+      const profile = await this.getUserProfile();
+      const hasCompleted = profile?.onboardingCompleted || false;
+      const hasReadinessScore = !!profile?.readinessScore;
+      
+      console.log('Onboarding completion check:', { 
+        hasCompleted, 
+        hasReadinessScore, 
+        overall: hasCompleted && hasReadinessScore 
+      });
+      
+      // BOTH conditions must be true
+      return hasCompleted && hasReadinessScore;
+    } catch (error) {
+      console.error('Error checking onboarding completion:', error);
+      return false;
+    }
   }
 
   static async getOnboardingProgress(): Promise<{ phase: number; step: number }> {
@@ -108,25 +170,41 @@ export class UserStateManager {
   }
 
   static async isAssessmentComplete(): Promise<boolean> {
-    const profile = await this.getUserProfile();
-    if (!profile) return false;
-    
-    const results = profile.assessmentResults;
-    return !!(
-      results.attachmentStyle &&
-      results.personality &&
-      results.birthOrder &&
-      results.relationshipIntent &&
-      results.emotionalCapacity &&
-      results.attractionLayer &&
-      results.physicalProximity &&
-      results.communicationStyle &&
-      results.lifeGoals &&
-      results.values &&
-      results.lifestyle &&
-      results.loveLanguages &&
-      results.financialValues
-    );
+    try {
+      const profile = await this.getUserProfile();
+      if (!profile) {
+        console.log('No profile found for assessment completion check');
+        return false;
+      }
+      
+      const results = profile.assessmentResults;
+      const isComplete = !!(
+        results.attachmentStyle &&
+        results.personality &&
+        results.birthOrder &&
+        results.relationshipIntent &&
+        results.emotionalCapacity &&
+        results.attractionLayer &&
+        results.physicalProximity &&
+        results.communicationStyle &&
+        results.lifeGoals &&
+        results.values &&
+        results.lifestyle &&
+        results.loveLanguages &&
+        results.financialValues
+      );
+      
+      console.log('Assessment completion check:', { isComplete, profileId: profile.id });
+      return isComplete;
+    } catch (error) {
+      console.error('Error checking assessment completion:', error);
+      return false;
+    }
+  }
+
+  // Guard against multiple simultaneous navigation attempts
+  static isNavigationInProgress(): boolean {
+    return this.navigationInProgress;
   }
 }
 
