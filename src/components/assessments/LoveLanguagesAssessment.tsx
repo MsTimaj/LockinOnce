@@ -39,10 +39,19 @@ const LoveLanguagesAssessment = ({ onComplete }: LoveLanguagesAssessmentProps) =
       givingPreference
     };
     console.log('Love Languages Results:', results);
+    console.log('Calling onComplete callback...');
     onComplete(results);
   };
 
   const isComplete = primaryLoveLanguage && secondaryLoveLanguage && receivingPreference && givingPreference;
+
+  console.log('Love Languages Assessment State:', {
+    primaryLoveLanguage,
+    secondaryLoveLanguage,
+    receivingPreference,
+    givingPreference,
+    isComplete
+  });
 
   return (
     <div className="space-y-6">
