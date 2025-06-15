@@ -17,6 +17,8 @@ import LoveLanguagesAssessment from "@/components/assessments/LoveLanguagesAsses
 import FinancialValuesAssessment from "@/components/assessments/FinancialValuesAssessment";
 import { calculateRelationshipReadiness } from "@/utils/assessmentScoring";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -217,6 +219,19 @@ const Onboarding = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
+          {/* Subtle back button at the top */}
+          <div className="mb-6">
+            <Button 
+              onClick={() => navigate('/')}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+          </div>
+
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-sm font-medium text-muted-foreground">
