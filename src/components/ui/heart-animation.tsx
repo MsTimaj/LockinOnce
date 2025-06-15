@@ -8,21 +8,24 @@ interface HeartAnimationProps {
 }
 
 const HeartAnimation = ({ trigger, className = "" }: HeartAnimationProps) => {
-  const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [hearts, setHearts] = useState<{ id: number; x: number; y: number; delay: number }[]>([]);
 
   useEffect(() => {
     if (trigger > 0) {
-      const newHearts = Array.from({ length: 5 }, (_, i) => ({
+      console.log("Hearts animation triggered:", trigger); // Debug log
+      
+      const newHearts = Array.from({ length: 6 }, (_, i) => ({
         id: Date.now() + i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
+        x: 20 + Math.random() * 60, // More centered distribution
+        y: 20 + Math.random() * 60,
+        delay: Math.random() * 0.8, // Stagger the animations
       }));
       
       setHearts(newHearts);
       
       const timer = setTimeout(() => {
         setHearts([]);
-      }, 2000);
+      }, 3000); // Longer duration
       
       return () => clearTimeout(timer);
     }
@@ -33,14 +36,16 @@ const HeartAnimation = ({ trigger, className = "" }: HeartAnimationProps) => {
       {hearts.map((heart) => (
         <Heart
           key={heart.id}
-          className="absolute text-rose-500 animate-ping"
+          className="absolute text-rose-500 animate-ping drop-shadow-lg"
           style={{
             left: `${heart.x}%`,
             top: `${heart.y}%`,
-            animationDuration: '1.5s',
-            animationDelay: `${Math.random() * 0.5}s`,
+            animationDuration: '2s',
+            animationDelay: `${heart.delay}s`,
+            transform: 'scale(1.2)', // Make hearts bigger
           }}
-          size={16}
+          size={20}
+          fill="currentColor"
         />
       ))}
     </div>

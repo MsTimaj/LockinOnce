@@ -19,12 +19,20 @@ const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle }: L
   
   const handleToggle = () => {
     setHeartTrigger(prev => prev + 1);
+    console.log("Heart trigger activated:", heartTrigger + 1); // Debug log
     if (onToggle) {
       onToggle();
     } else {
       setInternalIsOpen(!internalIsOpen);
     }
   };
+
+  // Also trigger hearts when chat opens/closes
+  useEffect(() => {
+    if (isChatOpen !== internalIsOpen && externalIsOpen !== undefined) {
+      setHeartTrigger(prev => prev + 1);
+    }
+  }, [isChatOpen]);
 
   return (
     <>
