@@ -97,12 +97,12 @@ const calculateEmotionalReadiness = (results: ComprehensiveAssessmentResults): n
 
   // Love Languages awareness (15% weight) - indicates emotional intelligence
   if (results.loveLanguages) {
-    const ll = results.loveLanguages;
     let loveLanguageScore = 70; // Base for having awareness
     
     // Higher score if they understand multiple languages
-    const languageCount = Object.values(ll).filter(val => val && val !== 'not_important').length;
-    loveLanguageScore += Math.min(languageCount * 5, 25);
+    const ll = results.loveLanguages;
+    const languageCount = [ll.primaryLoveLanguage, ll.secondaryLoveLanguage].filter(val => val).length;
+    loveLanguageScore += Math.min(languageCount * 10, 25);
     
     score += loveLanguageScore * 0.15;
     factors += 0.15;
@@ -139,25 +139,32 @@ const calculateCommunicationSkills = (results: ComprehensiveAssessmentResults): 
     let commScore = 0;
     let commFactors = 0;
 
-    if (cs.conflictStyle) {
-      commScore += cs.conflictStyle === 'collaborative' ? 95 :
-                   cs.conflictStyle === 'compromise' ? 80 :
-                   cs.conflictStyle === 'accommodating' ? 65 :
-                   cs.conflictStyle === 'competing' ? 45 : 35;
+    // Use actual properties from CommunicationStyleResults
+    if (cs.communicationStyle) {
+      commScore += cs.communicationStyle === 'direct_and_kind' ? 90 :
+                   cs.communicationStyle === 'gentle_and_indirect' ? 75 :
+                   cs.communicationStyle === 'very_direct' ? 60 : 40;
+      commFactors++;
+    }
+
+    if (cs.conflictResolution) {
+      commScore += cs.conflictResolution === 'collaborate_solutions' ? 95 :
+                   cs.conflictResolution === 'compromise_meet_middle' ? 80 :
+                   cs.conflictResolution === 'avoid_conflict' ? 45 : 35;
       commFactors++;
     }
 
     if (cs.expressionStyle) {
-      commScore += cs.expressionStyle === 'direct_kind' ? 90 :
-                   cs.expressionStyle === 'gentle_indirect' ? 75 :
-                   cs.expressionStyle === 'very_direct' ? 60 : 40;
+      commScore += cs.expressionStyle === 'open_and_honest' ? 90 :
+                   cs.expressionStyle === 'thoughtful_measured' ? 85 :
+                   cs.expressionStyle === 'reserved_private' ? 55 : 40;
       commFactors++;
     }
 
     if (cs.listeningStyle) {
       commScore += cs.listeningStyle === 'active_empathetic' ? 95 :
-                   cs.listeningStyle === 'good_listener' ? 80 :
-                   cs.listeningStyle === 'selective_listener' ? 55 : 35;
+                   cs.listeningStyle === 'attentive_engaged' ? 80 :
+                   cs.listeningStyle === 'selective_focused' ? 55 : 35;
       commFactors++;
     }
 
@@ -178,8 +185,9 @@ const calculateCommunicationSkills = (results: ComprehensiveAssessmentResults): 
   // Love Languages - indicates communication awareness (20% weight)
   if (results.loveLanguages) {
     let langScore = 65;
-    const wordsOfAffirmation = results.loveLanguages.wordsOfAffirmation;
-    if (wordsOfAffirmation === 'extremely_important' || wordsOfAffirmation === 'very_important') {
+    // Check if they value verbal communication
+    if (results.loveLanguages.primaryLoveLanguage === 'words_of_affirmation' || 
+        results.loveLanguages.secondaryLoveLanguage === 'words_of_affirmation') {
       langScore += 15; // Values verbal communication
     }
     
@@ -216,9 +224,7 @@ const calculateSelfAwareness = (results: ComprehensiveAssessmentResults): number
       results.personality.introversion || 50,
       results.personality.extroversion || 50,
       results.personality.thinking || 50,
-      results.personality.feeling || 50,
-      results.personality.judging || 50,
-      results.personality.perceiving || 50
+      results.personality.feeling || 50
     ];
     
     // Less extreme scores often indicate better self-understanding
@@ -277,26 +283,33 @@ const calculateRelationshipGoals = (results: ComprehensiveAssessmentResults): nu
     let intentScore = 0;
     let intentFactors = 0;
 
-    if (ri.lookingFor) {
-      intentScore += ri.lookingFor === 'long_term_relationship' ? 95 :
-                    ri.lookingFor === 'marriage_partnership' ? 100 :
-                    ri.lookingFor === 'casual_dating' ? 60 :
-                    ri.lookingFor === 'not_sure' ? 40 : 30;
+    // Use actual properties from RelationshipIntentResults
+    if (ri.timelineExpectation) {
+      intentScore += ri.timelineExpectation === 'within_6_months' ? 85 :
+                    ri.timelineExpectation === 'within_year' ? 90 :
+                    ri.timelineExpectation === 'within_2_years' ? 80 :
+                    ri.timelineExpectation === 'no_rush' ? 70 : 50;
       intentFactors++;
     }
 
-    if (ri.timeline) {
-      intentScore += ri.timeline === 'ready_now' ? 90 :
-                    ri.timeline === 'within_year' ? 85 :
-                    ri.timeline === 'few_years' ? 70 :
-                    ri.timeline === 'no_timeline' ? 50 : 40;
+    if (ri.commitmentLevel) {
+      intentScore += ri.commitmentLevel === 'very_serious' ? 95 :
+                    ri.commitmentLevel === 'serious' ? 85 :
+                    ri.commitmentLevel === 'moderate' ? 65 : 40;
       intentFactors++;
     }
 
-    if (ri.commitment) {
-      intentScore += ri.commitment === 'very_ready' ? 95 :
-                    ri.commitment === 'mostly_ready' ? 80 :
-                    ri.commitment === 'somewhat_ready' ? 60 : 35;
+    if (ri.priorityLevel) {
+      intentScore += ri.priorityLevel === 'top_priority' ? 90 :
+                    ri.priorityLevel === 'high_priority' ? 80 :
+                    ri.priorityLevel === 'moderate_priority' ? 65 : 45;
+      intentFactors++;
+    }
+
+    if (ri.exclusivityPreference) {
+      intentScore += ri.exclusivityPreference === 'exclusive_from_start' ? 95 :
+                    ri.exclusivityPreference === 'exclusive_when_serious' ? 85 :
+                    ri.exclusivityPreference === 'open_to_dating_multiple' ? 60 : 40;
       intentFactors++;
     }
 
