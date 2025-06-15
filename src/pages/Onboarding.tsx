@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -21,6 +22,11 @@ const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
 
   useEffect(() => {
     const initializeOnboarding = async () => {
