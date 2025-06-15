@@ -6,10 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
+import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
+  const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
   const totalSteps = 7;
   const navigate = useNavigate();
 
@@ -30,6 +32,12 @@ const Onboarding = () => {
   const handleAttachmentComplete = (results: AttachmentStyleResults) => {
     setAttachmentResults(results);
     console.log('Attachment Style Results:', results);
+    nextStep();
+  };
+
+  const handleBirthOrderComplete = (results: BirthOrderResults) => {
+    setBirthOrderResults(results);
+    console.log('Birth Order Results:', results);
     nextStep();
   };
 
@@ -56,22 +64,32 @@ const Onboarding = () => {
       case 2:
         return <AttachmentStyleAssessment onComplete={handleAttachmentComplete} />;
       case 3:
+        return <BirthOrderAssessment onComplete={handleBirthOrderComplete} />;
+      case 4:
         return (
           <div className="text-center space-y-6">
             <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Birth Order & Family Dynamics
+              Your Profile Summary
             </h2>
             <p className="text-lg text-muted-foreground">
-              Your position in your family shapes how you relate to others.
+              Here's what we've learned about you so far.
             </p>
-            {attachmentResults && (
-              <div className="card-glass p-4 text-left">
-                <p className="text-sm text-muted-foreground mb-2">Your attachment style result:</p>
-                <p className="text-primary font-medium capitalize">{attachmentResults.dominantStyle}</p>
-              </div>
-            )}
+            <div className="space-y-4">
+              {attachmentResults && (
+                <div className="card-glass p-4 text-left">
+                  <p className="text-sm text-muted-foreground mb-2">Attachment Style:</p>
+                  <p className="text-primary font-medium capitalize">{attachmentResults.dominantStyle}</p>
+                </div>
+              )}
+              {birthOrderResults && (
+                <div className="card-glass p-4 text-left">
+                  <p className="text-sm text-muted-foreground mb-2">Family Background:</p>
+                  <p className="text-primary font-medium capitalize">{birthOrderResults.birthOrder} child</p>
+                </div>
+              )}
+            </div>
             <div className="text-left space-y-4">
-              <p className="text-accent font-medium">Step 3 of 7 - Coming next...</p>
+              <p className="text-accent font-medium">Step 4 of 7 - Coming next...</p>
             </div>
           </div>
         );
@@ -119,7 +137,7 @@ const Onboarding = () => {
         </Card>
 
         {/* Navigation */}
-        {currentStep !== 2 && (
+        {currentStep !== 2 && currentStep !== 3 && (
           <div className="flex justify-between">
             <Button 
               variant="outline" 
