@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,11 +6,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
+import ValuesAssessment, { ValuesResults } from "@/components/assessments/ValuesAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
   const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
+  const [valuesResults, setValuesResults] = useState<ValuesResults | null>(null);
   const totalSteps = 7;
   const navigate = useNavigate();
 
@@ -41,6 +42,12 @@ const Onboarding = () => {
     nextStep();
   };
 
+  const handleValuesComplete = (results: ValuesResults) => {
+    setValuesResults(results);
+    console.log('Values Results:', results);
+    nextStep();
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -66,6 +73,8 @@ const Onboarding = () => {
       case 3:
         return <BirthOrderAssessment onComplete={handleBirthOrderComplete} />;
       case 4:
+        return <ValuesAssessment onComplete={handleValuesComplete} />;
+      case 5:
         return (
           <div className="text-center space-y-6">
             <h2 className="text-3xl font-playfair font-bold text-foreground">
@@ -87,9 +96,15 @@ const Onboarding = () => {
                   <p className="text-primary font-medium capitalize">{birthOrderResults.birthOrder} child</p>
                 </div>
               )}
+              {valuesResults && (
+                <div className="card-glass p-4 text-left">
+                  <p className="text-sm text-muted-foreground mb-2">Core Values:</p>
+                  <p className="text-primary font-medium">{valuesResults.coreValues.length} selected</p>
+                </div>
+              )}
             </div>
             <div className="text-left space-y-4">
-              <p className="text-accent font-medium">Step 4 of 7 - Coming next...</p>
+              <p className="text-accent font-medium">Step 5 of 7 - Coming next...</p>
             </div>
           </div>
         );
@@ -137,7 +152,7 @@ const Onboarding = () => {
         </Card>
 
         {/* Navigation */}
-        {currentStep !== 2 && currentStep !== 3 && (
+        {currentStep !== 2 && currentStep !== 3 && currentStep !== 4 && (
           <div className="flex justify-between">
             <Button 
               variant="outline" 
