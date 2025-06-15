@@ -10,6 +10,7 @@ export interface UserProfile {
     age?: number;
     location?: string;
     bio?: string;
+    occupation?: string;
     photos?: string[];
   };
   assessmentResults: ComprehensiveAssessmentResults;
