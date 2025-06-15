@@ -18,8 +18,10 @@ const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle }: L
   const isChatOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   
   const handleToggle = () => {
+    console.log("Button clicked - triggering hearts");
     setHeartTrigger(prev => prev + 1);
-    console.log("Heart trigger activated:", heartTrigger + 1); // Debug log
+    console.log("Heart trigger activated:", heartTrigger + 1);
+    
     if (onToggle) {
       onToggle();
     } else {
@@ -30,22 +32,26 @@ const LoveVeeChatButton = ({ initialTopic, isOpen: externalIsOpen, onToggle }: L
   // Also trigger hearts when chat opens/closes
   useEffect(() => {
     if (isChatOpen !== internalIsOpen && externalIsOpen !== undefined) {
+      console.log("Chat state changed - triggering hearts");
       setHeartTrigger(prev => prev + 1);
     }
-  }, [isChatOpen]);
+  }, [isChatOpen, internalIsOpen, externalIsOpen]);
 
   return (
     <>
       {!isChatOpen && (
         <div className="fixed bottom-6 right-6 z-40">
-          <div className="relative">
+          <div className="relative w-16 h-16">
             <Button
               onClick={handleToggle}
               className="w-16 h-16 rounded-full bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500 hover:from-rose-500 hover:via-pink-600 hover:to-rose-600 shadow-2xl border-4 border-white/80 transition-all duration-300 hover:scale-110 animate-pulse-glow"
             >
               <MessageSquare className="h-7 w-7 text-white" />
             </Button>
-            <HeartAnimation trigger={heartTrigger} />
+            <HeartAnimation 
+              trigger={heartTrigger} 
+              className="absolute inset-0 w-full h-full"
+            />
           </div>
         </div>
       )}
