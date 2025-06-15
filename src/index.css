@@ -3,50 +3,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LockInOnce Design System - Modern Blue Romance Theme */
+/* LockInOnce Design System - Sunset Harmony Theme */
 
 @layer base {
   :root {
-    /* LockInOnce Modern Blue Romance Colors */
-    --primary: 217 91% 60%; /* Modern Blue #3B82F6 */
-    --secondary: 213 27% 84%; /* Soft Blue Gray #CBD5E1 */
-    --accent: 212 95% 68%; /* Bright Blue #60A5FA */
-    --background-light: 210 40% 98%; /* Soft Blue White #F8FAFC */
-    --background-dark: 222 84% 5%; /* Deep Navy #0F172A */
-    --foreground-dark: 222 84% 5%; /* Rich Navy #0F172A */
-    --foreground-light: 210 40% 98%; /* Light Blue White #F8FAFC */
+    /* LockInOnce Sunset Harmony Colors */
+    --primary: 11 82% 80%; /* Soft Sunset Pink #F6AFA3 */
+    --secondary: 316 26% 76%; /* Misty Lavender #D1B3C4 */
+    --accent: 6 100% 71%; /* Glow Coral #FF7B6D */
+    --background-light: 215 74% 86%; /* Sky Blue Fade #C3DAF4 */
+    --background-dark: 211 31% 24%; /* Indigo Dusk #2C3A4B */
+    --foreground-dark: 210 18% 12%; /* Midnight Shadow #1B1F22 */
+    --foreground-light: 23 100% 96%; /* Dawn Blush #FFEFE9 */
     
     /* Default light theme */
     --background: var(--background-light);
     --foreground: var(--foreground-dark);
-    --card: 210 40% 99%;
+    --card: 23 100% 98%;
     --card-foreground: var(--foreground-dark);
-    --popover: 210 40% 99%;
+    --popover: 23 100% 98%;
     --popover-foreground: var(--foreground-dark);
     --primary-foreground: 0 0% 100%;
     --secondary-foreground: var(--foreground-dark);
-    --muted: 210 40% 95%;
-    --muted-foreground: 215 16% 47%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --muted: 215 60% 92%;
+    --muted-foreground: 210 18% 47%;
+    --border: 215 50% 88%;
+    --input: 215 50% 88%;
     --ring: var(--primary);
-    --radius: 1rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    /* Dark theme */
+    /* Dark theme - Twilight mode */
     --background: var(--background-dark);
     --foreground: var(--foreground-light);
-    --card: 222 84% 8%;
+    --card: 211 31% 18%;
     --card-foreground: var(--foreground-light);
-    --popover: 222 84% 8%;
+    --popover: 211 31% 18%;
     --popover-foreground: var(--foreground-light);
     --primary-foreground: var(--foreground-dark);
     --secondary-foreground: var(--foreground-light);
-    --muted: 217 33% 17%;
+    --muted: 211 31% 15%;
     --muted-foreground: 215 20% 65%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 211 31% 20%;
+    --input: 211 31% 20%;
   }
 }
 
@@ -76,42 +76,42 @@
 }
 
 @layer components {
-  /* Modern Gradient Buttons */
+  /* Sunset Harmony Gradient Buttons */
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary via-accent to-primary/80 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300 min-h-[56px] bg-[length:200%_100%] hover:bg-[position:100%_0];
+    @apply bg-gradient-to-r from-primary via-accent to-primary/90 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300 min-h-[56px] bg-[length:200%_100%] hover:bg-[position:100%_0];
   }
   
   .btn-secondary {
-    @apply border-2 border-primary/30 text-primary bg-card/50 backdrop-blur-sm font-semibold px-8 py-4 rounded-2xl hover:bg-primary hover:text-white hover:border-primary active:scale-95 transition-all duration-300 min-h-[56px];
+    @apply border-2 border-accent/60 text-accent bg-transparent backdrop-blur-sm font-semibold px-8 py-4 rounded-xl hover:bg-accent hover:text-white hover:border-accent active:scale-95 transition-all duration-300 min-h-[56px];
   }
 
-  /* Modern Glass Cards */
+  /* Emotional Glass Cards */
   .card-glass {
-    @apply bg-card/60 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl transition-all duration-500 hover:scale-[1.02];
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    @apply bg-card/70 backdrop-blur-xl border border-white/30 rounded-2xl shadow-xl transition-all duration-500 hover:scale-[1.02];
+    box-shadow: 0 20px 40px -12px rgba(246, 175, 163, 0.2);
   }
   
   .card-glass:hover {
-    box-shadow: 0 35px 60px -12px rgba(59, 130, 246, 0.3), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 25px 50px -12px rgba(255, 123, 109, 0.3), 0 20px 40px -12px rgba(246, 175, 163, 0.2);
   }
 
-  /* Modern Input Style */
+  /* Romantic Input Style */
   .input-modern {
-    @apply bg-card/50 backdrop-blur-sm border-2 border-border/50 focus:border-primary rounded-2xl px-6 py-4 focus:ring-0 transition-all duration-300 min-h-[56px] placeholder:text-muted-foreground/60;
+    @apply bg-card/60 backdrop-blur-sm border-b-2 border-border/50 focus:border-accent rounded-t-xl px-6 py-4 focus:ring-0 transition-all duration-300 min-h-[56px] placeholder:text-muted-foreground/60;
   }
 
-  /* Modern Romantic Quote */
+  /* Romantic Quote Style */
   .quote-modern {
     @apply font-dancing text-xl text-primary/90 italic text-center;
   }
 
-  /* Modern Match Badge */
+  /* Match Badge - Lavender Fill */
   .badge-modern {
-    @apply bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/20 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-sm;
+    @apply bg-gradient-to-r from-secondary/40 to-primary/40 text-foreground border border-secondary/30 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-sm;
   }
 }
 
-/* Modern animations */
+/* Sunset animations */
 @keyframes float-up {
   from {
     opacity: 0;
@@ -132,12 +132,12 @@
   }
 }
 
-@keyframes pulse-glow {
+@keyframes sunset-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(232, 121, 183, 0.3);
+    box-shadow: 0 0 20px rgba(246, 175, 163, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(232, 121, 183, 0.5);
+    box-shadow: 0 0 40px rgba(255, 123, 109, 0.5);
   }
 }
 
@@ -151,8 +151,8 @@
   animation: shimmer 2s infinite;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+.animate-sunset-glow {
+  animation: sunset-glow 2s ease-in-out infinite;
 }
 
 /* Mobile optimizations */
