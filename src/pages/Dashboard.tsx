@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { mockMatches } from "@/data/mockMatches";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
@@ -10,11 +9,13 @@ import OtherMatchesSection from "@/components/dashboard/OtherMatchesSection";
 import NavigationFooter from "@/components/dashboard/NavigationFooter";
 import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
 import UpdateChecklist from "@/components/dashboard/UpdateChecklist";
+import ProjectStatusChecklist from "@/components/dashboard/ProjectStatusChecklist";
 
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
   const [connectedMatches, setConnectedMatches] = useState<Set<string>>(new Set());
   const [showChecklist, setShowChecklist] = useState(false);
+  const [showProjectStatus, setShowProjectStatus] = useState(false);
 
   const handleMatchClick = (match: MatchProfile) => {
     setSelectedMatch(match);
@@ -61,7 +62,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
-      <DashboardHeader onShowChecklist={() => setShowChecklist(true)} />
+      <DashboardHeader 
+        onShowChecklist={() => setShowChecklist(true)} 
+        onShowProjectStatus={() => setShowProjectStatus(true)}
+      />
 
       <div className="max-w-md mx-auto px-4 pb-20">
         <WelcomeSection />
@@ -89,6 +93,10 @@ const Dashboard = () => {
       
       {showChecklist && (
         <UpdateChecklist onClose={() => setShowChecklist(false)} />
+      )}
+      
+      {showProjectStatus && (
+        <ProjectStatusChecklist onClose={() => setShowProjectStatus(false)} />
       )}
     </div>
   );

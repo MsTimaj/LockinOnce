@@ -1,12 +1,13 @@
 
-import { Bell, Settings, CheckSquare } from "lucide-react";
+import { Bell, Settings, CheckSquare, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DashboardHeaderProps {
   onShowChecklist?: () => void;
+  onShowProjectStatus?: () => void;
 }
 
-const DashboardHeader = ({ onShowChecklist }: DashboardHeaderProps) => {
+const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHeaderProps) => {
   return (
     <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
       <div className="max-w-md mx-auto px-4 py-4">
@@ -19,11 +20,24 @@ const DashboardHeader = ({ onShowChecklist }: DashboardHeaderProps) => {
           </div>
           
           <div className="flex items-center space-x-2">
+            {onShowProjectStatus && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onShowProjectStatus}
+                className="h-10 w-10 p-0 rounded-full hover:bg-blue-50"
+                title="Project Status"
+              >
+                <BarChart3 className="h-5 w-5 text-blue-500" />
+              </Button>
+            )}
+            
             <Button
               variant="ghost"
               size="sm"
               onClick={onShowChecklist}
               className="h-10 w-10 p-0 rounded-full hover:bg-rose-50"
+              title="Profile Updates"
             >
               <CheckSquare className="h-5 w-5 text-rose-500" />
             </Button>
