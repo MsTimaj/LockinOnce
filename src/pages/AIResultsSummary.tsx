@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,10 +31,20 @@ const AIResultsSummary = () => {
       try {
         console.log('Initializing AI Results Summary...');
         
-        // Check if navigation is in progress
-        if (UserStateManager.isNavigationInProgress()) {
-          console.log('Navigation in progress, waiting...');
-          return;
+        // Wait a moment for any navigation flags to clear
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Check if navigation is in progress with timeout
+        let attempts = 0;
+        const maxAttempts = 10;
+        while (UserStateManager.isNavigationInProgress() && attempts < maxAttempts) {
+          console.log(`Navigation in progress, waiting... (attempt ${attempts + 1})`);
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+
+        if (attempts >= maxAttempts) {
+          console.log('Navigation timeout reached, proceeding anyway...');
         }
 
         // CRITICAL FIX: Use unified completion check

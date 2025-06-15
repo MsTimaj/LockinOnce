@@ -101,9 +101,11 @@ export class UserStateManager {
       console.error('Failed to complete onboarding:', error);
       throw error;
     } finally {
+      // Clear the navigation flag after a shorter delay
       setTimeout(() => {
         this.navigationInProgress = false;
-      }, 1000);
+        console.log('Navigation flag cleared');
+      }, 100);
     }
   }
 
