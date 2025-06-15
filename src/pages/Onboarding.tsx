@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -63,8 +62,8 @@ const Onboarding = () => {
     } else if (currentPhase === 2 && currentStep < phase2Steps) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Navigate to dashboard when all assessments are complete
-      navigate('/dashboard');
+      // Navigate to AI Results Summary when all assessments are complete
+      navigate('/ai-results');
     }
   };
 
