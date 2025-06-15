@@ -31,6 +31,11 @@ export interface PreferencesResults {
     education: string[];
     careerAmbition: string;
   };
+  personalInfo: {
+    politicalLeaning: string;
+    religiousLeaning: string;
+    background: string;
+  };
 }
 
 export interface ComprehensiveAssessmentResults {

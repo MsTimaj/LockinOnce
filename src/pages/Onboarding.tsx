@@ -83,7 +83,7 @@ const Onboarding = () => {
     try {
       console.log(`Step ${currentStep} completed with results:`, results);
       
-      // Updated assessment mapping with preferences added
+      // Updated assessment mapping with preferences moved to the end
       const assessmentMap = [
         null, // Step 0: Welcome step
         'attachmentStyle', // Step 1
@@ -91,15 +91,15 @@ const Onboarding = () => {
         'birthOrder', // Step 3
         'relationshipIntent', // Step 4
         'emotionalCapacity', // Step 5
-        'preferences', // Step 6: NEW - Dating Preferences
-        'attractionLayer', // Step 7
-        'physicalProximity', // Step 8
-        'communicationStyle', // Step 9
-        'lifeGoals', // Step 10
-        'values', // Step 11
-        'lifestyle', // Step 12
-        'loveLanguages', // Step 13
-        'financialValues' // Step 14
+        'attractionLayer', // Step 6
+        'physicalProximity', // Step 7
+        'communicationStyle', // Step 8
+        'lifeGoals', // Step 9
+        'values', // Step 10
+        'lifestyle', // Step 11
+        'loveLanguages', // Step 12
+        'financialValues', // Step 13
+        'preferences' // Step 14: MOVED - Dating Preferences (now last)
       ] as const;
 
       const assessmentType = assessmentMap[currentStep + 1];
@@ -197,11 +197,6 @@ const Onboarding = () => {
       onComplete: handleStepComplete
     },
     { 
-      component: PreferencesAssessment, 
-      title: "Dating Preferences",
-      onComplete: handleStepComplete
-    },
-    { 
       component: AttractionLayerAssessment, 
       title: "Attraction Layer",
       onComplete: handleStepComplete
@@ -239,6 +234,11 @@ const Onboarding = () => {
     { 
       component: FinancialValuesAssessment, 
       title: "Financial Values",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: PreferencesAssessment, 
+      title: "Dating Preferences",
       onComplete: handleStepComplete
     }
   ];
