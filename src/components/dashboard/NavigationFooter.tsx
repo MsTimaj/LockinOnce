@@ -49,10 +49,7 @@ const NavigationFooter = () => {
         <Button
           variant="ghost"
           className={getButtonClass('/profile')}
-          onClick={() => {
-            // Future: Navigate to profile page
-            console.log('Profile page coming soon');
-          }}
+          onClick={() => navigate('/profile')}
         >
           <User className="h-5 w-5" />
           <span className="text-xs font-medium">Profile</span>

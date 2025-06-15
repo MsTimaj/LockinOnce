@@ -7,6 +7,7 @@ import { ValidationUtils } from "./state/validationUtils";
 import { NavigationStateManager } from "./state/navigationStateManager";
 import { AssessmentProgressManager } from "./state/assessmentProgressManager";
 import { SyncStateManager } from "./state/syncStateManager";
+import { LocalStorageManager } from "./storage/localStorageManager";
 
 export class UserStateManager {
   static async saveUserProfile(profile: UserProfile): Promise<void> {
@@ -192,6 +193,21 @@ export class UserStateManager {
       sessionStorage.setItem('current_user_id', userId);
     }
     return userId;
+  }
+
+  static async updateUserProfile(updatedProfile: any): Promise<void> {
+    try {
+      console.log('Updating user profile:', updatedProfile);
+      await LocalStorageManager.setUserProfile(updatedProfile);
+      
+      // Also sync to session storage for immediate access
+      SessionStorageManager.setCurrentProfile(updatedProfile);
+      
+      console.log('User profile updated successfully');
+    } catch (error) {
+      console.error('Failed to update user profile:', error);
+      throw error;
+    }
   }
 }
 

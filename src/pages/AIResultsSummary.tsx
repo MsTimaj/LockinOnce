@@ -9,7 +9,7 @@ import AnalysisLoadingState from "@/components/ai-results/AnalysisLoadingState";
 import AIResultsDisplay from "@/components/ai-results/AIResultsDisplay";
 
 const AIResultsSummary = () => {
-  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false); // Changed default to false
   const [chatTopic, setChatTopic] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
@@ -43,7 +43,8 @@ const AIResultsSummary = () => {
         console.log('Validation results:', { 
           hasCompleted, 
           isAssessmentComplete,
-          hasAssessmentData: !!userProfile.assessmentResults
+          hasAssessmentData: !!userProfile.assessmentResults,
+          hasReadinessScore: !!userProfile.readinessScore
         });
 
         // If user hasn't completed onboarding but we're here, redirect
@@ -53,13 +54,39 @@ const AIResultsSummary = () => {
           return;
         }
 
-        // Proceed with analysis even if assessment isn't "complete" but has data
-        console.log('Proceeding with analysis...');
+        // Check if user already has analysis results
+        if (userProfile.readinessScore) {
+          console.log('User already has analysis results, showing directly...');
+          
+          const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
+          const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
+          const topStrengths = getTopStrengths(userProfile.assessmentResults);
+
+          setAnalysis({
+            readinessScore: userProfile.readinessScore,
+            personalityType,
+            dominantStyle,
+            topStrengths
+          });
+          
+          setIsInitializing(false);
+          setIsAnalyzing(false); // Skip analyzing phase for returning users
+          return;
+        }
+
+        // For new users without readiness score, show the analysis sequence
+        console.log('New user without analysis, starting analysis sequence...');
 
         // Calculate or get cached readiness score
         let readinessScore = userProfile.readinessScore;
         if (!readinessScore && userProfile.assessmentResults) {
           console.log('Calculating readiness score from assessment data...');
+          setIsInitializing(false);
+          setIsAnalyzing(true); // Only show analyzing for new calculations
+          
+          // Simulate analysis time for new users
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
           await UserStateManager.saveReadinessScore(readinessScore);
         }
@@ -115,7 +142,7 @@ const AIResultsSummary = () => {
     );
   }
 
-  // Loading states or analyzing
+  // Loading states or analyzing (only for new users)
   if (isInitializing || isAnalyzing || !analysis) {
     return (
       <AnalysisLoadingState
