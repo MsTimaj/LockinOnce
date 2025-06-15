@@ -4,18 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import LoveVeeChat from "./LoveVeeChat";
 import HeartAnimation from "@/components/ui/heart-animation";
-
-interface AnalysisData {
-  readinessScore: {
-    overall: number;
-    isReady: boolean;
-    growthAreas: string[];
-    personalizedStrategy: string;
-  };
-  personalityType: string;
-  dominantStyle: string;
-  topStrengths: string[];
-}
+import { AnalysisData } from "./types";
 
 interface LoveVeeChatButtonProps {
   initialTopic?: string | null;
