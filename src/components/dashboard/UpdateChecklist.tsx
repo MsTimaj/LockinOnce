@@ -1,150 +1,214 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X, Star, Heart, MessageSquare, Camera, User, Target } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { X, CheckCircle, Circle, AlertTriangle, Rocket } from "lucide-react";
 
 interface UpdateChecklistProps {
   onClose: () => void;
 }
 
 const UpdateChecklist = ({ onClose }: UpdateChecklistProps) => {
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const [completedItems, setCompletedItems] = useState<Set<string>>(new Set([
+    'assessment-flow',
+    'ai-analysis',
+    'match-generation',
+    'ui-polish',
+    'local-persistence'
+  ]));
 
-  const checklistItems = [
+  const toggleItem = (id: string) => {
+    const newCompleted = new Set(completedItems);
+    if (newCompleted.has(id)) {
+      newCompleted.delete(id);
+    } else {
+      newCompleted.add(id);
+    }
+    setCompletedItems(newCompleted);
+  };
+
+  const mvpFeatures = [
     {
-      id: "photos",
-      icon: <Camera className="h-5 w-5" />,
-      title: "Add 3+ Recent Photos",
-      description: "Show your authentic self with varied, high-quality photos",
-      priority: "high"
+      id: 'assessment-flow',
+      title: '✅ Complete Assessment Flow',
+      description: 'Psychological assessment capturing meaningful relationship data',
+      status: 'completed'
     },
     {
-      id: "bio",
-      icon: <User className="h-5 w-5" />,
-      title: "Complete Your Bio",
-      description: "Share your passions, values, and what you're looking for",
-      priority: "high"
+      id: 'ai-analysis',
+      title: '✅ AI Results Analysis',
+      description: 'Personalized readiness scores and compatibility insights',
+      status: 'completed'
     },
     {
-      id: "preferences",
-      icon: <Target className="h-5 w-5" />,
-      title: "Set Your Preferences",
-      description: "Define age range, location, and relationship goals",
-      priority: "medium"
+      id: 'match-generation',
+      title: '✅ Smart Match Generation',
+      description: 'Research-based compatibility algorithm with detailed scoring',
+      status: 'completed'
     },
     {
-      id: "interests",
-      icon: <Heart className="h-5 w-5" />,
-      title: "Add Interests & Hobbies",
-      description: "Help us find compatible matches based on shared activities",
-      priority: "medium"
+      id: 'ui-polish',
+      title: '✅ Professional UI/UX',
+      description: 'Dating app quality interface and user experience',
+      status: 'completed'
     },
     {
-      id: "prompts",
-      icon: <MessageSquare className="h-5 w-5" />,
-      title: "Answer Profile Prompts",
-      description: "Give matches conversation starters and insights into your personality",
-      priority: "low"
-    },
-    {
-      id: "verification",
-      icon: <Star className="h-5 w-5" />,
-      title: "Verify Your Profile",
-      description: "Build trust with a verified badge",
-      priority: "low"
+      id: 'local-persistence',
+      title: '✅ Session Persistence',
+      description: 'User data and progress saved locally for testing',
+      status: 'completed'
     }
   ];
 
-  const toggleItem = (id: string) => {
-    setCheckedItems(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high": return "border-l-red-500 bg-red-50/50";
-      case "medium": return "border-l-amber-500 bg-amber-50/50";
-      case "low": return "border-l-emerald-500 bg-emerald-50/50";
-      default: return "border-l-gray-500 bg-gray-50/50";
+  const criticalGaps = [
+    {
+      id: 'match-decisions',
+      title: '🔥 Persistent Match Decisions',
+      description: 'Save likes/passes in localStorage - decisions should stick',
+      priority: 'CRITICAL',
+      time: '15 mins'
+    },
+    {
+      id: 'mutual-matching',
+      title: '🔥 Mutual Match Detection',
+      description: 'Show when both users are interested (simulate for demo)',
+      priority: 'CRITICAL',
+      time: '20 mins'
+    },
+    {
+      id: 'match-pool',
+      title: '🔥 Smart Match Pool',
+      description: 'Hide passed users, refresh pool when exhausted',
+      priority: 'CRITICAL',
+      time: '15 mins'
+    },
+    {
+      id: 'connection-flow',
+      title: '⚡ Connection States',
+      description: 'Clear next steps after mutual interest',
+      priority: 'HIGH',
+      time: '10 mins'
     }
-  };
+  ];
 
-  const completedCount = checkedItems.size;
-  const totalCount = checklistItems.length;
-  const progressPercentage = (completedCount / totalCount) * 100;
+  const completedCount = mvpFeatures.length;
+  const gapsCount = criticalGaps.filter(gap => completedItems.has(gap.id)).length;
+  const totalProgress = ((completedCount + gapsCount) / (mvpFeatures.length + criticalGaps.length)) * 100;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md max-h-[80vh] overflow-y-auto bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold text-gray-800">
-              Profile Updates
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-auto">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <div>
+            <CardTitle className="text-xl font-serif text-gray-800 flex items-center">
+              <Rocket className="h-5 w-5 mr-2 text-rose-500" />
+              MVP Launch Checklist
             </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <p className="text-sm text-gray-600 mt-1">
+              {Math.round(totalProgress)}% Complete • Ready to ship core functionality
+            </p>
           </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Progress</span>
-              <span className="font-semibold">{completedCount}/{totalCount}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-rose-400 to-pink-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-          </div>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
         </CardHeader>
-        
-        <CardContent className="space-y-3">
-          {checklistItems.map((item) => (
-            <div
-              key={item.id}
-              className={`p-4 rounded-lg border-l-4 transition-all duration-200 cursor-pointer hover:shadow-md ${getPriorityColor(item.priority)} ${
-                checkedItems.has(item.id) ? 'opacity-60' : ''
-              }`}
-              onClick={() => toggleItem(item.id)}
-            >
-              <div className="flex items-start space-x-3">
-                <div className={`flex-shrink-0 mt-0.5 ${checkedItems.has(item.id) ? 'text-green-600' : 'text-gray-500'}`}>
-                  {checkedItems.has(item.id) ? <Check className="h-5 w-5" /> : item.icon}
+
+        <CardContent className="space-y-6">
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div 
+              className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-3 rounded-full transition-all duration-300"
+              style={{ width: `${totalProgress}%` }}
+            />
+          </div>
+
+          {/* MVP Core Features (Completed) */}
+          <div>
+            <h3 className="text-lg font-semibold text-emerald-700 mb-3 flex items-center">
+              <CheckCircle className="h-5 w-5 mr-2" />
+              MVP Foundation ✅ COMPLETE
+            </h3>
+            <div className="space-y-2">
+              {mvpFeatures.map((feature) => (
+                <div key={feature.id} className="flex items-start space-x-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <CheckCircle className="h-5 w-5 text-emerald-600 mt-0.5" />
+                  <div className="flex-1">
+                    <div className="font-medium text-emerald-800">{feature.title}</div>
+                    <div className="text-sm text-emerald-700">{feature.description}</div>
+                  </div>
                 </div>
-                
-                <div className="flex-1">
-                  <h3 className={`font-semibold text-sm ${checkedItems.has(item.id) ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-          
-          <div className="pt-4 border-t">
-            <Button
-              className="w-full bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600"
+          </div>
+
+          {/* Critical Gaps */}
+          <div>
+            <h3 className="text-lg font-semibold text-rose-700 mb-3 flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Critical Gaps (1 Hour to Ship)
+            </h3>
+            <div className="space-y-2">
+              {criticalGaps.map((gap) => {
+                const isCompleted = completedItems.has(gap.id);
+                return (
+                  <div 
+                    key={gap.id}
+                    className={`flex items-start space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      isCompleted 
+                        ? 'bg-emerald-50 border-emerald-200' 
+                        : 'bg-rose-50 border-rose-200 hover:bg-rose-100'
+                    }`}
+                    onClick={() => toggleItem(gap.id)}
+                  >
+                    {isCompleted ? (
+                      <CheckCircle className="h-5 w-5 text-emerald-600 mt-0.5" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-rose-500 mt-0.5" />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div className={`font-medium ${isCompleted ? 'text-emerald-800' : 'text-rose-800'}`}>
+                          {gap.title}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            gap.priority === 'CRITICAL' 
+                              ? 'bg-red-100 text-red-700' 
+                              : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {gap.priority}
+                          </span>
+                          <span className="text-xs text-gray-500">{gap.time}</span>
+                        </div>
+                      </div>
+                      <div className={`text-sm ${isCompleted ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        {gap.description}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* MVP Demo Script */}
+          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <h4 className="font-semibold text-blue-800 mb-2">🎯 MVP Demo Script (5 mins)</h4>
+            <div className="space-y-1 text-sm text-blue-700">
+              <div>1. Assessment Flow (2 mins) - "Psychological-based matching"</div>
+              <div>2. AI Results (1 min) - "Personalized readiness analysis"</div>
+              <div>3. Smart Matches (2 mins) - "Compatibility-driven connections"</div>
+              <div>4. User Interaction (30s) - "Interest/connection system"</div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="flex justify-center pt-4">
+            <Button 
               onClick={onClose}
+              className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white px-8"
             >
-              Continue Matching
+              Let's Ship This MVP! 🚀
             </Button>
           </div>
         </CardContent>
