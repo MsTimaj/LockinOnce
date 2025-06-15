@@ -8,38 +8,39 @@ import { ProfileFactory } from "./profile/profileFactory";
 export class UserStateManager {
   private static navigationInProgress = false;
 
-  // Save to both localStorage and Supabase
   static async saveUserProfile(profile: UserProfile): Promise<void> {
     try {
-      // Always save to localStorage first (immediate)
-      LocalStorageManager.saveProfile(profile);
-      console.log('Profile saved to localStorage');
+      // Clear any invalid profiles first
+      await this.clearInvalidProfiles();
 
-      // Then sync to Supabase (background) - don't await to avoid blocking UI
-      SupabaseSyncManager.syncToSupabase(profile).catch(error => {
-        console.log('Background sync to Supabase failed, but localStorage saved:', error);
-      });
+      // Sync to Supabase first to get the proper UUID
+      const updatedProfile = await SupabaseSyncManager.syncToSupabase(profile);
+      
+      // Save the updated profile (with UUID) to localStorage
+      LocalStorageManager.saveProfile(updatedProfile);
+      console.log('Profile saved with UUID:', updatedProfile.id);
     } catch (error) {
-      console.error('Failed to save user profile to localStorage:', error);
+      console.error('Failed to save user profile:', error);
+      // Fallback: save to localStorage only
+      LocalStorageManager.saveProfile(profile);
     }
   }
 
-  // Load from localStorage first, fallback to Supabase
   static async getUserProfile(): Promise<UserProfile | null> {
     try {
-      // First try localStorage (fast)
+      // Clear any invalid profiles first
+      await this.clearInvalidProfiles();
+
       const stored = LocalStorageManager.getProfile();
-      if (stored) {
-        console.log('Profile loaded from localStorage');
-        // Background sync check with Supabase (don't await)
+      if (stored && this.isValidUUID(stored.id)) {
+        console.log('Profile loaded from localStorage with valid UUID');
         SupabaseSyncManager.backgroundSyncCheck(stored.id).catch(error => {
           console.log('Background sync check failed:', error);
         });
         return stored;
       }
 
-      // If no localStorage, try to restore from Supabase
-      console.log('No local profile found, attempting to restore from Supabase');
+      console.log('No valid local profile found, attempting to restore from Supabase');
       const restored = await SupabaseSyncManager.restoreFromSupabase();
       if (restored) {
         console.log('Profile restored from Supabase');
@@ -73,7 +74,6 @@ export class UserStateManager {
     await this.saveUserProfile(profile);
   }
 
-  // CRITICAL FIX: Complete onboarding with readiness score atomically
   static async completeOnboardingWithReadinessScore(readinessScore: RelationshipReadinessScore): Promise<void> {
     if (this.navigationInProgress) {
       console.log('Navigation already in progress, skipping completion');
@@ -86,7 +86,6 @@ export class UserStateManager {
       console.log('Starting atomic onboarding completion...');
       const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
       
-      // Set both completion flag AND readiness score atomically
       profile.onboardingCompleted = true;
       profile.readinessScore = readinessScore;
       profile.lastUpdated = new Date().toISOString();
@@ -102,14 +101,12 @@ export class UserStateManager {
       console.error('Failed to complete onboarding:', error);
       throw error;
     } finally {
-      // Reset navigation lock after a delay
       setTimeout(() => {
         this.navigationInProgress = false;
       }, 1000);
     }
   }
 
-  // Legacy method - now just delegates to the atomic version
   static async markOnboardingComplete(): Promise<void> {
     console.log('WARNING: markOnboardingComplete called without readiness score - this should not happen');
     const profile = await this.getUserProfile() || ProfileFactory.createNewProfile();
@@ -136,14 +133,12 @@ export class UserStateManager {
     console.log('User data cleared - you can now test as a new user');
   }
 
-  // Reset function for testing - clears all data and forces fresh start
   static resetForTesting(): void {
     LocalStorageManager.clearData();
     this.navigationInProgress = false;
     console.log('Application reset for testing - refresh the page to start fresh');
   }
 
-  // CRITICAL FIX: Unified completion check
   static async hasCompletedOnboarding(): Promise<boolean> {
     try {
       const profile = await this.getUserProfile();
@@ -156,7 +151,6 @@ export class UserStateManager {
         overall: hasCompleted && hasReadinessScore 
       });
       
-      // BOTH conditions must be true
       return hasCompleted && hasReadinessScore;
     } catch (error) {
       console.error('Error checking onboarding completion:', error);
@@ -202,11 +196,27 @@ export class UserStateManager {
     }
   }
 
-  // Guard against multiple simultaneous navigation attempts
   static isNavigationInProgress(): boolean {
     return this.navigationInProgress;
   }
+
+  // Helper methods
+  private static isValidUUID(str: string): boolean {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(str);
+  }
+
+  private static async clearInvalidProfiles(): Promise<void> {
+    try {
+      const stored = LocalStorageManager.getProfile();
+      if (stored && !this.isValidUUID(stored.id)) {
+        console.log('Clearing invalid profile with ID:', stored.id);
+        LocalStorageManager.clearData();
+      }
+    } catch (error) {
+      console.log('Error checking for invalid profiles:', error);
+    }
+  }
 }
 
-// Re-export types for backwards compatibility
 export type { UserProfile };

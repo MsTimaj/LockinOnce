@@ -4,7 +4,7 @@ import { UserProfile } from "../types/userProfile";
 export class ProfileFactory {
   static createNewProfile(): UserProfile {
     return {
-      id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: '', // Let Supabase auto-generate the UUID
       createdAt: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
       basicInfo: {},
