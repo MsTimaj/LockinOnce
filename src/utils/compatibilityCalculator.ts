@@ -1,4 +1,3 @@
-
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
 import { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
@@ -57,24 +56,22 @@ export const calculatePersonalityCompatibility = (
 
   let score = 50;
   
-  // Check for complementary introversion/extroversion (opposites attract in this case)
   const userIsIntrovert = (user.introversion || 50) > (user.extroversion || 50);
   const matchIsIntrovert = (match.introversion || 50) > (match.extroversion || 50);
   
   if (userIsIntrovert !== matchIsIntrovert) {
-    score += 25; // Complementary types get bonus
+    score += 25;
   } else if (userIsIntrovert === matchIsIntrovert) {
-    score += 15; // Same types still work but less bonus
+    score += 15;
   }
 
-  // Check for thinking/feeling compatibility (similar is better)
   const userIsThinking = (user.thinking || 50) > (user.feeling || 50);
   const matchIsThinking = (match.thinking || 50) > (match.feeling || 50);
   
   if (userIsThinking === matchIsThinking) {
-    score += 20; // Similar decision-making styles get bonus
+    score += 20;
   } else {
-    score += 5; // Different styles can still work
+    score += 5;
   }
 
   return Math.min(score, 100);
@@ -102,14 +99,12 @@ export const calculateValuesCompatibility = (
 ): number => {
   let score = 50;
   
-  // Check relationship intent alignment - use basic check since we don't know exact properties
   if (user.relationshipIntent && match.relationshipIntent) {
-    score += 25; // Basic compatibility bonus
+    score += 25;
   }
 
-  // Check life goals alignment
   if (user.lifeGoals && match.lifeGoals) {
-    score += 20; // Basic compatibility bonus
+    score += 20;
   }
 
   return Math.min(score, 100);
@@ -121,14 +116,12 @@ export const calculateLifestyleCompatibility = (
 ): number => {
   let score = 50;
 
-  // Check lifestyle preferences
   if (user.lifestyle && match.lifestyle) {
     score += 20;
   }
 
-  // Check physical proximity preferences
   if (user.physicalProximity && match.physicalProximity) {
-    score += 15; // Basic compatibility bonus
+    score += 15;
   }
 
   return Math.min(score, 100);
@@ -144,7 +137,6 @@ export const calculateDetailedCompatibility = (
   const values = calculateValuesCompatibility(user, match);
   const lifestyle = calculateLifestyleCompatibility(user, match);
 
-  // Calculate detailed breakdown
   const emotional = Math.round((attachment * 0.6 + (user.emotionalCapacity ? 40 : 20)) * 0.7);
   const communication = Math.round((personality * 0.7 + (user.communicationStyle ? 30 : 20)));
   const lifestyleScore = lifestyle;
@@ -201,7 +193,6 @@ export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentRe
   ];
 
   return baseProfiles.map(profile => {
-    // Generate compatible assessment results based on user's profile
     const compatibleResults = generateCompatibleAssessmentResults(userProfile);
     const compatibilityScore = calculateDetailedCompatibility(userProfile, compatibleResults);
     
@@ -222,14 +213,18 @@ const generateCompatibleAssessmentResults = (userProfile: ComprehensiveAssessmen
 
   return {
     attachmentStyle: {
-      dominantStyle: compatibleAttachment,
-      description: "Shows consistent patterns of secure attachment with healthy relationship dynamics."
+      secure: compatibleAttachment === 'secure' ? 5 : 0,
+      anxious: 0,
+      avoidant: 0,
+      disorganized: 0,
+      dominantStyle: compatibleAttachment
     },
     personality: {
-      introversion: userProfile.personality?.introversion ? 40 : 80, // Complementary
+      introversion: userProfile.personality?.introversion ? 40 : 80,
       extroversion: userProfile.personality?.extroversion ? 40 : 80,
       thinking: userProfile.personality?.thinking || 60,
-      feeling: userProfile.personality?.feeling || 60
+      feeling: userProfile.personality?.feeling || 60,
+      dominantType: "Compatible Type"
     },
     birthOrder: {
       birthOrder: userProfile.birthOrder?.birthOrder === 'oldest' ? 'youngest' : 'oldest',
@@ -237,13 +232,14 @@ const generateCompatibleAssessmentResults = (userProfile: ComprehensiveAssessmen
       parentalDynamics: "supportive"
     },
     relationshipIntent: {
-      timeline: "1-2 years",
-      qualities: ["Emotional maturity", "Shared values", "Physical attraction"]
+      timeline: "1-2 years"
     },
     emotionalCapacity: {
-      selfAwareness: "80",
-      empathy: "85",
-      emotionalRegulation: "78"
+      stressManagement: "healthy_coping",
+      emotionalSupport: "natural_supporter",
+      selfAwareness: "highly_aware",
+      empathy: "highly_empathetic",
+      resilience: "strong_resilience"
     },
     attractionLayer: null,
     physicalProximity: null,

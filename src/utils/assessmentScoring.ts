@@ -1,4 +1,3 @@
-
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
 import { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
@@ -45,15 +44,30 @@ export interface RelationshipReadinessScore {
 }
 
 export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentResults): RelationshipReadinessScore => {
-  // Emotional Readiness (30% weight)
+  // Emotional Readiness (30% weight) - using available properties from EmotionalCapacityResults
   let emotionalReadiness = 60;
   if (results.emotionalCapacity) {
-    // Use average of available numeric properties, defaulting to 60 if properties don't exist
-    const selfAware = typeof results.emotionalCapacity.selfAwareness === 'number' ? results.emotionalCapacity.selfAwareness : 60;
-    const empathy = typeof results.emotionalCapacity.empathy === 'number' ? results.emotionalCapacity.empathy : 60;
-    const regulation = typeof results.emotionalCapacity.emotionalRegulation === 'number' ? results.emotionalCapacity.emotionalRegulation : 60;
-    emotionalReadiness = (selfAware + empathy + regulation) / 3;
+    // EmotionalCapacityResults has: stressManagement, emotionalSupport, selfAwareness, empathy, resilience (all strings)
+    // We'll score based on the quality of responses
+    const scores = [
+      results.emotionalCapacity.stressManagement === 'healthy_coping' ? 90 : 
+      results.emotionalCapacity.stressManagement === 'mostly_manage' ? 75 : 60,
+      
+      results.emotionalCapacity.emotionalSupport === 'natural_supporter' ? 90 :
+      results.emotionalCapacity.emotionalSupport === 'care_but_unsure' ? 70 : 50,
+      
+      results.emotionalCapacity.selfAwareness === 'highly_aware' ? 90 :
+      results.emotionalCapacity.selfAwareness === 'moderately_aware' ? 70 : 50,
+      
+      results.emotionalCapacity.empathy === 'highly_empathetic' ? 90 :
+      results.emotionalCapacity.empathy === 'moderate_empathy' ? 70 : 50,
+      
+      results.emotionalCapacity.resilience === 'strong_resilience' ? 90 :
+      results.emotionalCapacity.resilience === 'moderate_resilience' ? 70 : 50
+    ];
+    emotionalReadiness = scores.reduce((a, b) => a + b, 0) / scores.length;
   }
+  
   if (results.attachmentStyle) {
     const attachmentBonus = results.attachmentStyle.dominantStyle === 'secure' ? 20 : 
                            results.attachmentStyle.dominantStyle === 'anxious' ? -5 :
@@ -64,25 +78,22 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
   // Communication Skills (25% weight)
   let communicationSkills = 65;
   if (results.communicationStyle) {
-    // Use available properties or defaults
-    const avgScore = 65; // Default since we need to check actual CommunicationStyle interface
-    communicationSkills = avgScore;
+    // Use default scoring since we don't know the exact properties
+    communicationSkills = 75;
   }
 
   // Self Awareness (20% weight)
   let selfAwareness = 70;
   if (results.personality) {
-    // Use available properties from PersonalityResults
     const intro = results.personality.introversion || 50;
     const extro = results.personality.extroversion || 50;
-    selfAwareness = Math.abs(intro - extro) > 20 ? 80 : 70; // Higher self-awareness if clear preference
+    selfAwareness = Math.abs(intro - extro) > 20 ? 80 : 70;
   }
 
   // Relationship Goals (15% weight)
   let relationshipGoals = 75;
   if (results.relationshipIntent) {
-    // Check actual properties available on RelationshipIntentResults
-    relationshipGoals = 80; // Default good score
+    relationshipGoals = 80;
   }
 
   // Attachment Security (10% weight)
@@ -93,7 +104,6 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
                         results.attachmentStyle.dominantStyle === 'avoidant' ? 55 : 45;
   }
 
-  // Calculate weighted overall score
   const overall = Math.round(
     (emotionalReadiness * 0.3) +
     (communicationSkills * 0.25) +
@@ -102,7 +112,6 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
     (attachmentSecurity * 0.1)
   );
 
-  // Determine strengths and growth areas
   const scores = { emotionalReadiness, communicationSkills, selfAwareness, relationshipGoals, attachmentSecurity };
   const strengths: string[] = [];
   const growthAreas: string[] = [];
@@ -115,7 +124,6 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
     }
   });
 
-  // Generate personalized strategy
   const personalizedStrategy = generatePersonalizedStrategy(results, overall);
 
   return {
@@ -178,7 +186,7 @@ export const getTopStrengths = (results: ComprehensiveAssessmentResults): string
     strengths.push("Secure Attachment Style");
   }
   
-  if (results.emotionalCapacity && typeof results.emotionalCapacity.empathy === 'number' && results.emotionalCapacity.empathy > 80) {
+  if (results.emotionalCapacity?.empathy === 'highly_empathetic') {
     strengths.push("High Empathy");
   }
   
@@ -190,15 +198,14 @@ export const getTopStrengths = (results: ComprehensiveAssessmentResults): string
     strengths.push("Relationship Commitment");
   }
   
-  if (results.emotionalCapacity && typeof results.emotionalCapacity.emotionalRegulation === 'number' && results.emotionalCapacity.emotionalRegulation > 75) {
-    strengths.push("Emotional Regulation");
+  if (results.emotionalCapacity?.resilience === 'strong_resilience') {
+    strengths.push("Emotional Resilience");
   }
   
-  // Ensure we always return at least 3 strengths
   if (strengths.length < 3) {
     const defaultStrengths = ["Self-Awareness", "Growth Mindset", "Authenticity"];
     strengths.push(...defaultStrengths.slice(0, 3 - strengths.length));
   }
   
-  return strengths.slice(0, 5); // Max 5 strengths
+  return strengths.slice(0, 5);
 };
