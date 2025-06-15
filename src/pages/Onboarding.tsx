@@ -5,9 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
   const totalSteps = 7;
   const navigate = useNavigate();
 
@@ -23,6 +25,12 @@ const Onboarding = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleAttachmentComplete = (results: AttachmentStyleResults) => {
+    setAttachmentResults(results);
+    console.log('Attachment Style Results:', results);
+    nextStep();
   };
 
   const renderStep = () => {
@@ -46,19 +54,7 @@ const Onboarding = () => {
           </div>
         );
       case 2:
-        return (
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Attachment Style Assessment
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Understanding how you connect emotionally is the foundation of lasting relationships.
-            </p>
-            <div className="text-left space-y-4">
-              <p className="text-accent font-medium">Step 2 of 7 - Coming next...</p>
-            </div>
-          </div>
-        );
+        return <AttachmentStyleAssessment onComplete={handleAttachmentComplete} />;
       case 3:
         return (
           <div className="text-center space-y-6">
@@ -68,6 +64,12 @@ const Onboarding = () => {
             <p className="text-lg text-muted-foreground">
               Your position in your family shapes how you relate to others.
             </p>
+            {attachmentResults && (
+              <div className="card-glass p-4 text-left">
+                <p className="text-sm text-muted-foreground mb-2">Your attachment style result:</p>
+                <p className="text-primary font-medium capitalize">{attachmentResults.dominantStyle}</p>
+              </div>
+            )}
             <div className="text-left space-y-4">
               <p className="text-accent font-medium">Step 3 of 7 - Coming next...</p>
             </div>
@@ -117,24 +119,26 @@ const Onboarding = () => {
         </Card>
 
         {/* Navigation */}
-        <div className="flex justify-between">
-          <Button 
-            variant="outline" 
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className="px-8"
-          >
-            Previous
-          </Button>
-          <Button 
-            onClick={nextStep}
-            disabled={currentStep === totalSteps}
-            className="btn-gradient px-8"
-          >
-            {currentStep === totalSteps ? 'Complete' : 'Continue'}
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
+        {currentStep !== 2 && (
+          <div className="flex justify-between">
+            <Button 
+              variant="outline" 
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              className="px-8"
+            >
+              Previous
+            </Button>
+            <Button 
+              onClick={nextStep}
+              disabled={currentStep === totalSteps}
+              className="btn-gradient px-8"
+            >
+              {currentStep === totalSteps ? 'Complete' : 'Continue'}
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
