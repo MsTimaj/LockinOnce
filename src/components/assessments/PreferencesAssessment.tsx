@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PersonalInfoSection from "./preferences/PersonalInfoSection";
@@ -113,6 +113,16 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
   // Simplified validation - only require the essential fields
   const isValid = genderPreference && careerAmbition && wantsChildren !== null;
 
+  // Debug logging to help identify the issue
+  useEffect(() => {
+    console.log('Validation Debug:', {
+      genderPreference,
+      careerAmbition, 
+      wantsChildren,
+      isValid
+    });
+  }, [genderPreference, careerAmbition, wantsChildren, isValid]);
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -160,7 +170,10 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
 
         <div className="border-t pt-6">
           <div className="mb-4 text-sm text-muted-foreground">
-            * Required fields to continue
+            * Required fields: Gender preference, Career ambition, Children preference
+          </div>
+          <div className="mb-2 text-xs text-muted-foreground">
+            Debug: Gender={genderPreference ? '✓' : '✗'} Career={careerAmbition ? '✓' : '✗'} Children={wantsChildren !== null ? '✓' : '✗'}
           </div>
           <Button 
             onClick={handleSubmit} 
