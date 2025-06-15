@@ -14,32 +14,8 @@ const AIResultsSummary = () => {
   const [currentInsight, setCurrentInsight] = useState(0);
   const [chatTopic, setChatTopic] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const navigate = useNavigate();
-
-  // Get real user data
-  const userProfile = UserStateManager.getUserProfile();
   const [analysis, setAnalysis] = useState<any>(null);
-
-  useEffect(() => {
-    // Check if user has completed assessments
-    if (!userProfile || !UserStateManager.isAssessmentComplete()) {
-      navigate('/onboarding');
-      return;
-    }
-
-    // Calculate real analysis
-    const readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
-    const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
-    const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
-    const topStrengths = getTopStrengths(userProfile.assessmentResults);
-
-    setAnalysis({
-      readinessScore,
-      personalityType,
-      dominantStyle,
-      topStrengths
-    });
-  }, [userProfile, navigate]);
+  const navigate = useNavigate();
 
   const insights = [
     "Analyzing your attachment style patterns...",
@@ -48,6 +24,39 @@ const AIResultsSummary = () => {
     "Generating your unique dating strategy...",
     "Preparing your personalized matches..."
   ];
+
+  useEffect(() => {
+    const initializeAnalysis = async () => {
+      try {
+        // Check if user has completed assessments
+        const userProfile = await UserStateManager.getUserProfile();
+        const isComplete = await UserStateManager.isAssessmentComplete();
+        
+        if (!userProfile || !isComplete) {
+          navigate('/onboarding');
+          return;
+        }
+
+        // Calculate real analysis
+        const readinessScore = calculateRelationshipReadiness(userProfile.assessmentResults);
+        const personalityType = getDominantPersonalityType(userProfile.assessmentResults.personality);
+        const dominantStyle = userProfile.assessmentResults.attachmentStyle?.dominantStyle || 'secure';
+        const topStrengths = getTopStrengths(userProfile.assessmentResults);
+
+        setAnalysis({
+          readinessScore,
+          personalityType,
+          dominantStyle,
+          topStrengths
+        });
+      } catch (error) {
+        console.error('Failed to initialize analysis:', error);
+        navigate('/onboarding');
+      }
+    };
+
+    initializeAnalysis();
+  }, [navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -108,20 +108,76 @@ const Onboarding = () => {
   };
 
   const assessments = [
-    { component: WelcomePhilosophyAssessment, title: "Welcome" },
-    { component: AttachmentStyleAssessment, title: "Attachment Style" },
-    { component: PersonalityAssessment, title: "Personality" },
-    { component: BirthOrderAssessment, title: "Birth Order" },
-    { component: RelationshipIntentAssessment, title: "Relationship Intent" },
-    { component: EmotionalCapacityAssessment, title: "Emotional Capacity" },
-    { component: AttractionLayerAssessment, title: "Attraction Layer" },
-    { component: PhysicalProximityAssessment, title: "Physical Proximity" },
-    { component: CommunicationStyleAssessment, title: "Communication Style" },
-    { component: LifeGoalsAssessment, title: "Life Goals" },
-    { component: ValuesAssessment, title: "Values" },
-    { component: LifestyleCompatibilityAssessment, title: "Lifestyle" },
-    { component: LoveLanguagesAssessment, title: "Love Languages" },
-    { component: FinancialValuesAssessment, title: "Financial Values" }
+    { 
+      component: WelcomePhilosophyAssessment, 
+      title: "Welcome",
+      onComplete: () => handleStepComplete(null)
+    },
+    { 
+      component: AttachmentStyleAssessment, 
+      title: "Attachment Style",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: PersonalityAssessment, 
+      title: "Personality",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: BirthOrderAssessment, 
+      title: "Birth Order",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: RelationshipIntentAssessment, 
+      title: "Relationship Intent",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: EmotionalCapacityAssessment, 
+      title: "Emotional Capacity",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: AttractionLayerAssessment, 
+      title: "Attraction Layer",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: PhysicalProximityAssessment, 
+      title: "Physical Proximity",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: CommunicationStyleAssessment, 
+      title: "Communication Style",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: LifeGoalsAssessment, 
+      title: "Life Goals",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: ValuesAssessment, 
+      title: "Values",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: LifestyleCompatibilityAssessment, 
+      title: "Lifestyle",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: LoveLanguagesAssessment, 
+      title: "Love Languages",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: FinancialValuesAssessment, 
+      title: "Financial Values",
+      onComplete: handleStepComplete
+    }
   ];
 
   if (isLoading) {
@@ -136,8 +192,9 @@ const Onboarding = () => {
   }
 
   const CurrentAssessment = assessments[currentStep]?.component;
+  const currentAssessmentData = assessments[currentStep];
 
-  if (!CurrentAssessment) {
+  if (!CurrentAssessment || !currentAssessmentData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background flex items-center justify-center">
         <div className="text-center">
@@ -168,7 +225,7 @@ const Onboarding = () => {
             </div>
           </div>
 
-          <CurrentAssessment onComplete={handleStepComplete} />
+          <CurrentAssessment onComplete={currentAssessmentData.onComplete} />
         </div>
       </div>
     </div>
