@@ -1,288 +1,175 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
-import { calculateRelationshipReadiness } from "@/utils/assessmentScoring";
-
-// Phase 1 Assessments
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
-import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
-import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
-import PersonalityAssessment, { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
-import RelationshipIntentAssessment, { RelationshipIntentResults } from "@/components/assessments/RelationshipIntentAssessment";
-import EmotionalCapacityAssessment, { EmotionalCapacityResults } from "@/components/assessments/EmotionalCapacityAssessment";
-import AttractionLayerAssessment, { AttractionLayerResults } from "@/components/assessments/AttractionLayerAssessment";
-import PhysicalProximityAssessment, { PhysicalProximityResults } from "@/components/assessments/PhysicalProximityAssessment";
-import CommunicationStyleAssessment, { CommunicationStyleResults } from "@/components/assessments/CommunicationStyleAssessment";
-import LifeGoalsAssessment, { LifeGoalsResults } from "@/components/assessments/LifeGoalsAssessment";
-
-// Phase 2 Assessments
-import ProximityIntimacyAssessment from "@/components/assessments/ProximityIntimacyAssessment";
-import ValuesAssessment, { ValuesResults } from "@/components/assessments/ValuesAssessment";
-import LifestyleCompatibilityAssessment, { LifestyleCompatibilityResults } from "@/components/assessments/LifestyleCompatibilityAssessment";
-import LoveLanguagesAssessment, { LoveLanguagesResults } from "@/components/assessments/LoveLanguagesAssessment";
-import FinancialValuesAssessment, { FinancialValuesResults } from "@/components/assessments/FinancialValuesAssessment";
+import AttachmentStyleAssessment from "@/components/assessments/AttachmentStyleAssessment";
+import PersonalityAssessment from "@/components/assessments/PersonalityAssessment";
+import BirthOrderAssessment from "@/components/assessments/BirthOrderAssessment";
+import RelationshipIntentAssessment from "@/components/assessments/RelationshipIntentAssessment";
+import EmotionalCapacityAssessment from "@/components/assessments/EmotionalCapacityAssessment";
+import AttractionLayerAssessment from "@/components/assessments/AttractionLayerAssessment";
+import PhysicalProximityAssessment from "@/components/assessments/PhysicalProximityAssessment";
+import CommunicationStyleAssessment from "@/components/assessments/CommunicationStyleAssessment";
+import LifeGoalsAssessment from "@/components/assessments/LifeGoalsAssessment";
+import ValuesAssessment from "@/components/assessments/ValuesAssessment";
+import LifestyleCompatibilityAssessment from "@/components/assessments/LifestyleCompatibilityAssessment";
+import LoveLanguagesAssessment from "@/components/assessments/LoveLanguagesAssessment";
+import FinancialValuesAssessment from "@/components/assessments/FinancialValuesAssessment";
+import { calculateRelationshipReadiness } from "@/utils/assessmentScoring";
+import { useNavigate } from "react-router-dom";
 
 const Onboarding = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [currentPhase, setCurrentPhase] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Load existing progress on component mount
   useEffect(() => {
-    const progress = UserStateManager.getOnboardingProgress();
-    setCurrentPhase(progress.phase);
-    setCurrentStep(progress.step);
-  }, []);
+    const initializeOnboarding = async () => {
+      try {
+        const hasCompleted = await UserStateManager.hasCompletedOnboarding();
+        if (hasCompleted) {
+          navigate('/dashboard');
+          return;
+        }
 
-  const phase1Steps = 10;
-  const phase2Steps = 5;
-  const totalSteps = currentPhase === 1 ? phase1Steps : phase2Steps;
+        const progress = await UserStateManager.getOnboardingProgress();
+        // Convert phase/step to linear step index
+        const stepIndex = (progress.phase - 1) * 5 + (progress.step - 1);
+        setCurrentStep(stepIndex);
+      } catch (error) {
+        console.error('Failed to initialize onboarding:', error);
+        setCurrentStep(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const progress = (currentStep / totalSteps) * 100;
+    initializeOnboarding();
+  }, [navigate]);
 
-  const nextStep = () => {
-    if (currentPhase === 1 && currentStep < phase1Steps) {
-      const newStep = currentStep + 1;
-      setCurrentStep(newStep);
-      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
-    } else if (currentPhase === 1 && currentStep === phase1Steps) {
-      // Transition to Phase 2
-      setCurrentPhase(2);
-      setCurrentStep(1);
-      UserStateManager.updateOnboardingProgress(2, 1);
-    } else if (currentPhase === 2 && currentStep < phase2Steps) {
-      const newStep = currentStep + 1;
-      setCurrentStep(newStep);
-      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
-    } else {
-      // Complete onboarding and calculate final scores
-      completeOnboarding();
+  const handleStepComplete = async (results: any) => {
+    try {
+      console.log(`Step ${currentStep} completed with results:`, results);
+      
+      // Save the assessment result based on current step
+      const assessmentMap = [
+        null, // Welcome step
+        'attachmentStyle',
+        'personality', 
+        'birthOrder',
+        'relationshipIntent',
+        'emotionalCapacity',
+        'attractionLayer',
+        'physicalProximity',
+        'communicationStyle',
+        'lifeGoals',
+        'values',
+        'lifestyle',
+        'loveLanguages',
+        'financialValues'
+      ] as const;
+
+      const assessmentType = assessmentMap[currentStep + 1];
+      if (assessmentType) {
+        await UserStateManager.updateAssessmentResult(assessmentType, results);
+      }
+
+      const nextStep = currentStep + 1;
+      
+      // Update progress
+      const phase = Math.floor(nextStep / 5) + 1;
+      const step = (nextStep % 5) + 1;
+      await UserStateManager.updateOnboardingProgress(phase, step);
+
+      if (nextStep >= assessments.length) {
+        // Complete onboarding and calculate readiness score
+        await UserStateManager.markOnboardingComplete();
+        
+        const profile = await UserStateManager.getUserProfile();
+        if (profile) {
+          const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
+          await UserStateManager.saveReadinessScore(readinessScore);
+        }
+        
+        navigate('/ai-results-summary');
+      } else {
+        setCurrentStep(nextStep);
+      }
+    } catch (error) {
+      console.error('Failed to complete step:', error);
+      // Continue with UI update even if save fails
+      const nextStep = currentStep + 1;
+      if (nextStep >= assessments.length) {
+        navigate('/ai-results-summary');
+      } else {
+        setCurrentStep(nextStep);
+      }
     }
   };
 
-  const completeOnboarding = () => {
-    const profile = UserStateManager.getUserProfile();
-    if (profile) {
-      const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
-      UserStateManager.saveReadinessScore(readinessScore);
-      UserStateManager.markOnboardingComplete();
-    }
-    navigate('/ai-results');
-  };
+  const assessments = [
+    { component: WelcomePhilosophyAssessment, title: "Welcome" },
+    { component: AttachmentStyleAssessment, title: "Attachment Style" },
+    { component: PersonalityAssessment, title: "Personality" },
+    { component: BirthOrderAssessment, title: "Birth Order" },
+    { component: RelationshipIntentAssessment, title: "Relationship Intent" },
+    { component: EmotionalCapacityAssessment, title: "Emotional Capacity" },
+    { component: AttractionLayerAssessment, title: "Attraction Layer" },
+    { component: PhysicalProximityAssessment, title: "Physical Proximity" },
+    { component: CommunicationStyleAssessment, title: "Communication Style" },
+    { component: LifeGoalsAssessment, title: "Life Goals" },
+    { component: ValuesAssessment, title: "Values" },
+    { component: LifestyleCompatibilityAssessment, title: "Lifestyle" },
+    { component: LoveLanguagesAssessment, title: "Love Languages" },
+    { component: FinancialValuesAssessment, title: "Financial Values" }
+  ];
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      const newStep = currentStep - 1;
-      setCurrentStep(newStep);
-      UserStateManager.updateOnboardingProgress(currentPhase, newStep);
-    } else if (currentPhase === 2) {
-      // Go back to Phase 1
-      setCurrentPhase(1);
-      setCurrentStep(phase1Steps);
-      UserStateManager.updateOnboardingProgress(1, phase1Steps);
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your progress...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleWelcomeComplete = () => {
-    nextStep();
-  };
+  const CurrentAssessment = assessments[currentStep]?.component;
 
-  // Phase 1 Handlers
-  const handleAttachmentComplete = (results: AttachmentStyleResults) => {
-    UserStateManager.updateAssessmentResult('attachmentStyle', results);
-    console.log('Attachment Style Results:', results);
-    nextStep();
-  };
-
-  const handleBirthOrderComplete = (results: BirthOrderResults) => {
-    UserStateManager.updateAssessmentResult('birthOrder', results);
-    console.log('Birth Order Results:', results);
-    nextStep();
-  };
-
-  const handlePersonalityComplete = (results: PersonalityResults) => {
-    UserStateManager.updateAssessmentResult('personality', results);
-    console.log('Personality Results:', results);
-    nextStep();
-  };
-
-  const handleRelationshipIntentComplete = (results: RelationshipIntentResults) => {
-    UserStateManager.updateAssessmentResult('relationshipIntent', results);
-    console.log('Relationship Intent Results:', results);
-    nextStep();
-  };
-
-  const handleEmotionalCapacityComplete = (results: EmotionalCapacityResults) => {
-    UserStateManager.updateAssessmentResult('emotionalCapacity', results);
-    console.log('Emotional Capacity Results:', results);
-    nextStep();
-  };
-
-  const handleAttractionLayerComplete = (results: AttractionLayerResults) => {
-    UserStateManager.updateAssessmentResult('attractionLayer', results);
-    console.log('Attraction Layer Results:', results);
-    nextStep();
-  };
-
-  const handlePhysicalProximityComplete = (results: PhysicalProximityResults) => {
-    UserStateManager.updateAssessmentResult('physicalProximity', results);
-    console.log('Physical Proximity Results:', results);
-    nextStep();
-  };
-
-  const handleCommunicationStyleComplete = (results: CommunicationStyleResults) => {
-    UserStateManager.updateAssessmentResult('communicationStyle', results);
-    console.log('Communication Style Results:', results);
-    nextStep();
-  };
-
-  const handleLifeGoalsComplete = (results: LifeGoalsResults) => {
-    UserStateManager.updateAssessmentResult('lifeGoals', results);
-    console.log('Life Goals Results:', results);
-    nextStep();
-  };
-
-  // Phase 2 Handlers
-  const handleProximityIntimacyComplete = () => {
-    console.log('Proximity Intimacy Assessment Complete');
-    nextStep();
-  };
-
-  const handleValuesComplete = (results: ValuesResults) => {
-    UserStateManager.updateAssessmentResult('values', results);
-    console.log('Values Results:', results);
-    nextStep();
-  };
-
-  const handleLifestyleComplete = (results: LifestyleCompatibilityResults) => {
-    UserStateManager.updateAssessmentResult('lifestyle', results);
-    console.log('Lifestyle Compatibility Results:', results);
-    nextStep();
-  };
-
-  const handleLoveLanguagesComplete = (results: LoveLanguagesResults) => {
-    UserStateManager.updateAssessmentResult('loveLanguages', results);
-    console.log('Love Languages Results:', results);
-    nextStep();
-  };
-
-  const handleFinancialValuesComplete = (results: FinancialValuesResults) => {
-    UserStateManager.updateAssessmentResult('financialValues', results);
-    console.log('Financial Values Results:', results);
-    nextStep();
-  };
-
-  const renderPhase1Step = () => {
-    switch (currentStep) {
-      case 1:
-        return <WelcomePhilosophyAssessment onComplete={handleWelcomeComplete} />;
-      case 2:
-        return <AttachmentStyleAssessment onComplete={handleAttachmentComplete} />;
-      case 3:
-        return <BirthOrderAssessment onComplete={handleBirthOrderComplete} />;
-      case 4:
-        return <PersonalityAssessment onComplete={handlePersonalityComplete} />;
-      case 5:
-        return <RelationshipIntentAssessment onComplete={handleRelationshipIntentComplete} />;
-      case 6:
-        return <EmotionalCapacityAssessment onComplete={handleEmotionalCapacityComplete} />;
-      case 7:
-        return <AttractionLayerAssessment onComplete={handleAttractionLayerComplete} />;
-      case 8:
-        return <PhysicalProximityAssessment onComplete={handlePhysicalProximityComplete} />;
-      case 9:
-        return <CommunicationStyleAssessment onComplete={handleCommunicationStyleComplete} />;
-      case 10:
-        return <LifeGoalsAssessment onComplete={handleLifeGoalsComplete} />;
-      default:
-        return null;
-    }
-  };
-
-  const renderPhase2Step = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Phase 2: Deep Compatibility Suite
-            </h2>
-            <div className="card-glass p-6">
-              <p className="text-lg text-muted-foreground mb-4">
-                Congratulations on completing Phase 1! You've shown serious commitment to finding lasting love.
-              </p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Phase 2 takes 20-25 minutes and unlocks enhanced matching capabilities based on deeper compatibility factors.
-              </p>
-              <div className="space-y-2 text-left">
-                <p className="text-xs text-muted-foreground">✓ Advanced intimacy and proximity preferences</p>
-                <p className="text-xs text-muted-foreground">✓ Core values and lifestyle compatibility</p>
-                <p className="text-xs text-muted-foreground">✓ Love languages and financial alignment</p>
-                <p className="text-xs text-muted-foreground">✓ Enhanced match quality and precision</p>
-              </div>
-            </div>
-            <Button onClick={nextStep} className="btn-gradient px-8">
-              Continue to Phase 2
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        );
-      case 2:
-        return <ProximityIntimacyAssessment onComplete={handleProximityIntimacyComplete} />;
-      case 3:
-        return <ValuesAssessment onComplete={handleValuesComplete} />;
-      case 4:
-        return <LifestyleCompatibilityAssessment onComplete={handleLifestyleComplete} />;
-      case 5:
-        return <LoveLanguagesAssessment onComplete={handleLoveLanguagesComplete} />;
-      case 6:
-        return <FinancialValuesAssessment onComplete={handleFinancialValuesComplete} />;
-      default:
-        return null;
-    }
-  };
-
-  const renderCurrentStep = () => {
-    if (currentPhase === 1) {
-      return renderPhase1Step();
-    } else {
-      return renderPhase2Step();
-    }
-  };
+  if (!CurrentAssessment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Assessment not found</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 px-6 py-8">
-      {/* Header with Progress */}
-      <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => (currentStep === 1 && currentPhase === 1) ? navigate('/') : prevStep()}
-            className="p-3 rounded-xl"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1 mx-4">
-            <Progress value={progress} className="h-2" />
-            <p className="text-sm text-muted-foreground text-center mt-2">
-              Phase {currentPhase}: Step {currentStep} of {totalSteps}
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h1 className="text-sm font-medium text-muted-foreground">
+                Step {currentStep + 1} of {assessments.length}
+              </h1>
+              <span className="text-sm text-muted-foreground">
+                {Math.round(((currentStep + 1) / assessments.length) * 100)}%
+              </span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${((currentStep + 1) / assessments.length) * 100}%` }}
+              />
+            </div>
           </div>
-          <div className="w-12" /> {/* Spacer for balance */}
-        </div>
 
-        {/* Content Card */}
-        <Card className="card-glass p-8 mb-8">
-          <CardContent className="pt-0">
-            {renderCurrentStep()}
-          </CardContent>
-        </Card>
+          <CurrentAssessment onComplete={handleStepComplete} />
+        </div>
       </div>
     </div>
   );
