@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,12 +8,14 @@ import { useNavigate } from "react-router-dom";
 import AttachmentStyleAssessment, { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import BirthOrderAssessment, { BirthOrderResults } from "@/components/assessments/BirthOrderAssessment";
 import ValuesAssessment, { ValuesResults } from "@/components/assessments/ValuesAssessment";
+import ProximityIntimacyAssessment, { ProximityIntimacyResults } from "@/components/assessments/ProximityIntimacyAssessment";
 
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [attachmentResults, setAttachmentResults] = useState<AttachmentStyleResults | null>(null);
   const [birthOrderResults, setBirthOrderResults] = useState<BirthOrderResults | null>(null);
   const [valuesResults, setValuesResults] = useState<ValuesResults | null>(null);
+  const [proximityResults, setProximityResults] = useState<ProximityIntimacyResults | null>(null);
   const totalSteps = 7;
   const navigate = useNavigate();
 
@@ -48,6 +51,12 @@ const Onboarding = () => {
     nextStep();
   };
 
+  const handleProximityComplete = (results: ProximityIntimacyResults) => {
+    setProximityResults(results);
+    console.log('Proximity & Intimacy Results:', results);
+    nextStep();
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -60,6 +69,15 @@ const Onboarding = () => {
               Let's create your profile based on proven relationship science. 
               This will take about 8-10 minutes and help us find your most compatible matches.
             </p>
+            <div className="card-glass p-6 border-l-4 border-accent">
+              <p className="text-accent font-medium mb-2">
+                For Serious Relationships Only
+              </p>
+              <p className="text-sm text-muted-foreground">
+                LockInOnce is designed exclusively for people seeking deep, lasting love. 
+                No casual dating - we focus on true compatibility for long-term partnerships.
+              </p>
+            </div>
             <div className="card-glass p-6">
               <p className="text-primary font-medium">
                 "Deep compatibility isn't about finding someone identical to you—
@@ -75,13 +93,15 @@ const Onboarding = () => {
       case 4:
         return <ValuesAssessment onComplete={handleValuesComplete} />;
       case 5:
+        return <ProximityIntimacyAssessment onComplete={handleProximityComplete} />;
+      case 6:
         return (
           <div className="text-center space-y-6">
             <h2 className="text-3xl font-playfair font-bold text-foreground">
-              Your Profile Summary
+              Your Compatibility Profile
             </h2>
             <p className="text-lg text-muted-foreground">
-              Here's what we've learned about you so far.
+              Here's your complete relationship compatibility profile.
             </p>
             <div className="space-y-4">
               {attachmentResults && (
@@ -102,9 +122,15 @@ const Onboarding = () => {
                   <p className="text-primary font-medium">{valuesResults.coreValues.length} selected</p>
                 </div>
               )}
+              {proximityResults && (
+                <div className="card-glass p-4 text-left">
+                  <p className="text-sm text-muted-foreground mb-2">Intimacy Style:</p>
+                  <p className="text-primary font-medium capitalize">{proximityResults.emotionalIntimacy.replace('_', ' ')}</p>
+                </div>
+              )}
             </div>
             <div className="text-left space-y-4">
-              <p className="text-accent font-medium">Step 5 of 7 - Coming next...</p>
+              <p className="text-accent font-medium">Step 6 of 7 - Almost done!</p>
             </div>
           </div>
         );
@@ -152,7 +178,7 @@ const Onboarding = () => {
         </Card>
 
         {/* Navigation */}
-        {currentStep !== 2 && currentStep !== 3 && currentStep !== 4 && (
+        {currentStep !== 2 && currentStep !== 3 && currentStep !== 4 && currentStep !== 5 && (
           <div className="flex justify-between">
             <Button 
               variant="outline" 
