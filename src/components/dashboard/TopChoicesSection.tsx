@@ -19,6 +19,12 @@ const TopChoicesSection = ({
   getScoreColor, 
   getScoreBackground 
 }: TopChoicesSectionProps) => {
+  const handleConnectClick = (e: React.MouseEvent, matchId: string) => {
+    e.stopPropagation();
+    console.log('Connect button clicked for match:', matchId);
+    onConnect(matchId);
+  };
+
   return (
     <div className="mb-8">
       <div className="flex items-center space-x-2 mb-6">
@@ -71,17 +77,35 @@ const TopChoicesSection = ({
                       <span>👨‍👩‍👧‍👦 {match.compatibilityScore.birthOrder}%</span>
                     </div>
                     
-                    <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white shadow-md"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onConnect(match.id);
-                      }}
-                    >
-                      <MessageCircle className="h-3 w-3 mr-1" />
-                      Connect
-                    </Button>
+                    {match.connectionStatus === 'interested' ? (
+                      <Button 
+                        size="sm"
+                        variant="outline"
+                        className="bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                        onClick={(e) => handleConnectClick(e, match.id)}
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        Interested ✓
+                      </Button>
+                    ) : match.connectionStatus === 'mutual' ? (
+                      <Button 
+                        size="sm"
+                        className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white shadow-md"
+                        onClick={(e) => handleConnectClick(e, match.id)}
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        Mutual Match!
+                      </Button>
+                    ) : (
+                      <Button 
+                        size="sm"
+                        className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white shadow-md"
+                        onClick={(e) => handleConnectClick(e, match.id)}
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        Connect
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

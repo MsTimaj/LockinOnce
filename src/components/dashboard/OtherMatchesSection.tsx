@@ -21,6 +21,12 @@ const OtherMatchesSection = ({
 }: OtherMatchesSectionProps) => {
   if (otherMatches.length === 0) return null;
 
+  const handleViewClick = (e: React.MouseEvent, match: MatchProfile) => {
+    e.stopPropagation();
+    console.log('View button clicked for match:', match.id);
+    onMatchClick(match);
+  };
+
   return (
     <div className="mb-8">
       <div className="flex items-center space-x-2 mb-6">
@@ -77,10 +83,7 @@ const OtherMatchesSection = ({
                       className={`text-xs ${!connectedMatches.has(match.id) 
                         ? "bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white" 
                         : ""}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onMatchClick(match);
-                      }}
+                      onClick={(e) => handleViewClick(e, match)}
                     >
                       <MessageCircle className="h-3 w-3 mr-1" />
                       {connectedMatches.has(match.id) ? "View" : "Connect"}

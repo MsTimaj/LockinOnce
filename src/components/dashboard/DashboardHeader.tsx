@@ -1,6 +1,7 @@
 
 import { Bell, Settings, CheckSquare, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardHeaderProps {
   onShowChecklist?: () => void;
@@ -8,6 +9,17 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHeaderProps) => {
+  const navigate = useNavigate();
+
+  const handleSettingsClick = () => {
+    navigate('/profile');
+  };
+
+  const handleNotificationClick = () => {
+    // For now, show a simple alert - can be expanded later
+    alert('Notifications feature coming soon!');
+  };
+
   return (
     <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
       <div className="max-w-md mx-auto px-4 py-4">
@@ -32,20 +44,24 @@ const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHead
               </Button>
             )}
             
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onShowChecklist}
-              className="h-10 w-10 p-0 rounded-full hover:bg-rose-50"
-              title="Profile Updates"
-            >
-              <CheckSquare className="h-5 w-5 text-rose-500" />
-            </Button>
+            {onShowChecklist && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onShowChecklist}
+                className="h-10 w-10 p-0 rounded-full hover:bg-rose-50"
+                title="Profile Updates"
+              >
+                <CheckSquare className="h-5 w-5 text-rose-500" />
+              </Button>
+            )}
             
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleNotificationClick}
               className="h-10 w-10 p-0 rounded-full hover:bg-gray-100 relative"
+              title="Notifications"
             >
               <Bell className="h-5 w-5 text-gray-600" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full"></div>
@@ -54,7 +70,9 @@ const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHead
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleSettingsClick}
               className="h-10 w-10 p-0 rounded-full hover:bg-gray-100"
+              title="Settings"
             >
               <Settings className="h-5 w-5 text-gray-600" />
             </Button>
