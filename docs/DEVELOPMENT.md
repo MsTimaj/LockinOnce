@@ -1,99 +1,63 @@
 
-# Development Guide
+# LockInOnce MVP Development Guide
 
-## 🚧 Development Status & Roadmap
+## 🎯 MVP Development Status & Focus
 
-### Current Implementation ✅
+### Current MVP Implementation ✅
 
-#### Phase 1 Core Onboarding Complete
-- Welcome & Philosophy introduction
-- Attachment Style Assessment
-- Birth Order & Family Dynamics Assessment
-- Personality Assessment (I/E + T/F)
-- Relationship Intent Assessment
-- Emotional Capacity Assessment
-- Attraction Layer Assessment
-- Physical Proximity Assessment
-- Communication Style Assessment
-- Life Goals Assessment
+#### Core User Journey Complete
+- Landing page with clear value proposition and philosophy
+- Complete 14-step assessment flow with progress tracking
+- AI-powered results analysis with readiness scoring
+- Match dashboard with compatibility-based match generation
+- Love-vee AI coach interface and basic interactions
+- Professional UI/UX with mobile-first responsive design
 
-#### Infrastructure Complete
-- React 18 + TypeScript + Vite setup
-- Tailwind CSS with glass morphism design
-- Shadcn/UI component library integration
-- React Router DOM routing
-- Responsive design mobile-first approach
-- Assessment result data models
+#### What's Actually Working
+- Users can complete the full assessment-to-matches journey
+- Assessment data drives match generation algorithms
+- Results are calculated and displayed meaningfully
+- Local state persistence maintains user progress
+- All core navigation and routing functions properly
 
-### Immediate Next Steps 🔄
+### Immediate MVP Priorities 🔥
 
-#### Phase 2 Deep Compatibility Suite
-- Proximity & Intimacy Assessment (partially implemented)
-- Values Assessment (structure exists)
-- Lifestyle Compatibility Assessment
-- Love Languages Assessment
-- Financial Values Assessment
+#### Week 1: Core Intelligence
+- **Real Compatibility Calculations** - Replace placeholder algorithms with actual compatibility scoring
+- **Enhanced Match Details** - Show users WHY matches are compatible with detailed breakdowns
+- **Connection System** - Simple like/pass functionality for match interactions
 
-#### Core Platform Features
-- User authentication system integration
-- Assessment results storage and retrieval
-- Basic matching algorithm development
-- User profile creation and management
+#### Week 2: Polish & Demo-Ready
+- **Improved Love-vee Responses** - More contextual, intelligent coaching advice
+- **Enhanced Match Profiles** - Diverse, realistic match data for better demos
+- **Error Handling** - Graceful handling of edge cases and failures
 
-### Short-term Development (Next 2-4 weeks) 📅
+#### Week 3: Final Polish
+- **User Profile Insights** - Help users understand their own assessment results
+- **Compatibility Education** - Explain matching science to users
+- **Demo Optimization** - Final UI/UX polish for presentations
 
-#### Backend Integration
-- Supabase integration for authentication
-- Database schema for user profiles and assessment results
-- Real-time data synchronization
-- Secure data storage and retrieval
+### MVP Success Criteria 📊
 
-#### Matching System
-- Compatibility scoring algorithm implementation
-- Match suggestion engine
-- User compatibility reports
-- Match notification system
+**Demo Must Show:**
+1. Complete assessment flow (14 steps, ~20 minutes)
+2. Intelligent compatibility analysis and scoring
+3. Generated matches with clear compatibility explanations
+4. AI coaching companion providing relationship advice
+5. Professional, relationship-focused platform experience
 
-#### User Experience Enhancements
-- Progress tracking during assessments
-- Assessment results visualization
-- User dashboard improvements
-- Mobile app optimization
-
-### Medium-term Development (1-3 months) 📈
-
-#### Advanced Features
-- Secure messaging system between matches
-- Video call integration for verified connections
-- Detailed compatibility breakdowns
-- Relationship coaching resources
-
-#### Platform Optimization
-- Advanced analytics dashboard
-- A/B testing for assessment effectiveness
-- Performance optimization
-- Enhanced security measures
-
-### Long-term Vision (3-6 months) 🎯
-
-#### Ecosystem Expansion
-- Mobile app development (React Native)
-- Relationship coaching platform integration
-- Community features for couples
-- Success story tracking and analytics
-
-#### Advanced Matching
-- Machine learning algorithm improvements
-- Behavioral pattern analysis
-- Predictive compatibility modeling
-- Continuous assessment refinement
+**Technical Requirements:**
+- No authentication complexity (localStorage persistence sufficient)
+- Reliable state management throughout user journey
+- Professional UI/UX on desktop and mobile
+- Graceful error handling for common edge cases
+- Fast performance and smooth interactions
 
 ## 🛠️ Development Setup
 
 ### Environment Requirements
 - Node.js 18+
 - npm or yarn
-- Git
 - Modern browser for testing
 
 ### Installation Steps
@@ -111,73 +75,115 @@ npm run dev
 # Open browser to http://localhost:5173
 ```
 
-### Development Workflow
-1. Create feature branches for new assessments
-2. Test thoroughly on mobile and desktop
-3. Ensure accessibility compliance
-4. Maintain TypeScript strict mode
-5. Follow existing code patterns and conventions
+### MVP Development Workflow
+1. Focus on user journey completion over enterprise features
+2. Test full assessment-to-matches flow regularly
+3. Prioritize demo-ready polish over scalability
+4. Maintain TypeScript strict mode and clean code practices
+5. Test thoroughly on mobile and desktop
 
-### Code Quality Standards
+## 📁 MVP Codebase Structure
+
+### Key Components
+```
+src/
+├── components/
+│   ├── assessments/          # 14 assessment steps (COMPLETE)
+│   ├── matches/              # Match display components (NEEDS WORK)
+│   ├── ai/                   # Love-vee interface (ENHANCE)
+│   └── dashboard/            # User dashboard (COMPLETE)
+├── pages/
+│   ├── Index.tsx             # Landing page (COMPLETE)
+│   ├── Onboarding.tsx        # Assessment flow (COMPLETE)
+│   ├── AIResultsSummary.tsx  # Results analysis (COMPLETE)
+│   └── Dashboard.tsx         # Match dashboard (COMPLETE)
+├── utils/
+│   ├── compatibilityCalculator.ts  # NEEDS REAL ALGORITHMS
+│   ├── assessmentScoring.ts         # NEEDS ENHANCEMENT
+│   └── userStateManager.ts         # WORKING WELL
+```
+
+### Code Quality Standards for MVP
 - TypeScript strict mode enabled
-- ESLint configuration enforced
 - Responsive design mandatory
-- Accessibility best practices
 - Clean, maintainable component architecture
+- Focus on functionality over optimization
+- Error boundaries for critical user paths
 
-## 🔒 Privacy & Security Considerations
+## 🚀 MVP Deployment Strategy
 
-### Data Protection
-- All assessment data encrypted at rest
-- Secure transmission protocols
-- Minimal data collection principles
-- Transparent privacy policies
+### Demo Environment
+- Deploy to Lovable's built-in hosting for demos
+- Ensure reliable localStorage for session persistence
+- Test full user journey on deployed version
+- Monitor console for any runtime errors
 
-### User Safety
-- Identity verification processes
-- Reporting and blocking features
-- Moderation tools for community safety
-- Regular security audits
+### Performance Targets
+- Initial page load: <3 seconds
+- Assessment step transitions: <1 second
+- Match generation: <2 seconds
+- Mobile usability score: >85%
 
-### Compliance
-- GDPR compliance for EU users
-- CCPA compliance for California users
-- Industry-standard security practices
-- Regular privacy policy updates
+## 📊 MVP Success Metrics
 
-## 📊 Performance & Analytics
+### User Journey Completion
+- Landing to assessment start: >70%
+- Assessment completion rate: >60%
+- Assessment to results view: >95%
+- Results to match dashboard: >90%
 
-### Key Metrics to Track
-- Assessment completion rates by phase
-- User retention after onboarding
-- Match success rates
-- Long-term relationship outcomes
-- Platform engagement metrics
+### Technical Performance
+- Zero critical runtime errors
+- Smooth transitions between all screens
+- Reliable state persistence throughout journey
+- Professional UI/UX on all device sizes
 
-### Optimization Targets
-- <5 second page load times
-- >80% mobile usability score
-- >90% assessment completion rate for serious users
-- <10% drop-off rate in Phase 1
+## 🔍 Testing Strategy
 
-## 🤝 Contributing Guidelines
+### Manual Testing Checklist
+- [ ] Complete full user journey without errors
+- [ ] Test assessment progress persistence
+- [ ] Verify match generation with different assessment results
+- [ ] Test Love-vee interactions and responses
+- [ ] Validate responsive design on mobile/desktop
+- [ ] Check all navigation and routing
 
-### Code Standards
-- Follow existing component patterns
-- Maintain TypeScript strict compliance
-- Ensure mobile-first responsive design
-- Include accessibility attributes
-- Write clear, self-documenting code
+### Edge Cases to Handle
+- Browser refresh during assessment
+- Invalid assessment responses
+- Empty or incomplete user data
+- Network connectivity issues (for future Supabase integration)
 
-### Testing Requirements
-- Test all assessment flows end-to-end
-- Verify responsive design on multiple devices
-- Validate data model integrations
-- Ensure error handling works correctly
+## 🎯 Post-MVP Roadmap
+
+### Phase 4: Scaling Features (Future)
+- User authentication and multi-device sync
+- Real-time messaging between matches
+- Advanced matching algorithms with ML
+- Payment processing for premium features
+- Relationship outcome tracking and analytics
+
+### Phase 5: Platform Growth (Future)
+- Mobile app development
+- Community features for couples
+- Relationship coaching platform integration
+- Advanced analytics and insights
+
+## 📝 Contributing to MVP
+
+### Priority Guidelines
+1. **MVP-blocking bugs**: Fix immediately
+2. **Core user journey issues**: High priority
+3. **UI/UX improvements**: Medium priority
+4. **Nice-to-have features**: Low priority (post-MVP)
 
 ### Pull Request Process
-1. Create descriptive branch names
-2. Include comprehensive testing notes
-3. Update documentation as needed
-4. Request code review before merging
-5. Ensure CI/CD pipeline passes
+1. Focus changes on MVP goals
+2. Test full user journey after changes
+3. Ensure mobile responsiveness
+4. Update documentation if needed
+5. Request review for core journey changes
+
+---
+
+*Focus: Ship a demo-ready MVP that proves the LockInOnce concept*

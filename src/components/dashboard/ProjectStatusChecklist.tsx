@@ -36,74 +36,59 @@ const ProjectStatusChecklist = ({ onClose }: ProjectStatusChecklistProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const checklistData: ChecklistItem[] = [
-    // Week 1: Foundation & Setup
-    { id: 'playfair-font', title: 'Add Playfair Display font for headings', status: 'complete', category: 'foundation', priority: 'medium' },
-    { id: 'ui-components', title: 'Create base UI components (Button, Input, Card, etc.)', status: 'complete', category: 'foundation', priority: 'high' },
-    { id: 'dual-theme', title: 'Implement dual theme (Daylight/Twilight modes)', status: 'incomplete', category: 'foundation', priority: 'medium' },
-    { id: 'routing', title: 'Set up routing structure for all screens', status: 'complete', category: 'foundation', priority: 'high' },
-    { id: 'responsive-layout', title: 'Create responsive layout foundation', status: 'complete', category: 'foundation', priority: 'high' },
+    // Core MVP Foundation - COMPLETE
+    { id: 'landing-page', title: 'Landing page with value proposition', status: 'complete', category: 'foundation', priority: 'high' },
+    { id: 'ui-components', title: 'Base UI components and design system', status: 'complete', category: 'foundation', priority: 'high' },
+    { id: 'routing', title: 'Core routing structure', status: 'complete', category: 'foundation', priority: 'high' },
+    { id: 'responsive-design', title: 'Mobile-responsive design', status: 'complete', category: 'foundation', priority: 'high' },
 
-    // Week 2: Authentication & Onboarding
-    { id: 'landing-screen', title: 'Landing/Welcome screen with LockInOnce philosophy', status: 'complete', category: 'authentication', priority: 'high' },
-    { id: 'auth-system', title: 'User registration/login system', status: 'critical', category: 'authentication', priority: 'high', description: 'Requires Supabase integration' },
-    { id: 'onboarding-welcome', title: 'Onboarding Step 1: Welcome & Philosophy explanation', status: 'complete', category: 'onboarding', priority: 'high' },
-    { id: 'attachment-assessment', title: 'Onboarding Step 2: Attachment Style assessment', status: 'complete', category: 'onboarding', priority: 'high' },
-    { id: 'birth-order', title: 'Onboarding Step 3: Birth Order & family dynamics', status: 'complete', category: 'onboarding', priority: 'medium' },
-    { id: 'personality-assessment', title: 'Onboarding Step 4: Personality assessment (I/E + T/F)', status: 'complete', category: 'onboarding', priority: 'high' },
-    { id: 'relationship-intent', title: 'Onboarding Step 5: Relationship Intent selection', status: 'complete', category: 'onboarding', priority: 'high' },
-    { id: 'emotional-capacity', title: 'Onboarding Step 6: Emotional Capacity self-assessment', status: 'complete', category: 'onboarding', priority: 'high' },
-    { id: 'attraction-layer', title: 'Onboarding Step 7: Attraction Layer (vibes, energy, style)', status: 'complete', category: 'onboarding', priority: 'medium' },
-    { id: 'progress-tracking', title: 'Profile completion progress tracking', status: 'complete', category: 'onboarding', priority: 'medium' },
+    // Assessment System - COMPLETE
+    { id: 'onboarding-flow', title: 'Complete 14-step assessment flow', status: 'complete', category: 'assessment', priority: 'high' },
+    { id: 'progress-tracking', title: 'Assessment progress tracking', status: 'complete', category: 'assessment', priority: 'high' },
+    { id: 'results-display', title: 'Assessment results display', status: 'complete', category: 'assessment', priority: 'high' },
+    { id: 'readiness-scoring', title: 'Basic readiness scoring system', status: 'complete', category: 'assessment', priority: 'high' },
 
-    // Week 3: Core Matching System
-    { id: 'profile-dashboard', title: 'User profile dashboard/settings (basic version)', status: 'complete', category: 'matching', priority: 'high' },
-    { id: 'compatibility-algorithm', title: 'Real compatibility algorithm implementation', status: 'critical', category: 'matching', priority: 'high', description: 'Currently using mock data' },
-    { id: 'daily-matches', title: 'Daily matches dashboard', status: 'complete', category: 'matching', priority: 'high' },
-    { id: 'match-detail', title: 'Individual match detail view', status: 'incomplete', category: 'matching', priority: 'high' },
-    { id: 'connection-system', title: 'Connection request system (non-swipe)', status: 'incomplete', category: 'matching', priority: 'high' },
-    { id: 'messaging', title: 'Basic messaging/conversation interface', status: 'incomplete', category: 'matching', priority: 'high' },
+    // Matching System - NEEDS WORK
+    { id: 'match-generation', title: 'Generate matches from assessment data', status: 'complete', category: 'matching', priority: 'high' },
+    { id: 'compatibility-scoring', title: 'Real compatibility calculation algorithm', status: 'critical', category: 'matching', priority: 'high', description: 'Currently using placeholder calculations' },
+    { id: 'match-detail-views', title: 'Detailed match profiles with compatibility breakdown', status: 'critical', category: 'matching', priority: 'high', description: 'Users need to see WHY matches are compatible' },
+    { id: 'connection-system', title: 'Simple connection/interest system', status: 'incomplete', category: 'matching', priority: 'high', description: 'Basic like/pass functionality for MVP' },
 
-    // Love-vee AI Integration
-    { id: 'lovevee-basic', title: 'Love-vee chat interface', status: 'complete', category: 'ai', priority: 'medium' },
-    { id: 'lovevee-intelligence', title: 'Love-vee AI intelligence (real responses)', status: 'critical', category: 'ai', priority: 'high', description: 'Currently scripted responses' },
-    { id: 'heart-animations', title: 'Heart animations for Love-vee interactions', status: 'in-progress', category: 'ai', priority: 'low', description: 'Needs debugging on all pages' },
-    { id: 'coaching-sessions', title: 'Love-vee coaching sessions', status: 'incomplete', category: 'ai', priority: 'medium' },
+    // AI Coach - NEEDS ENHANCEMENT
+    { id: 'lovevee-interface', title: 'Love-vee chat interface', status: 'complete', category: 'ai', priority: 'medium' },
+    { id: 'lovevee-responses', title: 'Contextual Love-vee responses', status: 'in-progress', category: 'ai', priority: 'medium', description: 'Needs more intelligent, context-aware responses' },
+    { id: 'coaching-advice', title: 'Relationship coaching content', status: 'incomplete', category: 'ai', priority: 'medium' },
 
-    // Assessment Engine
-    { id: 'assessment-scoring', title: 'Real assessment scoring system', status: 'critical', category: 'assessment', priority: 'high', description: 'Currently returns static results' },
-    { id: 'readiness-scoring', title: 'Relationship readiness scoring', status: 'critical', category: 'assessment', priority: 'high' },
-    { id: 'growth-roadmaps', title: 'Growth roadmaps for not-ready users', status: 'incomplete', category: 'assessment', priority: 'high' },
-    { id: 'brutal-honesty', title: 'Brutal honesty feedback system', status: 'incomplete', category: 'assessment', priority: 'high' },
+    // Data & Persistence - MVP LEVEL
+    { id: 'local-storage', title: 'Reliable localStorage management', status: 'complete', category: 'data', priority: 'high' },
+    { id: 'state-persistence', title: 'User state persistence between sessions', status: 'in-progress', category: 'data', priority: 'high', description: 'Sometimes loses progress on refresh' },
 
-    // Design System
-    { id: 'sunset-colors', title: 'Sunset Harmony color implementation', status: 'incomplete', category: 'design', priority: 'medium' },
-    { id: 'glass-morphism', title: 'Glass morphism cards', status: 'complete', category: 'design', priority: 'low' },
-    { id: 'micro-interactions', title: 'Enhanced micro-interactions', status: 'in-progress', category: 'design', priority: 'low' },
+    // User Experience Enhancements
+    { id: 'profile-insights', title: 'User profile insights page', status: 'incomplete', category: 'ux', priority: 'medium', description: 'Help users understand their own assessment results' },
+    { id: 'match-diversity', title: 'Diverse, realistic match profiles', status: 'incomplete', category: 'ux', priority: 'medium' },
+    { id: 'compatibility-education', title: 'Compatibility explanations for users', status: 'incomplete', category: 'ux', priority: 'medium' },
 
-    // Data Management
-    { id: 'user-state', title: 'User state management system', status: 'critical', category: 'data', priority: 'high', description: 'No persistence between sessions' },
-    { id: 'data-persistence', title: 'Local storage/backend integration', status: 'critical', category: 'data', priority: 'high' },
-    { id: 'analytics', title: 'Behavioral analytics collection', status: 'incomplete', category: 'data', priority: 'medium' },
+    // Polish & Demo Ready
+    { id: 'error-handling', title: 'Graceful error handling throughout app', status: 'incomplete', category: 'polish', priority: 'medium' },
+    { id: 'loading-states', title: 'Proper loading states and feedback', status: 'in-progress', category: 'polish', priority: 'low' },
+    { id: 'final-ui-polish', title: 'Final UI/UX polish for demo', status: 'in-progress', category: 'polish', priority: 'low' },
 
-    // Missing Screens
-    { id: 'profile-management', title: 'Comprehensive profile management', status: 'incomplete', category: 'screens', priority: 'high' },
-    { id: 'conversations-screen', title: 'Conversations/messaging screen', status: 'incomplete', category: 'screens', priority: 'high' },
-    { id: 'compatibility-insights', title: 'Compatibility insights/education', status: 'incomplete', category: 'screens', priority: 'medium' },
-    { id: 'settings-screen', title: 'App settings and preferences', status: 'incomplete', category: 'screens', priority: 'medium' },
-    { id: 'growth-plan', title: 'Personal growth plan screen', status: 'incomplete', category: 'screens', priority: 'high' },
+    // Future Enhancements (Post-MVP)
+    { id: 'authentication', title: 'User authentication system', status: 'incomplete', category: 'future', priority: 'low', description: 'Not needed for MVP demo' },
+    { id: 'real-messaging', title: 'Real-time messaging system', status: 'incomplete', category: 'future', priority: 'low', description: 'Post-MVP feature' },
+    { id: 'advanced-matching', title: 'Advanced matching algorithms', status: 'incomplete', category: 'future', priority: 'low', description: 'Current algorithm sufficient for MVP' },
   ];
 
   const categories = [
     { id: 'all', name: 'All Items', icon: <Sparkles className="h-4 w-4" /> },
     { id: 'foundation', name: 'Foundation', icon: <Code className="h-4 w-4" /> },
-    { id: 'authentication', name: 'Auth', icon: <Users className="h-4 w-4" /> },
-    { id: 'onboarding', name: 'Onboarding', icon: <Heart className="h-4 w-4" /> },
+    { id: 'assessment', name: 'Assessment', icon: <Heart className="h-4 w-4" /> },
     { id: 'matching', name: 'Matching', icon: <Users className="h-4 w-4" /> },
     { id: 'ai', name: 'Love-vee AI', icon: <MessageSquare className="h-4 w-4" /> },
-    { id: 'assessment', name: 'Assessment', icon: <AlertTriangle className="h-4 w-4" /> },
-    { id: 'design', name: 'Design', icon: <Palette className="h-4 w-4" /> },
     { id: 'data', name: 'Data', icon: <Database className="h-4 w-4" /> },
-    { id: 'screens', name: 'Screens', icon: <Settings className="h-4 w-4" /> },
+    { id: 'ux', name: 'User Experience', icon: <Palette className="h-4 w-4" /> },
+    { id: 'polish', name: 'Polish', icon: <Settings className="h-4 w-4" /> },
+    { id: 'future', name: 'Future Features', icon: <AlertTriangle className="h-4 w-4" /> },
   ];
 
   const filteredItems = selectedCategory === 'all' 
@@ -138,8 +123,8 @@ const ProjectStatusChecklist = ({ onClose }: ProjectStatusChecklistProps) => {
   };
 
   const calculateProgress = () => {
-    const total = checklistData.length;
-    const completed = checklistData.filter(item => item.status === 'complete').length;
+    const total = checklistData.filter(item => item.category !== 'future').length;
+    const completed = checklistData.filter(item => item.status === 'complete' && item.category !== 'future').length;
     return Math.round((completed / total) * 100);
   };
 
@@ -157,9 +142,9 @@ const ProjectStatusChecklist = ({ onClose }: ProjectStatusChecklistProps) => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl font-bold text-gray-800">
-                LockInOnce Development Status
+                LockInOnce MVP Development Status
               </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">Complete project checklist and roadmap</p>
+              <p className="text-sm text-gray-600 mt-1">Focused on demo-ready MVP features</p>
             </div>
             <Button
               variant="ghost"
@@ -173,7 +158,7 @@ const ProjectStatusChecklist = ({ onClose }: ProjectStatusChecklistProps) => {
           
           <div className="space-y-3 mt-4">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Overall Progress</span>
+              <span className="text-gray-600">MVP Progress (excluding future features)</span>
               <span className="font-semibold">{calculateProgress()}% Complete</span>
             </div>
             <Progress value={calculateProgress()} className="h-3" />
