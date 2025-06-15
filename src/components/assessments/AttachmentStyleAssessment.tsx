@@ -123,6 +123,11 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
         <h2 className="text-2xl font-playfair font-bold text-foreground">
           Attachment Style Assessment
         </h2>
+        <div className="card-glass p-4">
+          <p className="text-sm text-muted-foreground">
+            <strong>Why this matters:</strong> Your attachment style shapes how you connect, communicate, and handle conflict in relationships. Understanding this helps us match you with someone whose style complements yours for deeper compatibility.
+          </p>
+        </div>
         <p className="text-muted-foreground">
           Question {currentQuestion + 1} of {questions.length}
         </p>

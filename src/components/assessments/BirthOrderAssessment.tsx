@@ -39,9 +39,11 @@ const BirthOrderAssessment = ({ onComplete }: BirthOrderAssessmentProps) => {
         <h2 className="text-2xl font-playfair font-bold text-foreground">
           Family Background
         </h2>
-        <p className="text-muted-foreground">
-          Your family position shapes your relationship patterns
-        </p>
+        <div className="card-glass p-4">
+          <p className="text-sm text-muted-foreground">
+            <strong>Why this matters:</strong> Birth order and family dynamics shape your personality, leadership style, and relationship patterns. This helps us understand how you naturally interact and what type of partner would complement your style.
+          </p>
+        </div>
       </div>
 
       <div className="space-y-6">
