@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { UserProfile } from "../types/userProfile";
 import { LocalStorageManager } from "./localStorageManager";
@@ -9,7 +8,7 @@ export class SupabaseSyncManager {
       const { error } = await supabase
         .from('user_profiles')
         .upsert({
-          assessment_results: profile.assessmentResults,
+          id: profile.id,
           readiness_score: profile.readinessScore,
           onboarding_completed: profile.onboardingCompleted,
           current_step: profile.currentStep
