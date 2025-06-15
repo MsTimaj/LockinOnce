@@ -6,6 +6,7 @@ import PersonalityAssessment from "@/components/assessments/PersonalityAssessmen
 import BirthOrderAssessment from "@/components/assessments/BirthOrderAssessment";
 import RelationshipIntentAssessment from "@/components/assessments/RelationshipIntentAssessment";
 import EmotionalCapacityAssessment from "@/components/assessments/EmotionalCapacityAssessment";
+import PreferencesAssessment from "@/components/assessments/PreferencesAssessment";
 import AttractionLayerAssessment from "@/components/assessments/AttractionLayerAssessment";
 import PhysicalProximityAssessment from "@/components/assessments/PhysicalProximityAssessment";
 import CommunicationStyleAssessment from "@/components/assessments/CommunicationStyleAssessment";
@@ -59,7 +60,7 @@ const Onboarding = () => {
         
         // Convert phase/step to linear step index more accurately
         const stepIndex = Math.max(0, (progress.phase - 1) * 5 + (progress.step - 1));
-        const finalStep = Math.min(stepIndex, 13); // Cap at 13 (0-13 = 14 steps)
+        const finalStep = Math.min(stepIndex, 14); // Cap at 14 (0-14 = 15 steps)
         console.log('Setting current step to:', finalStep);
         setCurrentStep(finalStep);
       } catch (error) {
@@ -82,7 +83,7 @@ const Onboarding = () => {
     try {
       console.log(`Step ${currentStep} completed with results:`, results);
       
-      // Fixed assessment mapping - align with actual step indices
+      // Updated assessment mapping with preferences added
       const assessmentMap = [
         null, // Step 0: Welcome step
         'attachmentStyle', // Step 1
@@ -90,14 +91,15 @@ const Onboarding = () => {
         'birthOrder', // Step 3
         'relationshipIntent', // Step 4
         'emotionalCapacity', // Step 5
-        'attractionLayer', // Step 6
-        'physicalProximity', // Step 7
-        'communicationStyle', // Step 8
-        'lifeGoals', // Step 9
-        'values', // Step 10
-        'lifestyle', // Step 11
-        'loveLanguages', // Step 12
-        'financialValues' // Step 13
+        'preferences', // Step 6: NEW - Dating Preferences
+        'attractionLayer', // Step 7
+        'physicalProximity', // Step 8
+        'communicationStyle', // Step 9
+        'lifeGoals', // Step 10
+        'values', // Step 11
+        'lifestyle', // Step 12
+        'loveLanguages', // Step 13
+        'financialValues' // Step 14
       ] as const;
 
       const assessmentType = assessmentMap[currentStep + 1];
@@ -192,6 +194,11 @@ const Onboarding = () => {
     { 
       component: EmotionalCapacityAssessment, 
       title: "Emotional Capacity",
+      onComplete: handleStepComplete
+    },
+    { 
+      component: PreferencesAssessment, 
+      title: "Dating Preferences",
       onComplete: handleStepComplete
     },
     { 

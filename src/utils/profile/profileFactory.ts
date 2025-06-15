@@ -14,6 +14,7 @@ export class ProfileFactory {
         birthOrder: null,
         relationshipIntent: null,
         emotionalCapacity: null,
+        preferences: null, // NEW
         attractionLayer: null,
         physicalProximity: null,
         communicationStyle: null,
