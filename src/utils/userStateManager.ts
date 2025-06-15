@@ -1,7 +1,6 @@
-
 import { ComprehensiveAssessmentResults, RelationshipReadinessScore } from "./assessmentScoring";
 import { UserProfile } from "./types/userProfile";
-import { LocalStorageManager } from "./storage/localStorageManager";
+import { SessionStorageManager } from "./storage/sessionStorageManager";
 import { SupabaseSyncManager } from "./storage/supabaseSyncManager";
 import { ProfileFactory } from "./profile/profileFactory";
 import { ValidationUtils } from "./state/validationUtils";
@@ -13,20 +12,26 @@ export class UserStateManager {
   static async saveUserProfile(profile: UserProfile): Promise<void> {
     try {
       await SyncStateManager.withSyncLock(async () => {
-        // Always save to localStorage first for immediate persistence
-        LocalStorageManager.saveProfile(profile);
-        console.log('Profile saved to localStorage immediately');
+        // Always save to session storage first for immediate persistence
+        SessionStorageManager.saveProfile(profile);
+        console.log('Profile saved to session storage immediately');
 
-        // Then attempt Supabase sync in background
+        // Then attempt Supabase sync in background with session-aware ID
         try {
-          const updatedProfile = await SupabaseSyncManager.syncToSupabase(profile);
-          // Only update localStorage if we got a different profile back (with new UUID)
-          if (updatedProfile.id !== profile.id) {
-            LocalStorageManager.saveProfile(updatedProfile);
+          const sessionId = SessionStorageManager.getCurrentSessionId();
+          const sessionAwareProfile = {
+            ...profile,
+            id: profile.id.startsWith('sess_') ? profile.id : `${sessionId}_${profile.id}`
+          };
+          
+          const updatedProfile = await SupabaseSyncManager.syncToSupabase(sessionAwareProfile);
+          // Only update session storage if we got a different profile back
+          if (updatedProfile.id !== sessionAwareProfile.id) {
+            SessionStorageManager.saveProfile(updatedProfile);
             console.log('Profile updated with new UUID from Supabase:', updatedProfile.id);
           }
         } catch (supabaseError) {
-          console.log('Supabase sync failed, but localStorage save succeeded:', supabaseError);
+          console.log('Supabase sync failed, but session storage save succeeded:', supabaseError);
           // Continue - we still have the data saved locally
         }
       });
@@ -38,14 +43,14 @@ export class UserStateManager {
 
   static async getUserProfile(): Promise<UserProfile | null> {
     try {
-      const stored = LocalStorageManager.getProfile();
+      const stored = SessionStorageManager.getProfile();
       
       // If we have a valid stored profile, use it immediately
       if (stored && ValidationUtils.isValidProfile(stored)) {
-        console.log('Profile loaded from localStorage');
+        console.log('Profile loaded from session storage');
         
-        // Background sync check (don't await)
-        if (ValidationUtils.isValidUUID(stored.id)) {
+        // Background sync check (don't await) - only for valid UUIDs
+        if (ValidationUtils.isValidUUID(stored.id) && !stored.id.startsWith('sess_')) {
           SupabaseSyncManager.backgroundSyncCheck(stored.id).catch(error => {
             console.log('Background sync check failed (non-critical):', error);
           });
@@ -56,18 +61,11 @@ export class UserStateManager {
       // Clear invalid data
       if (stored && !ValidationUtils.isValidProfile(stored)) {
         console.log('Clearing invalid profile data');
-        LocalStorageManager.clearData();
+        SessionStorageManager.clearData();
       }
 
-      // Try to restore from Supabase only if no local data
-      console.log('No valid local profile, attempting Supabase restore...');
-      const restored = await SupabaseSyncManager.restoreFromSupabase();
-      if (restored) {
-        console.log('Profile restored from Supabase');
-        return restored;
-      }
-
-      console.log('No profile found, user needs to start onboarding');
+      // For MVP, prioritize session storage over Supabase restore
+      console.log('No valid session profile found');
       return null;
     } catch (error) {
       console.error('Failed to load user profile:', error);
@@ -113,19 +111,23 @@ export class UserStateManager {
   }
 
   static createNewProfile(): UserProfile {
-    return ProfileFactory.createNewProfile();
+    const sessionId = SessionStorageManager.getCurrentSessionId();
+    const profile = ProfileFactory.createNewProfile();
+    // Create session-aware profile ID
+    profile.id = `${sessionId}_${profile.id}`;
+    return profile;
   }
 
   static clearUserData(): void {
-    LocalStorageManager.clearData();
+    SessionStorageManager.clearData();
     NavigationStateManager.forceReset();
     SyncStateManager.forceReset();
-    console.log('User data cleared completely');
+    console.log('User session data cleared completely');
   }
 
   static resetForTesting(): void {
     this.clearUserData();
-    console.log('Application reset for testing - refresh to start fresh');
+    console.log('Session reset for testing - refresh to start fresh');
   }
 
   static async hasCompletedOnboarding(): Promise<boolean> {
@@ -174,6 +176,12 @@ export class UserStateManager {
   static forceNavigationReset(): void {
     NavigationStateManager.forceReset();
     SyncStateManager.forceReset();
+  }
+
+  static getCurrentSessionInfo(): { sessionId: string; hasProfile: boolean } {
+    const sessionId = SessionStorageManager.getCurrentSessionId();
+    const hasProfile = SessionStorageManager.hasValidData();
+    return { sessionId, hasProfile };
   }
 }
 
