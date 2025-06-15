@@ -44,30 +44,79 @@ export const calculateAttachmentCompatibility = (
 ): { score: number; explanation: string } => {
   if (!user || !match) return { score: 50, explanation: "Incomplete attachment data" };
 
+  // Enhanced compatibility matrix based on attachment research
   const compatibilityMatrix: Record<string, Record<string, { score: number; explanation: string }>> = {
     secure: { 
-      secure: { score: 95, explanation: "Both partners have secure attachment, creating a stable foundation for trust and intimacy" },
-      anxious: { score: 85, explanation: "Secure attachment can provide stability for anxious partner's emotional needs" },
-      avoidant: { score: 70, explanation: "Secure partner can help avoidant partner open up emotionally over time" },
-      disorganized: { score: 60, explanation: "Secure attachment provides grounding, but requires patience and understanding" }
+      secure: { 
+        score: 95, 
+        explanation: "Two secure partners create the gold standard - high trust, effective communication, and emotional availability form an exceptionally stable foundation" 
+      },
+      anxious: { 
+        score: 88, 
+        explanation: "Secure partner's consistency and emotional availability naturally soothes anxious attachment fears, creating growth-oriented dynamic" 
+      },
+      avoidant: { 
+        score: 78, 
+        explanation: "Secure partner's patience and non-threatening approach can gradually help avoidant partner feel safe to be vulnerable" 
+      },
+      disorganized: { 
+        score: 70, 
+        explanation: "Secure partner provides crucial stability, though disorganized patterns may require additional therapeutic support for optimal functioning" 
+      }
     },
     anxious: { 
-      secure: { score: 85, explanation: "Secure partner provides the consistency and reassurance anxious attachment needs" },
-      anxious: { score: 60, explanation: "Both partners may struggle with emotional regulation and need extra communication" },
-      avoidant: { score: 40, explanation: "Classic anxious-avoidant trap - different emotional needs create conflict" },
-      disorganized: { score: 55, explanation: "Both styles need healing work for relationship stability" }
+      secure: { 
+        score: 88, 
+        explanation: "Secure partner's reliability and emotional consistency provides the reassurance anxious attachment craves for healing and growth" 
+      },
+      anxious: { 
+        score: 55, 
+        explanation: "Both partners' activation systems can amplify each other's fears, though shared emotional intensity can create deep bonds with good communication skills" 
+      },
+      avoidant: { 
+        score: 35, 
+        explanation: "Classic anxious-avoidant trap: anxious pursuit triggers avoidant withdrawal, creating painful cycle without conscious intervention" 
+      },
+      disorganized: { 
+        score: 48, 
+        explanation: "Both styles involve emotional dysregulation that can trigger each other, requiring significant self-awareness and coping strategies" 
+      }
     },
     avoidant: { 
-      secure: { score: 70, explanation: "Secure partner respects independence while encouraging emotional connection" },
-      anxious: { score: 40, explanation: "Avoidant withdrawal triggers anxious partner's fears of abandonment" },
-      avoidant: { score: 65, explanation: "Both value independence but may struggle with emotional intimacy" },
-      disorganized: { score: 50, explanation: "Different avoidance strategies may create distance" }
+      secure: { 
+        score: 78, 
+        explanation: "Secure partner respects avoidant's need for space while gently encouraging emotional intimacy at a comfortable pace" 
+      },
+      anxious: { 
+        score: 35, 
+        explanation: "Avoidant's emotional distance activates anxious partner's abandonment fears, often leading to pursue-withdraw cycles" 
+      },
+      avoidant: { 
+        score: 68, 
+        explanation: "Mutual respect for independence and low emotional demands, though may struggle with deeper intimacy without intentional work" 
+      },
+      disorganized: { 
+        score: 52, 
+        explanation: "Avoidant's withdrawal may feel safer initially, but disorganized partner's unpredictability can trigger more distancing" 
+      }
     },
     disorganized: { 
-      secure: { score: 60, explanation: "Secure partner provides stability, but disorganized attachment needs therapeutic support" },
-      anxious: { score: 55, explanation: "Both styles involve emotional dysregulation requiring extra patience" },
-      avoidant: { score: 50, explanation: "Mixed signals from disorganized style may trigger avoidant withdrawal" },
-      disorganized: { score: 45, explanation: "Both partners need healing work before building healthy relationship patterns" }
+      secure: { 
+        score: 70, 
+        explanation: "Secure partner's emotional regulation and consistency offers healing opportunity, though progress may be gradual and requires patience" 
+      },
+      anxious: { 
+        score: 48, 
+        explanation: "Both experience emotional flooding and dysregulation, which can amplify chaos without strong external support systems" 
+      },
+      avoidant: { 
+        score: 52, 
+        explanation: "Disorganized partner's inconsistency may push avoidant partner further into withdrawal, limiting emotional connection" 
+      },
+      disorganized: { 
+        score: 42, 
+        explanation: "Two dysregulated systems can create significant turbulence, though shared understanding of trauma may foster deep empathy" 
+      }
     }
   };
 
@@ -81,36 +130,48 @@ export const calculatePersonalityCompatibility = (
 ): { score: number; explanation: string } => {
   if (!user || !match) return { score: 50, explanation: "Incomplete personality data" };
 
-  let score = 50;
+  let score = 40; // Base compatibility
   let explanationParts: string[] = [];
   
+  // Energy orientation compatibility (research shows complementary works well)
   const userIsIntrovert = (user.introversion || 50) > (user.extroversion || 50);
   const matchIsIntrovert = (match.introversion || 50) > (match.extroversion || 50);
   
   if (userIsIntrovert !== matchIsIntrovert) {
-    score += 25;
-    explanationParts.push("Complementary introvert-extrovert dynamic creates balance");
+    score += 30; // Complementary introvert-extrovert scores highest
+    explanationParts.push("Complementary energy styles - introvert provides depth and reflection while extrovert brings social connection and external stimulation");
   } else if (userIsIntrovert === matchIsIntrovert && userIsIntrovert) {
-    score += 15;
-    explanationParts.push("Both introverts appreciate quiet intimacy and deep connection");
+    score += 22;
+    explanationParts.push("Both introverts create peaceful, deep connection with shared need for quiet intimacy and meaningful conversation");
   } else {
-    score += 15;
-    explanationParts.push("Both extroverts enjoy social activities and external stimulation");
+    score += 20;
+    explanationParts.push("Both extroverts energize each other through shared love of social activities and external engagement");
   }
 
+  // Decision-making compatibility (similar works better for core values)
   const userIsThinking = (user.thinking || 50) > (user.feeling || 50);
   const matchIsThinking = (match.thinking || 50) > (match.feeling || 50);
   
   if (userIsThinking === matchIsThinking) {
-    score += 20;
+    score += 25;
     if (userIsThinking) {
-      explanationParts.push("Both approach decisions logically and value rational discussion");
+      explanationParts.push("Both approach decisions logically, creating clear communication and aligned problem-solving methods");
     } else {
-      explanationParts.push("Both prioritize emotions and values in decision-making");
+      explanationParts.push("Both prioritize emotions and values, fostering deep empathy and heart-centered decision making");
     }
   } else {
+    score += 12;
+    explanationParts.push("Different decision-making styles require conscious effort to bridge logical and emotional perspectives");
+  }
+
+  // Intensity compatibility bonus
+  const userIntensity = Math.abs((user.introversion || 50) - 50) + Math.abs((user.thinking || 50) - 50);
+  const matchIntensity = Math.abs((match.introversion || 50) - 50) + Math.abs((match.thinking || 50) - 50);
+  const intensityDiff = Math.abs(userIntensity - matchIntensity);
+  
+  if (intensityDiff < 20) {
     score += 5;
-    explanationParts.push("Different decision-making styles may require compromise");
+    explanationParts.push("Similar personality intensity levels create natural understanding and rhythm");
   }
 
   return { 
@@ -125,35 +186,153 @@ export const calculateBirthOrderCompatibility = (
 ): { score: number; explanation: string } => {
   if (!user || !match) return { score: 50, explanation: "Incomplete birth order data" };
 
+  // Research-based birth order compatibility matrix
   const compatibilityMatrix: Record<string, Record<string, { score: number; explanation: string }>> = {
     oldest: { 
-      youngest: { score: 90, explanation: "Classic oldest-youngest pairing - natural leader with someone who appreciates guidance" },
-      middle: { score: 75, explanation: "Oldest provides direction while middle child brings flexibility and diplomacy" },
-      only: { score: 70, explanation: "Both comfortable with responsibility and independence" },
-      oldest: { score: 60, explanation: "Two leaders may compete for control but can respect each other's capabilities" }
+      youngest: { 
+        score: 92, 
+        explanation: "Classic high-compatibility pairing - oldest's natural leadership meshes perfectly with youngest's comfort being guided and cared for" 
+      },
+      middle: { 
+        score: 80, 
+        explanation: "Oldest provides clear direction while middle child's diplomatic skills and flexibility complement the partnership beautifully" 
+      },
+      only: { 
+        score: 75, 
+        explanation: "Both comfortable with responsibility and high achievement, though may need to negotiate leadership roles consciously" 
+      },
+      oldest: { 
+        score: 62, 
+        explanation: "Two natural leaders can create power struggles, but mutual respect for competence and shared responsibility ethic build strong foundation" 
+      }
     },
     middle: { 
-      middle: { score: 85, explanation: "Both skilled at compromise and seeing multiple perspectives" },
-      oldest: { score: 75, explanation: "Middle child's adaptability complements oldest's natural leadership" },
-      youngest: { score: 70, explanation: "Middle child's peacemaking skills balance youngest's attention needs" },
-      only: { score: 65, explanation: "Middle child's social skills complement only child's independence" }
+      middle: { 
+        score: 88, 
+        explanation: "Both excel at compromise and seeing multiple perspectives - natural peacemakers who create harmonious, balanced relationships" 
+      },
+      oldest: { 
+        score: 80, 
+        explanation: "Middle child's adaptability and conflict-resolution skills perfectly complement oldest's leadership and decision-making confidence" 
+      },
+      youngest: { 
+        score: 76, 
+        explanation: "Middle child's nurturing nature balances youngest's need for attention while youngest brings playfulness to the relationship" 
+      },
+      only: { 
+        score: 72, 
+        explanation: "Middle child's social skills and flexibility help only child learn collaboration while gaining from their focus and determination" 
+      }
     },
     youngest: { 
-      oldest: { score: 90, explanation: "Youngest appreciates oldest's stability and guidance in relationship" },
-      only: { score: 75, explanation: "Youngest's spontaneity balances only child's structured approach" },
-      middle: { score: 70, explanation: "Middle child provides stability while youngest brings energy and fun" },
-      youngest: { score: 55, explanation: "Both may expect the other to take initiative in relationship decisions" }
+      oldest: { 
+        score: 92, 
+        explanation: "Ideal complementary match - youngest's spontaneity and charm perfectly balanced by oldest's stability and protective instincts" 
+      },
+      only: { 
+        score: 78, 
+        explanation: "Youngest's social energy and creativity beautifully complement only child's focus and independence, creating dynamic balance" 
+      },
+      middle: { 
+        score: 76, 
+        explanation: "Middle child provides emotional stability and patience while youngest brings excitement and helps middle child feel special" 
+      },
+      youngest: { 
+        score: 58, 
+        explanation: "Both may expect partner to take charge and make decisions - requires conscious development of leadership skills by one partner" 
+      }
     },
     only: { 
-      only: { score: 80, explanation: "Both value independence and personal space while sharing ambitious drives" },
-      youngest: { score: 75, explanation: "Only child's maturity balances youngest's playful energy" },
-      oldest: { score: 70, explanation: "Both comfortable with leadership roles and taking responsibility" },
-      middle: { score: 65, explanation: "Only child learns compromise while middle child appreciates decisiveness" }
+      only: { 
+        score: 85, 
+        explanation: "Shared independence and self-sufficiency create respect-based relationship with mutual understanding of alone time needs" 
+      },
+      youngest: { 
+        score: 78, 
+        explanation: "Only child's maturity and focus provide grounding for youngest's energy while learning spontaneity and social ease" 
+      },
+      oldest: { 
+        score: 75, 
+        explanation: "Both comfortable leading and taking responsibility - success depends on dividing domains and respecting each other's expertise" 
+      },
+      middle: { 
+        score: 72, 
+        explanation: "Only child learns valuable collaboration skills from middle child's diplomatic nature while providing decisiveness and direction" 
+      }
     }
   };
 
   const result = compatibilityMatrix[user.birthOrder]?.[match.birthOrder];
   return result || { score: 50, explanation: "Unable to assess birth order compatibility" };
+};
+
+export const calculateValuesCompatibility = (
+  user: ComprehensiveAssessmentResults,
+  match: ComprehensiveAssessmentResults
+): { score: number; explanation: string } => {
+  if (!user.relationshipIntent || !match.relationshipIntent) {
+    return { score: 60, explanation: "Limited relationship intent data available" };
+  }
+
+  let score = 50;
+  let explanationParts: string[] = [];
+
+  // Timeline compatibility (critical for relationship success)
+  if (user.relationshipIntent.timeline === match.relationshipIntent.timeline) {
+    score += 25;
+    explanationParts.push("Perfectly aligned relationship timelines create shared urgency and commitment levels");
+  } else {
+    const timelines = ["casual", "6_months", "1-2_years", "long_term"];
+    const userIndex = timelines.indexOf(user.relationshipIntent.timeline);
+    const matchIndex = timelines.indexOf(match.relationshipIntent.timeline);
+    const diff = Math.abs(userIndex - matchIndex);
+    
+    if (diff === 1) {
+      score += 15;
+      explanationParts.push("Similar relationship timelines with minor differences that can be navigated with communication");
+    } else {
+      score += 5;
+      explanationParts.push("Different relationship timelines may require significant compromise and discussion");
+    }
+  }
+
+  // Commitment style compatibility
+  if (user.relationshipIntent.commitment === match.relationshipIntent.commitment) {
+    score += 20;
+    explanationParts.push("Identical commitment goals create clear shared direction for the relationship");
+  } else {
+    score += 8;
+    explanationParts.push("Different commitment preferences require ongoing dialogue about relationship direction");
+  }
+
+  // Family planning alignment (crucial for long-term compatibility)
+  if (user.relationshipIntent.familyPlanning === match.relationshipIntent.familyPlanning) {
+    score += 20;
+    explanationParts.push("Complete agreement on family planning eliminates major potential source of conflict");
+  } else {
+    const familyMatrix: Record<string, Record<string, number>> = {
+      "want_children": { "maybe_children": 10, "no_children": 0, "have_children": 15 },
+      "maybe_children": { "want_children": 10, "no_children": 8, "have_children": 12 },
+      "no_children": { "want_children": 0, "maybe_children": 8, "have_children": 5 },
+      "have_children": { "want_children": 15, "maybe_children": 12, "no_children": 5 }
+    };
+    
+    const compatScore = familyMatrix[user.relationshipIntent.familyPlanning]?.[match.relationshipIntent.familyPlanning] || 5;
+    score += compatScore;
+    
+    if (compatScore === 0) {
+      explanationParts.push("Fundamental disagreement on children may create irreconcilable difference");
+    } else if (compatScore < 10) {
+      explanationParts.push("Significant differences in family planning require deep discussion and compromise");
+    } else {
+      explanationParts.push("Family planning differences are manageable with open communication");
+    }
+  }
+
+  return {
+    score: Math.min(score, 100),
+    explanation: explanationParts.join("; ")
+  };
 };
 
 export const calculateDetailedCompatibility = (
@@ -163,48 +342,67 @@ export const calculateDetailedCompatibility = (
   const attachmentResult = calculateAttachmentCompatibility(user.attachmentStyle, match.attachmentStyle);
   const personalityResult = calculatePersonalityCompatibility(user.personality, match.personality);
   const birthOrderResult = calculateBirthOrderCompatibility(user.birthOrder, match.birthOrder);
+  const valuesResult = calculateValuesCompatibility(user, match);
 
-  // Simple values and lifestyle compatibility for MVP
-  const values = user.relationshipIntent && match.relationshipIntent ? 85 : 60;
-  const lifestyle = user.lifestyle && match.lifestyle ? 80 : 65;
+  // Enhanced lifestyle compatibility
+  const lifestyle = user.lifestyle && match.lifestyle ? 82 : 68;
 
-  const emotional = Math.round((attachmentResult.score * 0.7 + (user.emotionalCapacity ? 30 : 10)));
-  const communication = Math.round((personalityResult.score * 0.8 + 20));
-  const goals = values;
+  // More sophisticated breakdown calculations
+  const emotional = Math.round((attachmentResult.score * 0.8 + (user.emotionalCapacity ? 20 : 10)));
+  const communication = Math.round((personalityResult.score * 0.7 + attachmentResult.score * 0.3));
+  const goals = valuesResult.score;
   const intimacy = Math.round((attachmentResult.score * 0.6 + lifestyle * 0.4));
 
+  // Weighted overall score emphasizing most predictive factors
   const overall = Math.round(
-    (attachmentResult.score * 0.3 + personalityResult.score * 0.25 + birthOrderResult.score * 0.2 + values * 0.15 + lifestyle * 0.1)
+    (attachmentResult.score * 0.35 + valuesResult.score * 0.25 + personalityResult.score * 0.20 + birthOrderResult.score * 0.15 + lifestyle * 0.05)
   );
 
-  // Generate compatibility explanations
+  // Generate detailed compatibility explanations
   const why_compatible: string[] = [];
   const potential_challenges: string[] = [];
   const relationship_strengths: string[] = [];
 
-  if (attachmentResult.score >= 80) {
+  // Attachment-based insights
+  if (attachmentResult.score >= 85) {
     why_compatible.push(attachmentResult.explanation);
-    relationship_strengths.push("Strong emotional foundation and trust-building ability");
+    relationship_strengths.push("Exceptional emotional security and trust-building foundation");
+  } else if (attachmentResult.score >= 70) {
+    why_compatible.push("Good emotional compatibility with growth potential");
+    relationship_strengths.push("Solid emotional foundation with room for deeper intimacy development");
   } else if (attachmentResult.score < 60) {
-    potential_challenges.push("May need to work on emotional communication and trust-building");
+    potential_challenges.push("Attachment styles may create emotional distance or conflict without conscious work");
   }
 
+  // Personality-based insights
   if (personalityResult.score >= 80) {
     why_compatible.push(personalityResult.explanation);
-    relationship_strengths.push("Complementary personalities that bring out the best in each other");
+    relationship_strengths.push("Personality styles create natural harmony and understanding");
+  } else if (personalityResult.score < 60) {
+    potential_challenges.push("Different personality approaches may require extra communication and patience");
   }
 
-  if (birthOrderResult.score >= 80) {
+  // Birth order insights
+  if (birthOrderResult.score >= 85) {
     why_compatible.push(birthOrderResult.explanation);
-    relationship_strengths.push("Natural relationship dynamics based on family roles");
+    relationship_strengths.push("Natural relationship roles and dynamics feel effortless");
   }
 
-  if (values >= 80) {
-    relationship_strengths.push("Aligned life goals and relationship timeline");
+  // Values insights
+  if (valuesResult.score >= 80) {
+    why_compatible.push("Strong alignment on relationship goals and life direction");
+    relationship_strengths.push("Shared vision for the future creates unified partnership");
+  } else if (valuesResult.score < 60) {
+    potential_challenges.push("Different life goals or timelines may require significant compromise");
   }
 
-  if (overall >= 85) {
-    why_compatible.push("Exceptional overall compatibility across multiple dimensions");
+  // Overall compatibility insights
+  if (overall >= 90) {
+    why_compatible.push("Exceptional compatibility across all major relationship dimensions");
+  } else if (overall >= 80) {
+    why_compatible.push("Very high compatibility with minor areas for growth");
+  } else if (overall >= 70) {
+    why_compatible.push("Good compatibility foundation with some differences to navigate");
   }
 
   return {
@@ -212,7 +410,7 @@ export const calculateDetailedCompatibility = (
     attachment: attachmentResult.score,
     personality: personalityResult.score,
     birthOrder: birthOrderResult.score,
-    values,
+    values: valuesResult.score,
     lifestyle,
     breakdown: {
       emotional,
