@@ -94,12 +94,16 @@ const Onboarding = () => {
 
       if (nextStep >= assessments.length) {
         // Complete onboarding and calculate readiness score
+        console.log('Assessment complete, marking onboarding as complete...');
         await UserStateManager.markOnboardingComplete();
         
         const profile = await UserStateManager.getUserProfile();
+        console.log('Profile after onboarding:', profile);
         if (profile) {
           const readinessScore = calculateRelationshipReadiness(profile.assessmentResults);
+          console.log('Calculated readiness score:', readinessScore);
           await UserStateManager.saveReadinessScore(readinessScore);
+          console.log('Readiness score saved, navigating to AI results...');
         }
         
         navigate('/ai-results');

@@ -23,6 +23,11 @@ const createMatch = (
       lifestyle: Math.floor(Math.random() * 30) + 70,
       goals: Math.floor(Math.random() * 30) + 70,
       intimacy: Math.floor(Math.random() * 30) + 70
+    },
+    explanations: {
+      why_compatible: ["Strong emotional connection potential", "Complementary communication styles"],
+      relationship_strengths: ["Deep understanding", "Mutual growth opportunities"],
+      potential_challenges: ["Different pace preferences"]
     }
   };
   
