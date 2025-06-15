@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from "react";
 import { UserStateManager } from "@/utils/userStateManager";
 import WelcomePhilosophyAssessment from "@/components/assessments/WelcomePhilosophyAssessment";
@@ -23,9 +24,15 @@ const Onboarding = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Scroll to top when step changes
+  // Scroll to top when step changes - using both smooth scroll and immediate fallback
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Use requestAnimationFrame to ensure DOM is updated first
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      // Also scroll the document element and body as fallback
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
   }, [currentStep]);
 
   useEffect(() => {
@@ -240,3 +247,4 @@ const Onboarding = () => {
 };
 
 export default Onboarding;
+
