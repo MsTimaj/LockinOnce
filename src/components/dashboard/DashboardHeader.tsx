@@ -1,6 +1,8 @@
+
 import { Bell, Settings, CheckSquare, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface DashboardHeaderProps {
   onShowChecklist?: () => void;
@@ -9,14 +11,17 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSettingsClick = () => {
     navigate('/settings');
   };
 
   const handleNotificationClick = () => {
-    // For now, show a simple alert - can be expanded later
-    alert('Notifications feature coming soon!');
+    toast({
+      title: "Demo Mode",
+      description: "Notifications are not active in demo mode. This feature would send alerts for new matches and messages.",
+    });
   };
 
   return (
@@ -24,10 +29,15 @@ const DashboardHeader = ({ onShowChecklist, onShowProjectStatus }: DashboardHead
       <div className="max-w-md mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-              LockInOnce
-            </h1>
-            <p className="text-xs text-gray-600">Find your perfect match</p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                LockInOnce
+              </h1>
+              <span className="bg-rose-100 text-rose-600 text-xs px-2 py-1 rounded-full font-medium">
+                Beta
+              </span>
+            </div>
+            <p className="text-xs text-gray-600">Demo - Find your perfect match</p>
           </div>
           
           <div className="flex items-center space-x-2">

@@ -7,16 +7,16 @@ export const filterProfilesByPreferences = (profiles: any[], preferences: any): 
   }
 
   return profiles.filter(profile => {
-    // Age range filtering
-    if (preferences.ageRange?.min !== undefined && preferences.ageRange?.max !== undefined) {
-      if (profile.age < preferences.ageRange.min || profile.age > preferences.ageRange.max) {
+    // Gender preference filtering - STRICT enforcement
+    if (preferences.genderPreference && preferences.genderPreference !== 'any') {
+      if (!profile.gender || profile.gender !== preferences.genderPreference) {
         return false;
       }
     }
 
-    // Gender preference filtering
-    if (preferences.genderPreference && preferences.genderPreference !== 'any') {
-      if (profile.gender && profile.gender !== preferences.genderPreference) {
+    // Age range filtering
+    if (preferences.ageRange?.min !== undefined && preferences.ageRange?.max !== undefined) {
+      if (profile.age < preferences.ageRange.min || profile.age > preferences.ageRange.max) {
         return false;
       }
     }

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Target, Sparkles, ArrowRight, RotateCcw } from "lucide-react";
@@ -13,14 +14,24 @@ const Index = () => {
     navigate("/onboarding");
   };
 
-  const handleResetForTesting = () => {
-    UserStateManager.resetForTesting();
-    toast({
-      title: "Data Cleared",
-      description: "All user data has been cleared. You can now test as a new user.",
-    });
-    // Refresh the page to ensure clean state
-    window.location.reload();
+  const handleResetForTesting = async () => {
+    try {
+      await UserStateManager.resetForTesting();
+      toast({
+        title: "Demo Reset Complete",
+        description: "All demo data cleared. You can now test as a new user.",
+      });
+      // Small delay before refresh to show the toast
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      toast({
+        title: "Reset Failed",
+        description: "There was an issue resetting the demo. Please refresh the page.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCheckDashboard = async () => {
@@ -47,20 +58,31 @@ const Index = () => {
                 <Heart className="h-12 w-12 text-white" />
               </div>
             </div>
-            <h1 className="text-5xl font-serif font-bold text-gray-800 mb-6">
-              LockInOnce
-            </h1>
+            <div className="flex items-center justify-center space-x-3 mb-6">
+              <h1 className="text-5xl font-serif font-bold text-gray-800">
+                LockInOnce
+              </h1>
+              <span className="bg-rose-100 text-rose-600 text-sm px-3 py-1 rounded-full font-medium">
+                Beta Demo
+              </span>
+            </div>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
               Science-based compatibility matching for serious relationships. 
               Find your one true match through our comprehensive personality and attachment assessment.
             </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+              <p className="text-sm text-amber-800">
+                <strong>Demo Version:</strong> This is a demonstration of the LockInOnce matching system. 
+                All profiles and matches are simulated for testing purposes.
+              </p>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 onClick={handleStartOnboarding}
                 className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-3 text-lg"
                 size="lg"
               >
-                Start Your Assessment
+                Start Demo Assessment
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
               <Button 
@@ -68,13 +90,13 @@ const Index = () => {
                 variant="outline"
                 className="border-rose-200 text-rose-600 hover:bg-rose-50"
               >
-                View Results
+                View Demo Results
               </Button>
             </div>
             
             {/* Testing Reset Button */}
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-sm text-gray-500 mb-3">Testing & Development</p>
+              <p className="text-sm text-gray-500 mb-3">Demo Controls</p>
               <Button 
                 onClick={handleResetForTesting}
                 variant="outline"
@@ -82,7 +104,7 @@ const Index = () => {
                 className="border-gray-300 text-gray-600 hover:bg-gray-50"
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
-                Reset as New User
+                Reset Demo Data
               </Button>
             </div>
           </div>
