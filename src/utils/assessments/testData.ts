@@ -1,3 +1,4 @@
+
 import { ComprehensiveAssessmentResults } from "@/utils/assessment/types";
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
@@ -59,10 +60,10 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     }
   },
   attractionLayer: {
-    physical: 'important',
-    emotional: 'essential',
-    intellectual: 'very_important',
-    shared: 'essential'
+    physicalImportance: 'important',
+    emotionalConnection: 'essential',
+    intellectualCompatibility: 'very_important',
+    sharedValues: 'essential'
   },
   physicalProximity: {
     physicalAffection: 'moderate',
@@ -77,33 +78,33 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     listeningStyle: 'active_empathetic'
   },
   lifeGoals: {
-    career: 'high',
-    family: 'important',
-    lifestyle: 'balanced',
-    growth: 'continuous'
+    careerImportance: 'high',
+    familyImportance: 'important',
+    lifestylePreference: 'balanced',
+    personalGrowth: 'continuous'
   },
   values: {
-    core: ['extremely_important'],
-    relationship: 'very_important',
-    lifestyle: 'moderately_important',
-    personal: 'very_important',
-    shared: 'moderately_important'
+    coreValues: ['extremely_important'],
+    relationshipValues: 'very_important',
+    lifestyleValues: 'moderately_important',
+    personalValues: 'very_important',
+    sharedBeliefs: 'moderately_important'
   },
   lifestyle: {
-    social: 'moderate',
-    fitness: 'active',
-    diet: 'flexible',
-    balance: 'balanced'
+    socialActivity: 'moderate',
+    fitnessLevel: 'active',
+    dietaryPreferences: 'flexible',
+    workLifeBalance: 'balanced'
   },
   loveLanguages: {
-    primary: 'quality_time',
-    secondary: 'acts_of_service'
+    primaryLoveLanguage: 'quality_time',
+    secondaryLoveLanguage: 'acts_of_service'
   },
   financialValues: {
-    spending: 'balanced',
-    saving: 'high',
-    goals: 'security_growth',
-    debt: 'low'
+    spendingHabits: 'balanced',
+    savingPriority: 'high',
+    financialGoals: 'security_growth',
+    debtTolerance: 'low'
   }
 });
 
