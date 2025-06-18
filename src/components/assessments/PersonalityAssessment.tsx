@@ -113,7 +113,9 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
   };
 
   const currentQuestionData = questions[currentQuestion];
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  // Progress should only reach 100% when all questions are answered
+  // Current question is 0-indexed, so progress = currentQuestion / questions.length * 100
+  const progress = Math.min((currentQuestion / questions.length) * 100, 95);
 
   return (
     <div className="space-y-6">

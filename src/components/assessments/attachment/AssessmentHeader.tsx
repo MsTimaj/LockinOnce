@@ -5,7 +5,10 @@ interface AssessmentHeaderProps {
 }
 
 const AssessmentHeader = ({ currentQuestion, totalQuestions }: AssessmentHeaderProps) => {
-  const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  // Progress should only reach 100% when all questions are answered
+  // Current question is 0-indexed, so progress = currentQuestion / totalQuestions * 100
+  // This ensures we don't reach 100% until we're past the last question
+  const progress = Math.min((currentQuestion / totalQuestions) * 100, 95);
 
   return (
     <div className="text-center space-y-4">

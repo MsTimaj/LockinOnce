@@ -7,7 +7,10 @@ interface OnboardingProgressBarProps {
 }
 
 const OnboardingProgressBar = ({ currentStep, totalSteps }: OnboardingProgressBarProps) => {
-  const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
+  // Progress should only reach 100% when all steps are completed
+  // Current step is 0-indexed, so progress = currentStep / totalSteps * 100
+  // This ensures we don't reach 100% until we're past the last step
+  const progressPercentage = Math.min((currentStep / totalSteps) * 100, 95);
 
   return (
     <div className="mb-8">
