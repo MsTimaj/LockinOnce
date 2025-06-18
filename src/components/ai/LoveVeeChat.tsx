@@ -75,50 +75,48 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic, analysisData }: LoveVeeCh
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <div className="relative">
-        <Card className={`bg-white/95 backdrop-blur-xl shadow-2xl border-2 border-rose-200/50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'}`}>
-          <CardHeader className="p-0">
-            <ChatHeader 
-              isMinimized={isMinimized}
-              onMinimize={handleMinimize}
-              onClose={handleClose}
-            />
-          </CardHeader>
-          
-          {!isMinimized && (
-            <CardContent className="p-0 flex flex-col h-80">
-              {showApiKeyInput && (
-                <ApiKeyInput
-                  apiKey={apiKey}
-                  onChange={setApiKey}
-                  onSubmit={handleApiKeySubmit}
-                />
-              )}
-              
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
-                ))}
-                
-                {isLoading && <ChatLoadingIndicator />}
-                
-                <div ref={messagesEndRef} />
-              </div>
-              
-              <ChatInput
-                value={inputValue}
-                onChange={setInputValue}
-                onSend={handleSendMessage}
-                isLoading={isLoading}
-              />
-            </CardContent>
-          )}
-        </Card>
+    <div className="relative">
+      <Card className={`bg-white/95 backdrop-blur-xl shadow-2xl border-2 border-rose-200/50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'}`}>
+        <CardHeader className="p-0">
+          <ChatHeader 
+            isMinimized={isMinimized}
+            onMinimize={handleMinimize}
+            onClose={handleClose}
+          />
+        </CardHeader>
         
-        <HeartAnimation trigger={heartTrigger} className="rounded-lg" />
-      </div>
+        {!isMinimized && (
+          <CardContent className="p-0 flex flex-col h-80">
+            {showApiKeyInput && (
+              <ApiKeyInput
+                apiKey={apiKey}
+                onChange={setApiKey}
+                onSubmit={handleApiKeySubmit}
+              />
+            )}
+            
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+              
+              {isLoading && <ChatLoadingIndicator />}
+              
+              <div ref={messagesEndRef} />
+            </div>
+            
+            <ChatInput
+              value={inputValue}
+              onChange={setInputValue}
+              onSend={handleSendMessage}
+              isLoading={isLoading}
+            />
+          </CardContent>
+        )}
+      </Card>
+      
+      <HeartAnimation trigger={heartTrigger} className="rounded-lg" />
     </div>
   );
 };
