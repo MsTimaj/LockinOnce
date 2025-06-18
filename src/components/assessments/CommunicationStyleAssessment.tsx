@@ -58,20 +58,20 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
             </h3>
             <RadioGroup value={communicationStyle} onValueChange={setCommunicationStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="direct" id="direct" />
-                <Label htmlFor="direct" className="cursor-pointer flex-1">Direct - I say what I mean clearly and appreciate the same</Label>
+                <RadioGroupItem value="direct_and_kind" id="direct_kind" />
+                <Label htmlFor="direct_kind" className="cursor-pointer flex-1">Direct and kind - I say what I mean clearly while being considerate</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="gentle" id="gentle" />
-                <Label htmlFor="gentle" className="cursor-pointer flex-1">Gentle - I prefer softer, more considerate communication</Label>
+                <RadioGroupItem value="gentle_and_indirect" id="gentle_indirect" />
+                <Label htmlFor="gentle_indirect" className="cursor-pointer flex-1">Gentle and indirect - I prefer softer, more subtle communication</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="expressive" id="expressive" />
-                <Label htmlFor="expressive" className="cursor-pointer flex-1">Expressive - I communicate with emotion and storytelling</Label>
+                <RadioGroupItem value="very_direct" id="very_direct" />
+                <Label htmlFor="very_direct" className="cursor-pointer flex-1">Very direct - I value straightforward, no-nonsense communication</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="thoughtful" id="thoughtful" />
-                <Label htmlFor="thoughtful" className="cursor-pointer flex-1">Thoughtful - I prefer to think before speaking and choose words carefully</Label>
+                <RadioGroupItem value="context_dependent" id="context_dependent" />
+                <Label htmlFor="context_dependent" className="cursor-pointer flex-1">Context-dependent - My style adapts based on the situation</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -85,20 +85,20 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
             </h3>
             <RadioGroup value={conflictResolution} onValueChange={setConflictResolution}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="discuss_immediately" id="discuss-immediately" />
-                <Label htmlFor="discuss-immediately" className="cursor-pointer flex-1">Discuss immediately - Address issues right away</Label>
+                <RadioGroupItem value="collaborate_solutions" id="collaborate" />
+                <Label htmlFor="collaborate" className="cursor-pointer flex-1">Collaborate on solutions - Work together to find win-win outcomes</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="cool_down_first" id="cool-down-first" />
-                <Label htmlFor="cool-down-first" className="cursor-pointer flex-1">Cool down first - Take time to process before discussing</Label>
+                <RadioGroupItem value="compromise_meet_middle" id="compromise" />
+                <Label htmlFor="compromise" className="cursor-pointer flex-1">Compromise and meet in the middle - Find fair solutions for both</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="collaborative_problem_solving" id="collaborative" />
-                <Label htmlFor="collaborative" className="cursor-pointer flex-1">Collaborative problem-solving - Work together to find solutions</Label>
+                <RadioGroupItem value="avoid_conflict" id="avoid" />
+                <Label htmlFor="avoid" className="cursor-pointer flex-1">Avoid conflict when possible - Prefer harmony over confrontation</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="avoid_when_possible" id="avoid" />
-                <Label htmlFor="avoid" className="cursor-pointer flex-1">Avoid when possible - Prefer harmony over confrontation</Label>
+                <RadioGroupItem value="need_time_process" id="process_time" />
+                <Label htmlFor="process_time" className="cursor-pointer flex-1">Need time to process - Take space before discussing difficult topics</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -112,20 +112,20 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
             </h3>
             <RadioGroup value={expressionStyle} onValueChange={setExpressionStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="open_book" id="open-book" />
-                <Label htmlFor="open-book" className="cursor-pointer flex-1">Open book - I share my feelings readily and openly</Label>
+                <RadioGroupItem value="open_and_honest" id="open_honest" />
+                <Label htmlFor="open_honest" className="cursor-pointer flex-1">Open and honest - I share my feelings readily and authentically</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="gradual_sharing" id="gradual" />
-                <Label htmlFor="gradual" className="cursor-pointer flex-1">Gradual sharing - I open up as trust builds over time</Label>
+                <RadioGroupItem value="thoughtful_measured" id="thoughtful" />
+                <Label htmlFor="thoughtful" className="cursor-pointer flex-1">Thoughtful and measured - I consider my words carefully before sharing</Label>
+              </div>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="reserved_private" id="reserved" />
+                <Label htmlFor="reserved" className="cursor-pointer flex-1">Reserved and private - I prefer to keep most feelings internal</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
                 <RadioGroupItem value="actions_over_words" id="actions" />
                 <Label htmlFor="actions" className="cursor-pointer flex-1">Actions over words - I express feelings through behavior rather than words</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="private_person" id="private" />
-                <Label htmlFor="private" className="cursor-pointer flex-1">Private person - I keep most feelings internal</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -139,20 +139,20 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
             </h3>
             <RadioGroup value={listeningStyle} onValueChange={setListeningStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="active_listener" id="active" />
-                <Label htmlFor="active" className="cursor-pointer flex-1">Active listener - I focus fully and ask clarifying questions</Label>
+                <RadioGroupItem value="active_empathetic" id="active_empathetic" />
+                <Label htmlFor="active_empathetic" className="cursor-pointer flex-1">Active and empathetic - I listen fully and respond with understanding</Label>
+              </div>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="attentive_engaged" id="attentive" />
+                <Label htmlFor="attentive" className="cursor-pointer flex-1">Attentive and engaged - I focus well and ask thoughtful questions</Label>
+              </div>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="selective_focused" id="selective" />
+                <Label htmlFor="selective" className="cursor-pointer flex-1">Selective and focused - I listen best when the topic interests me</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
                 <RadioGroupItem value="solution_oriented" id="solution" />
-                <Label htmlFor="solution" className="cursor-pointer flex-1">Solution-oriented - I listen and offer practical advice</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="emotional_support" id="emotional" />
-                <Label htmlFor="emotional" className="cursor-pointer flex-1">Emotional support - I listen with empathy and provide comfort</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="reflective" id="reflective" />
-                <Label htmlFor="reflective" className="cursor-pointer flex-1">Reflective - I listen carefully and think before responding</Label>
+                <Label htmlFor="solution" className="cursor-pointer flex-1">Solution-oriented - I listen and naturally offer practical advice</Label>
               </div>
             </RadioGroup>
           </CardContent>

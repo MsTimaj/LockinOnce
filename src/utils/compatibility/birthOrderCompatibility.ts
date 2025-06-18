@@ -9,81 +9,116 @@ export const calculateBirthOrderCompatibility = (
   if (!user || !match) return { score: 50, explanation: "Incomplete birth order data" };
 
   // Research-based birth order compatibility matrix
-  const compatibilityMatrix: Record<string, Record<string, { score: number; explanation: string }>> = {
-    oldest: { 
-      youngest: { 
-        score: 92, 
-        explanation: "Classic high-compatibility pairing - oldest's natural leadership meshes perfectly with youngest's comfort being guided and cared for" 
-      },
-      middle: { 
-        score: 80, 
-        explanation: "Oldest provides clear direction while middle child's diplomatic skills and flexibility complement the partnership beautifully" 
-      },
-      only: { 
-        score: 75, 
-        explanation: "Both comfortable with responsibility and high achievement, though may need to negotiate leadership roles consciously" 
-      },
+  const birthOrderMatrix: Record<string, Record<string, { score: number; explanation: string }>> = {
+    oldest: {
       oldest: { 
-        score: 62, 
-        explanation: "Two natural leaders can create power struggles, but mutual respect for competence and shared responsibility ethic build strong foundation" 
-      }
-    },
-    middle: { 
+        score: 65, 
+        explanation: "Two firstborns can create a power struggle dynamic, but shared responsibility and leadership qualities can work well if both learn to compromise and take turns leading in different areas." 
+      },
       middle: { 
         score: 88, 
-        explanation: "Both excel at compromise and seeing multiple perspectives - natural peacemakers who create harmonious, balanced relationships" 
-      },
-      oldest: { 
-        score: 80, 
-        explanation: "Middle child's adaptability and conflict-resolution skills perfectly complement oldest's leadership and decision-making confidence" 
+        explanation: "Excellent pairing! Oldest provides structure and direction that middle children appreciate, while middle child's flexibility and social skills complement firstborn's more rigid approach." 
       },
       youngest: { 
-        score: 76, 
-        explanation: "Middle child's nurturing nature balances youngest's need for attention while youngest brings playfulness to the relationship" 
+        score: 92, 
+        explanation: "Classic complementary match! Oldest child's natural caretaking and leadership pairs beautifully with youngest child's charm and acceptance of being cared for. Natural roles feel comfortable." 
       },
       only: { 
-        score: 72, 
-        explanation: "Middle child's social skills and flexibility help only child learn collaboration while gaining from their focus and determination" 
+        score: 70, 
+        explanation: "Good compatibility as both understand responsibility and high expectations. Only child's independence balances oldest child's tendency to take charge, though both may need to work on flexibility." 
       }
     },
-    youngest: { 
+    middle: {
+      oldest: { 
+        score: 88, 
+        explanation: "Excellent pairing! Middle child's diplomatic nature and flexibility works well with oldest child's leadership style. Middle child feels appreciated for their unique perspective." 
+      },
+      middle: { 
+        score: 85, 
+        explanation: "Very compatible! Both middle children understand compromise, negotiation, and the importance of harmony. They're both flexible and skilled at seeing multiple perspectives." 
+      },
+      youngest: { 
+        score: 80, 
+        explanation: "Good match with mutual understanding of not being the 'first' in family hierarchy. Middle child's responsibility balances youngest child's free spirit, creating a harmonious dynamic." 
+      },
+      only: { 
+        score: 75, 
+        explanation: "Interesting dynamic where middle child's social skills help only child connect with others, while only child's confidence supports middle child's sometimes wavering self-esteem." 
+      }
+    },
+    youngest: {
       oldest: { 
         score: 92, 
-        explanation: "Ideal complementary match - youngest's spontaneity and charm perfectly balanced by oldest's stability and protective instincts" 
-      },
-      only: { 
-        score: 78, 
-        explanation: "Youngest's social energy and creativity beautifully complement only child's focus and independence, creating dynamic balance" 
+        explanation: "Perfect complementary pairing! Youngest child's charm and easygoing nature pairs beautifully with oldest child's protective and guiding instincts. Very natural relationship roles." 
       },
       middle: { 
-        score: 76, 
-        explanation: "Middle child provides emotional stability and patience while youngest brings excitement and helps middle child feel special" 
+        score: 80, 
+        explanation: "Solid compatibility! Middle child's flexibility and diplomatic skills work well with youngest child's spontaneous nature. Both understand not being the primary focus in family." 
       },
       youngest: { 
-        score: 58, 
-        explanation: "Both may expect partner to take charge and make decisions - requires conscious development of leadership skills by one partner" 
+        score: 60, 
+        explanation: "Can work but requires conscious effort. Two youngest children may both expect to be taken care of, leading to issues with responsibility. However, shared playfulness and optimism are strengths." 
+      },
+      only: { 
+        score: 72, 
+        explanation: "Interesting balance where only child's self-reliance complements youngest child's social ease. Only child may enjoy taking care of youngest, while youngest brings fun and spontaneity." 
       }
     },
-    only: { 
-      only: { 
-        score: 85, 
-        explanation: "Shared independence and self-sufficiency create respect-based relationship with mutual understanding of alone time needs" 
-      },
-      youngest: { 
-        score: 78, 
-        explanation: "Only child's maturity and focus provide grounding for youngest's energy while learning spontaneity and social ease" 
-      },
+    only: {
       oldest: { 
-        score: 75, 
-        explanation: "Both comfortable leading and taking responsibility - success depends on dividing domains and respecting each other's expertise" 
+        score: 70, 
+        explanation: "Compatible pairing of two responsible, achievement-oriented personalities. Both understand high expectations and perfectionism, though they may need to work on relaxing together." 
       },
       middle: { 
+        score: 75, 
+        explanation: "Good balance where only child's direct approach complements middle child's diplomatic skills. Middle child helps only child understand group dynamics and compromise." 
+      },
+      youngest: { 
         score: 72, 
-        explanation: "Only child learns valuable collaboration skills from middle child's diplomatic nature while providing decisiveness and direction" 
+        explanation: "Complementary match where only child's maturity and responsibility balances youngest child's playful, carefree approach. Can create a protective, nurturing dynamic." 
+      },
+      only: { 
+        score: 68, 
+        explanation: "Both understand independence and may need to work on interdependence. Shared understanding of parental expectations and self-reliance, but may struggle with compromise and sharing space." 
       }
     }
   };
 
-  const result = compatibilityMatrix[user.birthOrder]?.[match.birthOrder];
-  return result || { score: 50, explanation: "Unable to assess birth order compatibility" };
+  // Get family size impact
+  const getSizeFactor = (size1: string, size2: string): number => {
+    // Similar family sizes often mean similar dynamics
+    if (size1 === size2) return 5;
+    // Large family + small family can work well (different perspectives)
+    if ((size1 === 'large' && size2 === 'small') || (size1 === 'small' && size2 === 'large')) return 3;
+    return 0;
+  };
+
+  // Get parenting style compatibility
+  const getParentingFactor = (style1: string, style2: string): number => {
+    // Similar parenting backgrounds often create understanding
+    if (style1 === style2) return 3;
+    // Complementary styles can also work well
+    const complementary = [
+      ['warm_supportive', 'structured_strict'],
+      ['permissive_relaxed', 'structured_strict']
+    ];
+    const isComplementary = complementary.some(([a, b]) => 
+      (style1 === a && style2 === b) || (style1 === b && style2 === a)
+    );
+    return isComplementary ? 2 : 0;
+  };
+
+  const baseResult = birthOrderMatrix[user.birthOrder]?.[match.birthOrder];
+  if (!baseResult) return { score: 50, explanation: "Unable to assess birth order compatibility" };
+
+  // Apply modifiers
+  const sizeFactor = getSizeFactor(user.familySize, match.familySize);
+  const parentingFactor = getParentingFactor(user.parentalDynamics, match.parentalDynamics);
+  
+  const adjustedScore = Math.min(95, baseResult.score + sizeFactor + parentingFactor);
+
+  return {
+    score: adjustedScore,
+    explanation: baseResult.explanation
+  };
 };

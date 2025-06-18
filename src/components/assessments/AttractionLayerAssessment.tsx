@@ -16,6 +16,7 @@ export interface AttractionLayerResults {
   conversationStyle: string;
   socialEnergy: string;
   attractionFactors: string[];
+  intimacyPace: string;
 }
 
 const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProps) => {
@@ -24,6 +25,7 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
   const [conversationStyle, setConversationStyle] = useState("");
   const [socialEnergy, setSocialEnergy] = useState("");
   const [attractionFactors, setAttractionFactors] = useState<string[]>([]);
+  const [intimacyPace, setIntimacyPace] = useState("");
 
   const handleAttractionFactorChange = (factor: string, checked: boolean) => {
     if (checked) {
@@ -39,23 +41,25 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
       personalStyle,
       conversationStyle,
       socialEnergy,
-      attractionFactors
+      attractionFactors,
+      intimacyPace
     };
     console.log('Attraction Layer Results:', results);
     onComplete(results);
   };
 
-  const isComplete = energyStyle && personalStyle && conversationStyle && socialEnergy && attractionFactors.length > 0;
+  const isComplete = energyStyle && personalStyle && conversationStyle && socialEnergy && 
+                     attractionFactors.length > 0 && intimacyPace;
 
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-playfair font-bold text-foreground">
-          Attraction Layer
+          Attraction & Chemistry
         </h2>
         <div className="card-glass p-4">
           <p className="text-sm text-muted-foreground">
-            <strong>Why this matters:</strong> Beyond deep compatibility, initial attraction and energy alignment matter for spark and chemistry. This helps us understand your vibe and what draws you to others for that important initial connection.
+            <strong>Why this matters:</strong> Beyond deep compatibility, initial attraction and energy alignment create spark and chemistry. Understanding your attraction patterns helps us identify the type of person who will naturally draw you in and maintain that magnetic connection.
           </p>
         </div>
       </div>
@@ -69,20 +73,20 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
             </h3>
             <RadioGroup value={energyStyle} onValueChange={setEnergyStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="calm_steady" id="calm_steady" />
-                <Label htmlFor="calm_steady" className="cursor-pointer flex-1">Calm and steady - I bring peaceful, grounding energy</Label>
+                <RadioGroupItem value="calm_grounding" id="calm_grounding" />
+                <Label htmlFor="calm_grounding" className="cursor-pointer flex-1">Calm and grounding - I bring peaceful, stabilizing presence</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="warm_engaging" id="warm_engaging" />
-                <Label htmlFor="warm_engaging" className="cursor-pointer flex-1">Warm and engaging - I'm naturally welcoming and approachable</Label>
+                <RadioGroupItem value="warm_inviting" id="warm_inviting" />
+                <Label htmlFor="warm_inviting" className="cursor-pointer flex-1">Warm and inviting - I'm naturally welcoming and create emotional safety</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="dynamic_passionate" id="dynamic_passionate" />
-                <Label htmlFor="dynamic_passionate" className="cursor-pointer flex-1">Dynamic and passionate - I bring excitement and enthusiasm</Label>
+                <RadioGroupItem value="dynamic_inspiring" id="dynamic_inspiring" />
+                <Label htmlFor="dynamic_inspiring" className="cursor-pointer flex-1">Dynamic and inspiring - I bring excitement and motivate others</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="thoughtful_deep" id="thoughtful_deep" />
-                <Label htmlFor="thoughtful_deep" className="cursor-pointer flex-1">Thoughtful and deep - I prefer meaningful, contemplative energy</Label>
+                <RadioGroupItem value="mysterious_intriguing" id="mysterious_intriguing" />
+                <Label htmlFor="mysterious_intriguing" className="cursor-pointer flex-1">Mysterious and intriguing - I have depth that draws people in gradually</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -92,24 +96,24 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
         <Card className="card-glass">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your personal style approach:
+              How you present yourself to the world:
             </h3>
             <RadioGroup value={personalStyle} onValueChange={setPersonalStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="classic_polished" id="classic_polished" />
-                <Label htmlFor="classic_polished" className="cursor-pointer flex-1">Classic and polished - I prefer timeless, well-put-together looks</Label>
+                <RadioGroupItem value="polished_professional" id="polished_professional" />
+                <Label htmlFor="polished_professional" className="cursor-pointer flex-1">Polished and professional - I dress well and pay attention to details</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="casual_comfortable" id="casual_comfortable" />
-                <Label htmlFor="casual_comfortable" className="cursor-pointer flex-1">Casual and comfortable - I prioritize comfort and authenticity</Label>
+                <RadioGroupItem value="effortless_natural" id="effortless_natural" />
+                <Label htmlFor="effortless_natural" className="cursor-pointer flex-1">Effortless and natural - I prefer authentic, comfortable self-expression</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="creative_unique" id="creative_unique" />
-                <Label htmlFor="creative_unique" className="cursor-pointer flex-1">Creative and unique - I like to express my personality through style</Label>
+                <RadioGroupItem value="creative_distinctive" id="creative_distinctive" />
+                <Label htmlFor="creative_distinctive" className="cursor-pointer flex-1">Creative and distinctive - I express my personality through unique style choices</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="minimalist_clean" id="minimalist_clean" />
-                <Label htmlFor="minimalist_clean" className="cursor-pointer flex-1">Minimalist and clean - I prefer simple, understated elegance</Label>
+                <RadioGroupItem value="classic_timeless" id="classic_timeless" />
+                <Label htmlFor="classic_timeless" className="cursor-pointer flex-1">Classic and timeless - I prefer elegant, understated sophistication</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -119,24 +123,24 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
         <Card className="card-glass">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 text-foreground">
-              In conversations, you tend to be:
+              Your conversation and connection style:
             </h3>
             <RadioGroup value={conversationStyle} onValueChange={setConversationStyle}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="playful_humorous" id="playful_humorous" />
-                <Label htmlFor="playful_humorous" className="cursor-pointer flex-1">Playful and humorous - I love to laugh and keep things light</Label>
+                <RadioGroupItem value="playful_witty" id="playful_witty" />
+                <Label htmlFor="playful_witty" className="cursor-pointer flex-1">Playful and witty - I love humor, banter, and keeping things light-hearted</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="intellectual_curious" id="intellectual_curious" />
-                <Label htmlFor="intellectual_curious" className="cursor-pointer flex-1">Intellectual and curious - I enjoy deep, thought-provoking discussions</Label>
+                <RadioGroupItem value="deep_meaningful" id="deep_meaningful" />
+                <Label htmlFor="deep_meaningful" className="cursor-pointer flex-1">Deep and meaningful - I prefer substantial conversations about ideas and emotions</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="empathetic_supportive" id="empathetic_supportive" />
-                <Label htmlFor="empathetic_supportive" className="cursor-pointer flex-1">Empathetic and supportive - I focus on understanding and connection</Label>
+                <RadioGroupItem value="supportive_nurturing" id="supportive_nurturing" />
+                <Label htmlFor="supportive_nurturing" className="cursor-pointer flex-1">Supportive and nurturing - I naturally create emotional safety and understanding</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="direct_honest" id="direct_honest" />
-                <Label htmlFor="direct_honest" className="cursor-pointer flex-1">Direct and honest - I value straightforward, authentic communication</Label>
+                <RadioGroupItem value="adventurous_spontaneous" id="adventurous_spontaneous" />
+                <Label htmlFor="adventurous_spontaneous" className="cursor-pointer flex-1">Adventurous and spontaneous - I love exploring new ideas and experiences together</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -146,20 +150,43 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
         <Card className="card-glass">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your social energy preference:
+              Your social energy and lifestyle preference:
             </h3>
             <RadioGroup value={socialEnergy} onValueChange={setSocialEnergy}>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="intimate_gatherings" id="intimate_gatherings" />
-                <Label htmlFor="intimate_gatherings" className="cursor-pointer flex-1">Intimate gatherings - I prefer small groups or one-on-one time</Label>
+                <RadioGroupItem value="intimate_quality_time" id="intimate_quality" />
+                <Label htmlFor="intimate_quality" className="cursor-pointer flex-1">Intimate quality time - I prefer deep one-on-one connections and small gatherings</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="balanced_social" id="balanced_social" />
-                <Label htmlFor="balanced_social" className="cursor-pointer flex-1">Balanced social life - I enjoy both intimate and larger social settings</Label>
+                <RadioGroupItem value="balanced_social_life" id="balanced_social" />
+                <Label htmlFor="balanced_social" className="cursor-pointer flex-1">Balanced social life - I enjoy both intimate moments and larger social experiences</Label>
               </div>
               <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="vibrant_social" id="vibrant_social" />
-                <Label htmlFor="vibrant_social" className="cursor-pointer flex-1">Vibrant social life - I thrive in larger groups and social events</Label>
+                <RadioGroupItem value="active_social_butterfly" id="social_butterfly" />
+                <Label htmlFor="social_butterfly" className="cursor-pointer flex-1">Active social butterfly - I thrive in groups and love meeting new people together</Label>
+              </div>
+            </RadioGroup>
+          </CardContent>
+        </Card>
+
+        {/* Intimacy Pace */}
+        <Card className="card-glass">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-medium mb-4 text-foreground">
+              Your preferred pace for emotional and physical intimacy:
+            </h3>
+            <RadioGroup value={intimacyPace} onValueChange={setIntimacyPace}>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="slow_and_steady" id="slow_steady" />
+                <Label htmlFor="slow_steady" className="cursor-pointer flex-1">Slow and steady - I prefer to build intimacy gradually with strong foundation</Label>
+              </div>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="natural_progression" id="natural_progression" />
+                <Label htmlFor="natural_progression" className="cursor-pointer flex-1">Natural progression - I let intimacy develop organically based on connection</Label>
+              </div>
+              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                <RadioGroupItem value="passionate_intense" id="passionate_intense" />
+                <Label htmlFor="passionate_intense" className="cursor-pointer flex-1">Passionate and intense - I value strong chemistry and emotional intensity</Label>
               </div>
             </RadioGroup>
           </CardContent>
@@ -169,18 +196,20 @@ const AttractionLayerAssessment = ({ onComplete }: AttractionLayerAssessmentProp
         <Card className="card-glass">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 text-foreground">
-              What initially attracts you to someone? (Select all that apply)
+              What creates strong initial attraction for you? (Select all that apply)
             </h3>
             <div className="space-y-3">
               {[
-                { id: "genuine_smile", label: "Genuine smile and warm eyes" },
-                { id: "confidence", label: "Quiet confidence and self-assurance" },
-                { id: "intelligence", label: "Intelligence and wit in conversation" },
-                { id: "kindness", label: "Kindness and empathy toward others" },
-                { id: "passion", label: "Passion for their interests and goals" },
-                { id: "style", label: "Personal style and how they present themselves" },
-                { id: "energy", label: "Overall energy and vibe they bring" },
-                { id: "authenticity", label: "Authenticity and being genuinely themselves" }
+                { id: "genuine_smile", label: "Genuine smile and expressive eyes" },
+                { id: "quiet_confidence", label: "Quiet confidence and self-assurance" },
+                { id: "intellectual_curiosity", label: "Intelligence and intellectual curiosity" },
+                { id: "emotional_intelligence", label: "Emotional intelligence and empathy" },
+                { id: "passionate_purpose", label: "Passion and sense of purpose" },
+                { id: "physical_chemistry", label: "Physical attraction and chemistry" },
+                { id: "humor_playfulness", label: "Sense of humor and playfulness" },
+                { id: "authenticity", label: "Authenticity and being genuinely themselves" },
+                { id: "mysterious_depth", label: "Mysterious quality or intriguing depth" },
+                { id: "kindness_compassion", label: "Kindness and compassion toward others" }
               ].map((factor) => (
                 <div key={factor.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
                   <input

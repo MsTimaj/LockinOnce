@@ -68,6 +68,36 @@ const questions = [
       { value: "avoidant", text: "Use it as an opportunity to focus on my own interests" },
       { value: "disorganized", text: "Feel confused and react inconsistently" }
     ]
+  },
+  {
+    id: 6,
+    text: "When I feel hurt by my partner's actions, I:",
+    options: [
+      { value: "secure", text: "Express my feelings clearly and work toward understanding" },
+      { value: "anxious", text: "Become emotional and need immediate reassurance that they still care" },
+      { value: "avoidant", text: "Tend to shut down and process the hurt internally" },
+      { value: "disorganized", text: "Feel overwhelmed and react in ways that confuse even myself" }
+    ]
+  },
+  {
+    id: 7,
+    text: "In past relationships, I've typically:",
+    options: [
+      { value: "secure", text: "Maintained my independence while being committed to the relationship" },
+      { value: "anxious", text: "Worried frequently about whether my partner truly loved me" },
+      { value: "avoidant", text: "Felt suffocated when partners wanted too much closeness" },
+      { value: "disorganized", text: "Experienced intense highs and lows with unpredictable patterns" }
+    ]
+  },
+  {
+    id: 8,
+    text: "When thinking about commitment, I:",
+    options: [
+      { value: "secure", text: "Feel excited about building a life with the right person" },
+      { value: "anxious", text: "Want commitment but worry about being hurt or abandoned" },
+      { value: "avoidant", text: "Feel nervous about losing my freedom and independence" },
+      { value: "disorganized", text: "Have conflicting feelings - wanting it but also fearing it" }
+    ]
   }
 ];
 
@@ -98,19 +128,34 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
       disorganized: 0
     };
 
+    // Count responses for each attachment style
     Object.values(answers).forEach(answer => {
       scores[answer as keyof typeof scores]++;
     });
 
-    const dominantStyle = Object.entries(scores).reduce((a, b) => 
+    // Determine dominant style with tie-breaking logic
+    let dominantStyle = Object.entries(scores).reduce((a, b) => 
       scores[a[0] as keyof typeof scores] > scores[b[0] as keyof typeof scores] ? a : b
     )[0];
+
+    // Handle ties by preferring more common styles in population
+    const maxScore = Math.max(...Object.values(scores));
+    const tiedStyles = Object.entries(scores).filter(([, score]) => score === maxScore);
+    
+    if (tiedStyles.length > 1) {
+      // Population-based tie-breaking: secure > anxious > avoidant > disorganized
+      const styleOrder = ['secure', 'anxious', 'avoidant', 'disorganized'];
+      dominantStyle = tiedStyles
+        .map(([style]) => style)
+        .sort((a, b) => styleOrder.indexOf(a) - styleOrder.indexOf(b))[0];
+    }
 
     const results: AttachmentStyleResults = {
       ...scores,
       dominantStyle
     };
 
+    console.log('Attachment Style Results:', results);
     onComplete(results);
   };
 
