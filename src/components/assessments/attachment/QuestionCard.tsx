@@ -1,0 +1,47 @@
+
+import { Card, CardContent } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { AttachmentQuestion } from "./types";
+
+interface QuestionCardProps {
+  question: AttachmentQuestion;
+  currentAnswer: string;
+  onAnswer: (value: string) => void;
+}
+
+const QuestionCard = ({ question, currentAnswer, onAnswer }: QuestionCardProps) => {
+  return (
+    <Card className="card-glass">
+      <CardContent className="p-6">
+        <h3 className="text-lg font-medium mb-6 text-foreground">
+          {question.text}
+        </h3>
+        
+        <RadioGroup 
+          value={currentAnswer}
+          onValueChange={onAnswer}
+          className="space-y-4"
+        >
+          {question.options.map((option, index) => (
+            <div key={`${question.id}-${index}`} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
+              <RadioGroupItem 
+                value={option.value} 
+                id={`q${question.id}-option-${index}`}
+                className="mt-0.5 shrink-0"
+              />
+              <Label 
+                htmlFor={`q${question.id}-option-${index}`}
+                className="text-sm leading-relaxed cursor-pointer flex-1"
+              >
+                {option.text}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default QuestionCard;
