@@ -5,10 +5,13 @@ import { ArrowRight } from "lucide-react";
 import { AttachmentStyleAssessmentProps, AttachmentStyleResults } from "./attachment/types";
 import { attachmentQuestions } from "./attachment/questions";
 import { calculateAttachmentResults } from "./attachment/scoring";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 import AssessmentHeader from "./attachment/AssessmentHeader";
 import QuestionCard from "./attachment/QuestionCard";
 
 const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProps) => {
+  useScrollToTop();
+  
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 

@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
 import { shuffleArray } from "@/utils/assessments/questionRandomizer";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 
 interface PhysicalProximityAssessmentProps {
   onComplete: (results: PhysicalProximityResults) => void;
@@ -58,6 +59,8 @@ const questionSections = [
 ];
 
 const PhysicalProximityAssessment = ({ onComplete }: PhysicalProximityAssessmentProps) => {
+  useScrollToTop();
+  
   // Randomize questions on component initialization
   const [randomizedSections] = useState(() => 
     shuffleArray(questionSections).map(section => ({

@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
 import { randomizeQuestionsWithOptions } from "@/utils/assessments/questionRandomizer";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 
 interface PersonalityAssessmentProps {
   onComplete: (results: PersonalityResults) => void;
@@ -71,6 +72,8 @@ const baseQuestions = [
 ];
 
 const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
+  useScrollToTop();
+  
   const [questions] = useState(() => randomizeQuestionsWithOptions(baseQuestions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});

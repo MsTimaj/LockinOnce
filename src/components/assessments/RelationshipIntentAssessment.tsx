@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
 import { shuffleArray } from "@/utils/assessments/questionRandomizer";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 
 interface RelationshipIntentAssessmentProps {
   onComplete: (results: RelationshipIntentResults) => void;
@@ -68,6 +69,8 @@ const questionSections = [
 ];
 
 const RelationshipIntentAssessment = ({ onComplete }: RelationshipIntentAssessmentProps) => {
+  useScrollToTop();
+  
   // Randomize sections and their options on component initialization
   const [randomizedSections] = useState(() => 
     shuffleArray(questionSections).map(section => ({

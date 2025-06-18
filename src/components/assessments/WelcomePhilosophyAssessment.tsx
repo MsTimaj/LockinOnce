@@ -3,12 +3,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 
 interface WelcomePhilosophyAssessmentProps {
   onComplete: () => void;
 }
 
 const WelcomePhilosophyAssessment = ({ onComplete }: WelcomePhilosophyAssessmentProps) => {
+  useScrollToTop();
+  
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
