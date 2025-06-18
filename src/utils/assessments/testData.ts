@@ -84,7 +84,7 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     personalGrowth: 'continuous'
   },
   values: {
-    coreValues: 'extremely_important',
+    coreValues: ['extremely_important'],
     relationshipValues: 'very_important',
     lifestyleValues: 'moderately_important',
     personalValues: 'very_important',
