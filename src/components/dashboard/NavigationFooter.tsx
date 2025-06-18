@@ -9,26 +9,26 @@ const NavigationFooter = () => {
 
   const getButtonClass = (path: string) => {
     const isActive = location.pathname === path;
-    return `flex-1 flex flex-col items-center space-y-1 py-3 px-3 rounded-xl transition-all duration-200 ${
+    return `flex-1 flex flex-col items-center justify-center space-y-1 py-2 sm:py-3 px-2 sm:px-3 rounded-xl transition-all duration-200 min-h-[60px] sm:min-h-[70px] ${
       isActive 
-        ? 'bg-rose-500 text-white shadow-md' 
-        : 'text-gray-600 hover:text-rose-500 hover:bg-rose-50'
+        ? 'bg-rose-500 text-white shadow-md transform scale-105' 
+        : 'text-gray-600 hover:text-rose-500 hover:bg-rose-50 active:scale-95'
     }`;
   };
 
   const getIconClass = (path: string) => {
     const isActive = location.pathname === path;
-    return `h-5 w-5 ${isActive ? 'text-white' : ''}`;
+    return `h-5 w-5 sm:h-6 sm:w-6 ${isActive ? 'text-white' : ''} transition-all duration-200`;
   };
 
   const getTextClass = (path: string) => {
     const isActive = location.pathname === path;
-    return `text-xs font-medium ${isActive ? 'text-white' : ''}`;
+    return `text-xs sm:text-sm font-medium ${isActive ? 'text-white' : ''} transition-all duration-200`;
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-2 shadow-lg">
-      <div className="max-w-md mx-auto flex items-center justify-between gap-2">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-3 sm:px-4 py-2 shadow-lg z-50">
+      <div className="max-w-md mx-auto flex items-center justify-between gap-1 sm:gap-2">
         <Button
           variant="ghost"
           className={getButtonClass('/dashboard')}

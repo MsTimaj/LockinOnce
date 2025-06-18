@@ -23,18 +23,22 @@ const Messages = () => {
 
   if (selectedConversation) {
     return (
-      <ChatInterface 
-        conversation={selectedConversation}
-        onBack={handleBack}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+        <ChatInterface 
+          conversation={selectedConversation}
+          onBack={handleBack}
+        />
+      </div>
     );
   }
 
   return (
-    <ConversationsList 
-      onBack={handleBack}
-      onSelectConversation={handleSelectConversation}
-    />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+      <ConversationsList 
+        onBack={handleBack}
+        onSelectConversation={handleSelectConversation}
+      />
+    </div>
   );
 };
 

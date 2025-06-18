@@ -9,7 +9,7 @@ import AnalysisLoadingState from "@/components/ai-results/AnalysisLoadingState";
 import AIResultsDisplay from "@/components/ai-results/AIResultsDisplay";
 
 const AIResultsSummary = () => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false); // Changed default to false
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [chatTopic, setChatTopic] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
@@ -70,7 +70,7 @@ const AIResultsSummary = () => {
           });
           
           setIsInitializing(false);
-          setIsAnalyzing(false); // Skip analyzing phase for returning users
+          setIsAnalyzing(false);
           return;
         }
 
@@ -82,7 +82,7 @@ const AIResultsSummary = () => {
         if (!readinessScore && userProfile.assessmentResults) {
           console.log('Calculating readiness score from assessment data...');
           setIsInitializing(false);
-          setIsAnalyzing(true); // Only show analyzing for new calculations
+          setIsAnalyzing(true);
           
           // Simulate analysis time for new users
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -131,10 +131,13 @@ const AIResultsSummary = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-4 sm:px-6">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className="text-red-500 text-lg font-medium">{error}</div>
-          <Button onClick={() => window.location.reload()} className="bg-rose-500 hover:bg-rose-600">
+          <div className="text-red-500 text-base sm:text-lg font-medium">{error}</div>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="bg-rose-500 hover:bg-rose-600 w-full sm:w-auto min-h-[48px] px-6 py-3"
+          >
             Refresh Page
           </Button>
         </div>
@@ -153,7 +156,7 @@ const AIResultsSummary = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
       <AIResultsDisplay
         analysis={analysis}
         onLearnMore={handleLearnMore}
@@ -165,7 +168,7 @@ const AIResultsSummary = () => {
         onToggle={() => setIsChatOpen(!isChatOpen)}
         analysisData={analysis}
       />
-    </>
+    </div>
   );
 };
 

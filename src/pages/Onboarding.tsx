@@ -37,18 +37,18 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 lg:py-8">
         <div className="max-w-2xl mx-auto">
-          {/* Subtle back button at the top */}
-          <div className="mb-6">
+          {/* Mobile-friendly back button */}
+          <div className="mb-4 sm:mb-6">
             <Button 
               onClick={() => navigate('/')}
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity"
+              className="text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity min-h-[44px] px-3 sm:px-4"
             >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back
+              <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="text-sm sm:text-base">Back</span>
             </Button>
           </div>
 
@@ -57,7 +57,9 @@ const Onboarding = () => {
             totalSteps={assessments.length} 
           />
 
-          <CurrentAssessment onComplete={currentAssessmentData.onComplete} />
+          <div className="px-2 sm:px-0">
+            <CurrentAssessment onComplete={currentAssessmentData.onComplete} />
+          </div>
         </div>
       </div>
     </div>
