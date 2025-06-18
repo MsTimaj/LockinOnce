@@ -28,7 +28,7 @@ const Dashboard = () => {
   // Show match detail if a match is selected
   if (selectedMatch) {
     return (
-      <div className="pb-20 lg:pb-6">
+      <div className="pb-20 lg:pb-6 lg:pt-20">
         <MatchDetail 
           match={selectedMatch}
           onBack={handleBackToMatches}
@@ -36,12 +36,14 @@ const Dashboard = () => {
           onPass={handlePass}
         />
         <LoveVeeChatButton />
+        <NavigationFooter />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
+      <NavigationFooter />
       <DashboardHeader />
 
       {/* Mobile Layout */}
@@ -54,14 +56,15 @@ const Dashboard = () => {
       />
 
       {/* Desktop Layout */}
-      <DashboardDesktopLayout
-        matches={matches}
-        onMatchClick={handleMatchClick}
-        getScoreColor={getScoreColor}
-        getScoreBackground={getScoreBackground}
-      />
+      <div className="lg:pt-4">
+        <DashboardDesktopLayout
+          matches={matches}
+          onMatchClick={handleMatchClick}
+          getScoreColor={getScoreColor}
+          getScoreBackground={getScoreBackground}
+        />
+      </div>
 
-      <NavigationFooter />
       <LoveVeeChatButton />
     </div>
   );

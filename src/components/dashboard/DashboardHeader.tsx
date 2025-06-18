@@ -20,7 +20,7 @@ const DashboardHeader = () => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
+    <div className="lg:hidden bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
       <div className="max-w-sm sm:max-w-md mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
