@@ -18,55 +18,114 @@ export interface PersonalityResults {
   thinking: number;
   feeling: number;
   dominantType: string;
+  percentages?: {
+    introversion: number;
+    extroversion: number;
+    thinking: number;
+    feeling: number;
+  };
+  totalResponses?: number;
 }
 
 const baseQuestions = [
   {
     id: 1,
-    text: "When making important decisions, I typically:",
+    text: "You're at a work conference during lunch break. You'd naturally gravitate toward:",
     options: [
-      { value: "thinking", text: "Analyze facts and logic first, then consider emotions" },
-      { value: "feeling", text: "Consider how it affects people and relationships first" },
+      { value: "extroversion", text: "Joining the largest, most animated group conversation" },
+      { value: "introversion", text: "Finding one interesting person for a deeper conversation" },
+      { value: "extroversion", text: "Introducing yourself to new people and making connections" },
+      { value: "introversion", text: "Taking a quiet walk outside to recharge" }
     ]
   },
   {
     id: 2,
-    text: "In social situations, I usually:",
+    text: "Your friend is upset about a work situation and asks for your perspective. You instinctively:",
     options: [
-      { value: "extroversion", text: "Feel energized and seek out conversations" },
-      { value: "introversion", text: "Prefer smaller groups or one-on-one interactions" },
+      { value: "feeling", text: "Listen to how they're feeling and validate their emotions first" },
+      { value: "thinking", text: "Ask clarifying questions to understand the facts of the situation" },
+      { value: "feeling", text: "Share a similar experience to help them feel less alone" },
+      { value: "thinking", text: "Suggest practical steps they could take to improve things" }
     ]
   },
   {
     id: 3,
-    text: "When processing information, I tend to:",
+    text: "It's Saturday morning with no plans. Your ideal way to spend the day would be:",
     options: [
-      { value: "thinking", text: "Focus on objective facts and logical consistency" },
-      { value: "feeling", text: "Consider personal values and emotional impact" },
+      { value: "introversion", text: "Reading a book or pursuing a personal hobby at home" },
+      { value: "extroversion", text: "Calling friends to organize a spontaneous group activity" },
+      { value: "introversion", text: "Taking a solo hike or visiting a quiet museum" },
+      { value: "extroversion", text: "Going to a farmer's market or festival with lots of people" }
     ]
   },
   {
     id: 4,
-    text: "After a long day, I prefer to:",
+    text: "When your team needs to make an important decision, you typically:",
     options: [
-      { value: "introversion", text: "Recharge alone or with close family/friends" },
-      { value: "extroversion", text: "Go out and socialize to re-energize" },
+      { value: "thinking", text: "Create a pros and cons list to evaluate options objectively" },
+      { value: "feeling", text: "Consider how each option will affect team morale and relationships" },
+      { value: "thinking", text: "Look at past data and outcomes to guide the choice" },
+      { value: "feeling", text: "Make sure everyone feels heard before deciding" }
     ]
   },
   {
     id: 5,
-    text: "When giving feedback, I:",
+    text: "After a stimulating but long day, you feel most restored by:",
     options: [
-      { value: "thinking", text: "Focus on what can be improved objectively" },
-      { value: "feeling", text: "Consider the person's feelings and motivations" },
+      { value: "introversion", text: "Having quiet time alone to process the day" },
+      { value: "extroversion", text: "Talking through the day's events with others" },
+      { value: "introversion", text: "Engaging in a solitary creative activity" },
+      { value: "extroversion", text: "Going out for dinner and conversation with friends" }
     ]
   },
   {
     id: 6,
-    text: "In group settings, I typically:",
+    text: "You're helping a friend choose between two job offers. Your advice focuses on:",
     options: [
-      { value: "extroversion", text: "Speak up quickly and think out loud" },
-      { value: "introversion", text: "Listen first, then share thoughtful responses" },
+      { value: "thinking", text: "Comparing salary, benefits, and career advancement potential" },
+      { value: "feeling", text: "Which workplace culture aligns better with their values" },
+      { value: "thinking", text: "The logical pros and cons of each company's stability" },
+      { value: "feeling", text: "Where they felt more personally connected during interviews" }
+    ]
+  },
+  {
+    id: 7,
+    text: "In group meetings, you're most likely to:",
+    options: [
+      { value: "extroversion", text: "Share ideas as they come to you during discussion" },
+      { value: "introversion", text: "Listen carefully, then contribute thoughtful insights" },
+      { value: "extroversion", text: "Ask questions to keep the conversation flowing" },
+      { value: "introversion", text: "Prefer to share your input in smaller breakout groups" }
+    ]
+  },
+  {
+    id: 8,
+    text: "When giving feedback to someone, you naturally tend to:",
+    options: [
+      { value: "feeling", text: "Start with what they're doing well to soften any criticism" },
+      { value: "thinking", text: "Be direct about specific areas that need improvement" },
+      { value: "feeling", text: "Frame suggestions in terms of personal growth and potential" },
+      { value: "thinking", text: "Focus on concrete examples and measurable outcomes" }
+    ]
+  },
+  {
+    id: 9,
+    text: "Your ideal vacation would involve:",
+    options: [
+      { value: "introversion", text: "A quiet retreat with time for reflection and personal interests" },
+      { value: "extroversion", text: "Group travel with lots of social activities and new people" },
+      { value: "introversion", text: "Exploring a destination at your own pace with minimal scheduling" },
+      { value: "extroversion", text: "Adventure tours, group classes, or interactive experiences" }
+    ]
+  },
+  {
+    id: 10,
+    text: "When facing a personal dilemma, you usually:",
+    options: [
+      { value: "thinking", text: "Research information and analyze different approaches logically" },
+      { value: "feeling", text: "Consider how each choice aligns with your personal values" },
+      { value: "thinking", text: "Make a systematic list of potential outcomes and risks" },
+      { value: "feeling", text: "Think about how your decision might affect the people you care about" }
     ]
   }
 ];
@@ -101,25 +160,55 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
       feeling: 0
     };
 
+    // Count responses for each personality dimension
     Object.values(answers).forEach(answer => {
-      scores[answer as keyof typeof scores]++;
+      if (answer && scores.hasOwnProperty(answer)) {
+        scores[answer as keyof typeof scores]++;
+      }
     });
 
+    console.log('Raw personality scores:', scores);
+    
+    // Calculate total responses to get percentages
+    const totalResponses = Object.values(scores).reduce((sum, score) => sum + score, 0);
+    
+    // Convert to percentages for more nuanced analysis
+    const percentageScores = {
+      introversion: totalResponses > 0 ? Math.round((scores.introversion / totalResponses) * 100) : 0,
+      extroversion: totalResponses > 0 ? Math.round((scores.extroversion / totalResponses) * 100) : 0,
+      thinking: totalResponses > 0 ? Math.round((scores.thinking / totalResponses) * 100) : 0,
+      feeling: totalResponses > 0 ? Math.round((scores.feeling / totalResponses) * 100) : 0
+    };
+
+    console.log('Percentage personality scores:', percentageScores);
+
+    // Determine dominant dimensions with enhanced logic
     const ieType = scores.introversion > scores.extroversion ? 'I' : 'E';
     const tfType = scores.thinking > scores.feeling ? 'T' : 'F';
-    const dominantType = `${ieType}${tfType}`;
+    
+    // Handle ties with preference for balance
+    let dominantType = `${ieType}${tfType}`;
+    
+    // If scores are very close (within 1), consider it balanced
+    if (Math.abs(scores.introversion - scores.extroversion) <= 1) {
+      console.log('Balanced introversion-extroversion detected');
+    }
+    if (Math.abs(scores.thinking - scores.feeling) <= 1) {
+      console.log('Balanced thinking-feeling detected');
+    }
 
     const results: PersonalityResults = {
       ...scores,
-      dominantType
+      dominantType,
+      percentages: percentageScores,
+      totalResponses
     };
 
+    console.log('Final personality results:', results);
     onComplete(results);
   };
 
   const currentQuestionData = questions[currentQuestion];
-  // Progress should only reach 100% when all questions are answered
-  // Current question is 0-indexed, so progress = currentQuestion / questions.length * 100
   const progress = Math.min((currentQuestion / questions.length) * 100, 95);
 
   return (
@@ -130,7 +219,7 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
         </h2>
         <div className="card-glass p-4">
           <p className="text-sm text-muted-foreground">
-            <strong>Why this matters:</strong> Understanding your core personality traits (Introversion/Extroversion + Thinking/Feeling) helps us match you with someone whose energy and decision-making style complements yours for long-term harmony.
+            <strong>Why this matters:</strong> Understanding your natural energy patterns and decision-making style helps us match you with someone whose approach to life complements yours for authentic, sustainable connection.
           </p>
         </div>
         <p className="text-muted-foreground">
