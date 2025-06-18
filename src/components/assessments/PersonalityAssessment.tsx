@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { randomizeQuestionsWithOptions } from "@/utils/assessments/questionRandomizer";
 
 interface PersonalityAssessmentProps {
   onComplete: (results: PersonalityResults) => void;
@@ -69,28 +70,8 @@ const baseQuestions = [
   }
 ];
 
-// Fisher-Yates shuffle algorithm
-const shuffleArray = <T>(array: T[]): T[] => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};
-
-// Randomize questions and their options
-const randomizeQuestions = () => {
-  const shuffledQuestions = shuffleArray(baseQuestions);
-  
-  return shuffledQuestions.map(question => ({
-    ...question,
-    options: shuffleArray(question.options)
-  }));
-};
-
 const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
-  const [questions] = useState(() => randomizeQuestions());
+  const [questions] = useState(() => randomizeQuestionsWithOptions(baseQuestions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
