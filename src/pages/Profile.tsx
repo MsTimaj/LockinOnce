@@ -91,173 +91,353 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 pb-20 sm:pb-24">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
-        <div className="max-w-sm mx-auto px-3 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/dashboard')}
-              className="h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full hover:bg-gray-100 min-h-[44px] min-w-[44px] flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-            </Button>
-            <div className="flex-1 min-w-0 text-center">
-              <h1 className="text-lg sm:text-xl font-bold text-gray-800 truncate">Profile</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
+      {/* Mobile Layout */}
+      <div className="lg:hidden pb-20">
+        {/* Mobile Header */}
+        <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
+          <div className="max-w-sm mx-auto px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/dashboard')}
+                className="h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full hover:bg-gray-100 min-h-[44px] min-w-[44px] flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <div className="flex-1 min-w-0 text-center">
+                <h1 className="text-lg sm:text-xl font-bold text-gray-800 truncate">Profile</h1>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(!isEditing)}
+                className="h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full hover:bg-gray-100 min-h-[44px] min-w-[44px] flex-shrink-0"
+              >
+                {isEditing ? <Save className="h-4 w-4 sm:h-5 sm:w-5" /> : <Edit3 className="h-4 w-4 sm:h-5 sm:w-5" />}
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsEditing(!isEditing)}
-              className="h-8 w-8 sm:h-10 sm:w-10 p-0 rounded-full hover:bg-gray-100 min-h-[44px] min-w-[44px] flex-shrink-0"
-            >
-              {isEditing ? <Save className="h-4 w-4 sm:h-5 sm:w-5" /> : <Edit3 className="h-4 w-4 sm:h-5 sm:w-5" />}
-            </Button>
           </div>
         </div>
-      </div>
 
-      <div className="w-full max-w-sm mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 overflow-x-hidden">
-        {/* Profile Photo & Basic Info */}
-        <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
-          <CardContent className="p-4 sm:p-6">
-            <div className="text-center space-y-3 sm:space-y-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto">
-                <User className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
-              </div>
-              
-              {isEditing ? (
-                <div className="space-y-3 sm:space-y-4">
+        <div className="w-full max-w-sm mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 overflow-x-hidden">
+          {/* Profile Photo & Basic Info */}
+          <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
+            <CardContent className="p-4 sm:p-6">
+              <div className="text-center space-y-3 sm:space-y-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto">
+                  <User className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+                </div>
+                
+                {isEditing ? (
+                  <div className="space-y-3 sm:space-y-4">
+                    <div>
+                      <Label htmlFor="name" className="text-sm">Name</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        placeholder="Your name"
+                        className="mt-1 w-full min-h-[44px]"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="age" className="text-sm">Age</Label>
+                      <Input
+                        id="age"
+                        type="number"
+                        value={formData.age}
+                        onChange={(e) => setFormData({...formData, age: e.target.value})}
+                        placeholder="Your age"
+                        className="mt-1 w-full min-h-[44px]"
+                      />
+                    </div>
+                  </div>
+                ) : (
                   <div>
-                    <Label htmlFor="name" className="text-sm">Name</Label>
+                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 break-words">
+                      {formData.name || "Your Name"}
+                    </h2>
+                    <p className="text-sm sm:text-base text-gray-600">
+                      {formData.age ? `${formData.age} years old` : "Age not set"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Location & Bio */}
+          <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-gray-800 text-base sm:text-lg">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span>About Me</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 sm:space-y-4 pt-0">
+              {isEditing ? (
+                <>
+                  <div>
+                    <Label htmlFor="location" className="text-sm">Location</Label>
                     <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="Your name"
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      placeholder="City, State"
                       className="mt-1 w-full min-h-[44px]"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="age" className="text-sm">Age</Label>
+                    <Label htmlFor="occupation" className="text-sm">Occupation</Label>
                     <Input
-                      id="age"
-                      type="number"
-                      value={formData.age}
-                      onChange={(e) => setFormData({...formData, age: e.target.value})}
-                      placeholder="Your age"
+                      id="occupation"
+                      value={formData.occupation}
+                      onChange={(e) => setFormData({...formData, occupation: e.target.value})}
+                      placeholder="Your job/career"
                       className="mt-1 w-full min-h-[44px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="bio" className="text-sm">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      value={formData.bio}
+                      onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                      placeholder="Tell others about yourself..."
+                      rows={4}
+                      className="mt-1 resize-none w-full"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center text-gray-600 min-w-0">
+                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate text-sm sm:text-base">{formData.location || "Location not set"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600 min-w-0">
+                    <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate text-sm sm:text-base">{formData.occupation || "Occupation not set"}</span>
+                  </div>
+                  <p className="text-gray-700 text-sm sm:text-base break-words leading-relaxed">
+                    {formData.bio || "No bio yet. Edit your profile to add one!"}
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Relationship Readiness */}
+          {profile.readinessScore && (
+            <Card className={`border shadow-md ${getReadinessBackground(profile.readinessScore.overall)}`}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center text-gray-800 text-base sm:text-lg">
+                  <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                  <span>Relationship Readiness</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="text-center">
+                  <div className={`text-2xl sm:text-3xl font-bold ${getReadinessColor(profile.readinessScore.overall)}`}>
+                    {profile.readinessScore.overall}%
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                    {profile.readinessScore.isReady ? "Ready for a relationship!" : "Keep growing!"}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Save Button */}
+          {isEditing && (
+            <Button 
+              onClick={handleSave}
+              className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white min-h-[48px] text-sm sm:text-base"
+            >
+              Save Changes
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:block pb-12">
+        {/* Desktop Header */}
+        <div className="bg-white/80 backdrop-blur-xl border-b border-white/30 sticky top-0 z-30">
+          <div className="max-w-4xl mx-auto px-8 py-6">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/dashboard')}
+                className="h-12 w-12 p-0 rounded-full hover:bg-gray-100"
+              >
+                <ArrowLeft className="h-6 w-6" />
+              </Button>
+              <div className="flex-1 text-center">
+                <h1 className="text-3xl font-bold text-gray-800">Profile</h1>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(!isEditing)}
+                className="h-12 w-12 p-0 rounded-full hover:bg-gray-100"
+              >
+                {isEditing ? <Save className="h-6 w-6" /> : <Edit3 className="h-6 w-6" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-8 py-8 space-y-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Profile Photo & Basic Info */}
+            <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
+              <CardContent className="p-8">
+                <div className="text-center space-y-6">
+                  <div className="w-24 h-24 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto">
+                    <User className="h-12 w-12 text-white" />
+                  </div>
+                  
+                  {isEditing ? (
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="name" className="text-base">Name</Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          placeholder="Your name"
+                          className="mt-2 w-full min-h-[48px]"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="age" className="text-base">Age</Label>
+                        <Input
+                          id="age"
+                          type="number"
+                          value={formData.age}
+                          onChange={(e) => setFormData({...formData, age: e.target.value})}
+                          placeholder="Your age"
+                          className="mt-2 w-full min-h-[48px]"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h2 className="text-2xl font-semibold text-gray-800">
+                        {formData.name || "Your Name"}
+                      </h2>
+                      <p className="text-lg text-gray-600">
+                        {formData.age ? `${formData.age} years old` : "Age not set"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Relationship Readiness */}
+            {profile.readinessScore && (
+              <Card className={`border shadow-md ${getReadinessBackground(profile.readinessScore.overall)}`}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center text-gray-800 text-xl">
+                    <Heart className="h-6 w-6 mr-3" />
+                    <span>Relationship Readiness</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="text-center">
+                    <div className={`text-4xl font-bold ${getReadinessColor(profile.readinessScore.overall)}`}>
+                      {profile.readinessScore.overall}%
+                    </div>
+                    <p className="text-base text-gray-600 mt-2">
+                      {profile.readinessScore.isReady ? "Ready for a relationship!" : "Keep growing!"}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Location & Bio */}
+          <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center text-gray-800 text-xl">
+                <MapPin className="h-6 w-6 mr-3" />
+                <span>About Me</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-0">
+              {isEditing ? (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <div>
+                    <Label htmlFor="location" className="text-base">Location</Label>
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      placeholder="City, State"
+                      className="mt-2 w-full min-h-[48px]"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="occupation" className="text-base">Occupation</Label>
+                    <Input
+                      id="occupation"
+                      value={formData.occupation}
+                      onChange={(e) => setFormData({...formData, occupation: e.target.value})}
+                      placeholder="Your job/career"
+                      className="mt-2 w-full min-h-[48px]"
+                    />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <Label htmlFor="bio" className="text-base">Bio</Label>
+                    <Textarea
+                      id="bio"
+                      value={formData.bio}
+                      onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                      placeholder="Tell others about yourself..."
+                      rows={4}
+                      className="mt-2 resize-none w-full"
                     />
                   </div>
                 </div>
               ) : (
-                <div>
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800 break-words">
-                    {formData.name || "Your Name"}
-                  </h2>
-                  <p className="text-sm sm:text-base text-gray-600">
-                    {formData.age ? `${formData.age} years old` : "Age not set"}
+                <>
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <div className="flex items-center text-gray-600">
+                      <MapPin className="h-5 w-5 mr-3" />
+                      <span className="text-lg">{formData.location || "Location not set"}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Briefcase className="h-5 w-5 mr-3" />
+                      <span className="text-lg">{formData.occupation || "Occupation not set"}</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    {formData.bio || "No bio yet. Edit your profile to add one!"}
                   </p>
-                </div>
+                </>
               )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Location & Bio */}
-        <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-gray-800 text-base sm:text-lg">
-              <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
-              <span>About Me</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 sm:space-y-4 pt-0">
-            {isEditing ? (
-              <>
-                <div>
-                  <Label htmlFor="location" className="text-sm">Location</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    placeholder="City, State"
-                    className="mt-1 w-full min-h-[44px]"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="occupation" className="text-sm">Occupation</Label>
-                  <Input
-                    id="occupation"
-                    value={formData.occupation}
-                    onChange={(e) => setFormData({...formData, occupation: e.target.value})}
-                    placeholder="Your job/career"
-                    className="mt-1 w-full min-h-[44px]"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="bio" className="text-sm">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={formData.bio}
-                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                    placeholder="Tell others about yourself..."
-                    rows={4}
-                    className="mt-1 resize-none w-full"
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center text-gray-600 min-w-0">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
-                  <span className="truncate text-sm sm:text-base">{formData.location || "Location not set"}</span>
-                </div>
-                <div className="flex items-center text-gray-600 min-w-0">
-                  <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 mr-2 flex-shrink-0" />
-                  <span className="truncate text-sm sm:text-base">{formData.occupation || "Occupation not set"}</span>
-                </div>
-                <p className="text-gray-700 text-sm sm:text-base break-words leading-relaxed">
-                  {formData.bio || "No bio yet. Edit your profile to add one!"}
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Relationship Readiness */}
-        {profile.readinessScore && (
-          <Card className={`border shadow-md ${getReadinessBackground(profile.readinessScore.overall)}`}>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-gray-800 text-base sm:text-lg">
-                <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
-                <span>Relationship Readiness</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-center">
-                <div className={`text-2xl sm:text-3xl font-bold ${getReadinessColor(profile.readinessScore.overall)}`}>
-                  {profile.readinessScore.overall}%
-                </div>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                  {profile.readinessScore.isReady ? "Ready for a relationship!" : "Keep growing!"}
-                </p>
-              </div>
             </CardContent>
           </Card>
-        )}
 
-        {/* Save Button */}
-        {isEditing && (
-          <Button 
-            onClick={handleSave}
-            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white min-h-[48px] text-sm sm:text-base"
-          >
-            Save Changes
-          </Button>
-        )}
+          {/* Save Button */}
+          {isEditing && (
+            <div className="text-center">
+              <Button 
+                onClick={handleSave}
+                className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white min-h-[56px] px-12 text-lg"
+              >
+                Save Changes
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       <NavigationFooter />

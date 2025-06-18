@@ -132,15 +132,31 @@ const AIResultsSummary = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-4 sm:px-6">
-        <div className="max-w-sm w-full text-center space-y-4">
-          <div className="text-red-500 text-sm sm:text-base font-medium px-2">{error}</div>
-          <Button 
-            onClick={() => window.location.reload()} 
-            className="bg-rose-500 hover:bg-rose-600 w-full min-h-[44px] px-4 py-3 text-sm"
-          >
-            Refresh Page
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center">
+        {/* Mobile Error Layout */}
+        <div className="lg:hidden px-4 w-full">
+          <div className="max-w-sm w-full mx-auto text-center space-y-4">
+            <div className="text-red-500 text-sm font-medium px-2">{error}</div>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="bg-rose-500 hover:bg-rose-600 w-full min-h-[44px] px-4 py-3 text-sm"
+            >
+              Refresh Page
+            </Button>
+          </div>
+        </div>
+
+        {/* Desktop Error Layout */}
+        <div className="hidden lg:block px-8 w-full">
+          <div className="max-w-2xl w-full mx-auto text-center space-y-6">
+            <div className="text-red-500 text-lg font-medium">{error}</div>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="bg-rose-500 hover:bg-rose-600 min-h-[56px] px-8 py-4 text-base"
+            >
+              Refresh Page
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -149,23 +165,38 @@ const AIResultsSummary = () => {
   // Loading states or analyzing (only for new users)
   if (isInitializing || isAnalyzing || !analysis) {
     return (
-      <div className="pb-20 sm:pb-24">
-        <AnalysisLoadingState
-          isInitializing={isInitializing}
-          onAnalysisComplete={() => setIsAnalyzing(false)}
-        />
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+        <div className="pb-20 lg:pb-24">
+          <AnalysisLoadingState
+            isInitializing={isInitializing}
+            onAnalysisComplete={() => setIsAnalyzing(false)}
+          />
+        </div>
         <NavigationFooter />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-20 sm:pb-24">
-      <div className="w-full max-w-sm mx-auto px-3 sm:px-6 overflow-x-hidden">
-        <AIResultsDisplay
-          analysis={analysis}
-          onLearnMore={handleLearnMore}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+      {/* Mobile Layout */}
+      <div className="lg:hidden pb-20">
+        <div className="w-full max-w-sm mx-auto px-3 overflow-x-hidden">
+          <AIResultsDisplay
+            analysis={analysis}
+            onLearnMore={handleLearnMore}
+          />
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:block pb-12">
+        <div className="max-w-4xl mx-auto px-8 py-8">
+          <AIResultsDisplay
+            analysis={analysis}
+            onLearnMore={handleLearnMore}
+          />
+        </div>
       </div>
 
       <NavigationFooter />
