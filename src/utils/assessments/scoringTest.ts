@@ -21,7 +21,7 @@ const createTestAssessmentResults = (): ComprehensiveAssessmentResults => ({
     dominantType: 'EF'
   } as PersonalityResults,
   birthOrder: {
-    position: 'firstborn',
+    birthPosition: 'firstborn',
     familySize: 'medium',
     parentingStyle: 'authoritative',
     siblingGap: 'close'
@@ -61,10 +61,10 @@ const createTestAssessmentResults = (): ComprehensiveAssessmentResults => ({
     }
   },
   attractionLayer: {
-    physical: 'important',
-    emotional: 'essential',
-    intellectual: 'very_important',
-    values: 'essential'
+    physicalAttraction: 'important',
+    emotionalConnection: 'essential',
+    intellectualCompatibility: 'very_important',
+    sharedValues: 'essential'
   },
   physicalProximity: {
     physicalAffection: 'moderate',
@@ -79,36 +79,36 @@ const createTestAssessmentResults = (): ComprehensiveAssessmentResults => ({
     listeningStyle: 'active_empathetic'
   },
   lifeGoals: {
-    career: 'high',
-    family: 'important',
+    careerAmbition: 'high',
+    familyOrientation: 'important',
     lifestyle: 'balanced',
-    growth: 'continuous'
+    personalGrowth: 'continuous'
   },
   values: {
-    core: 'honesty',
-    secondary: 'loyalty',
-    lifestyle: 'adventure',
-    relationship: 'stability',
-    personal: 'spirituality'
+    honesty: 'extremely_important',
+    loyalty: 'very_important',
+    adventure: 'moderately_important',
+    stability: 'very_important',
+    spirituality: 'moderately_important'
   },
   lifestyle: {
-    social: 'moderate',
-    fitness: 'active',
-    diet: 'flexible',
-    workLife: 'balanced'
+    socialLevel: 'moderate',
+    fitnessLevel: 'active',
+    dietaryStyle: 'flexible',
+    workLifeBalance: 'balanced'
   },
   loveLanguages: {
-    primary: 'quality_time',
-    secondary: 'words_of_affirmation',
-    physical: 'moderate',
-    acts: 'high',
-    gifts: 'low'
+    primaryLoveLanguage: 'quality_time',
+    secondaryLoveLanguage: 'words_of_affirmation',
+    physicalTouch: 'moderate',
+    actsOfService: 'high',
+    giftGiving: 'low'
   },
   financialValues: {
-    spending: 'balanced',
-    saving: 'high',
-    goals: 'security_growth',
-    debt: 'low'
+    spendingStyle: 'balanced',
+    savingPriority: 'high',
+    financialGoals: 'security_growth',
+    debtTolerance: 'low'
   }
 });
 
