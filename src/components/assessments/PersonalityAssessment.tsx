@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -136,10 +137,16 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
-  const handleAnswer = (value: string) => {
+  const handleAnswer = (uniqueValue: string) => {
+    // Extract the actual personality dimension from the unique value
+    const [questionId, optionIndex] = uniqueValue.split('-option-');
+    const actualValue = questions[currentQuestion].options[parseInt(optionIndex)].value;
+    
+    console.log('Selected unique value:', uniqueValue, 'Actual personality value:', actualValue);
+    
     setAnswers(prev => ({
       ...prev,
-      [questions[currentQuestion].id]: value
+      [questions[currentQuestion].id]: actualValue
     }));
   };
 
@@ -209,6 +216,12 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
 
   const currentQuestionData = questions[currentQuestion];
   const progress = Math.min((currentQuestion / questions.length) * 100, 95);
+  
+  // Get the selected unique value for the current question
+  const selectedAnswer = answers[currentQuestionData.id];
+  const selectedUniqueValue = selectedAnswer ? 
+    `${currentQuestionData.id}-option-${currentQuestionData.options.findIndex(opt => opt.value === selectedAnswer)}` : 
+    "";
 
   return (
     <div className="space-y-6">
@@ -239,16 +252,17 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
           </h3>
           
           <RadioGroup 
-            value={answers[currentQuestionData.id] || ""} 
+            value={selectedUniqueValue} 
             onValueChange={handleAnswer}
             className="space-y-4"
           >
             {currentQuestionData.options.map((option, index) => {
+              const uniqueValue = `${currentQuestionData.id}-option-${index}`;
               const uniqueId = `q${currentQuestionData.id}-option${index}-${option.value}`;
               return (
                 <div key={uniqueId} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
                   <RadioGroupItem 
-                    value={option.value} 
+                    value={uniqueValue} 
                     id={uniqueId}
                     className="mt-0.5"
                   />
