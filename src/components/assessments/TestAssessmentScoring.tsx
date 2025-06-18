@@ -3,9 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { runAllAssessmentTests } from "@/utils/assessments/testRunner";
 import { RelationshipReadinessScore } from "@/utils/assessment/types";
-import { Play, CheckCircle, AlertCircle } from "lucide-react";
+import { Play, CheckCircle, AlertCircle, AlertTriangle } from "lucide-react";
 
 interface TestResults {
   secureResults: RelationshipReadinessScore;
@@ -21,8 +20,9 @@ const TestAssessmentScoring = () => {
   const runTests = async () => {
     setIsRunning(true);
     try {
-      const results = runAllAssessmentTests();
-      setTestResults(results);
+      // Test functionality has been removed
+      console.log('Test data files have been deleted - no tests available');
+      setTestResults(null);
     } catch (error) {
       console.error('Test failed:', error);
     } finally {
@@ -45,21 +45,30 @@ const TestAssessmentScoring = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Play className="h-5 w-5" />
+            <AlertTriangle className="h-5 w-5 text-yellow-500" />
             Assessment Scoring Test Suite
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">
-            This test validates that our assessment scoring algorithms are working correctly across different personality types and attachment styles.
-          </p>
-          <Button 
-            onClick={runTests} 
-            disabled={isRunning}
-            className="btn-gradient"
-          >
-            {isRunning ? "Running Tests..." : "Run Scoring Tests"}
-          </Button>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <p className="text-sm text-yellow-800">
+                Test data files have been removed. Testing functionality is currently unavailable.
+              </p>
+            </div>
+            <p className="text-muted-foreground">
+              This component was used to validate assessment scoring algorithms, but the test data has been deleted.
+            </p>
+            <Button 
+              onClick={runTests} 
+              disabled={true}
+              variant="secondary"
+              className="opacity-50 cursor-not-allowed"
+            >
+              Tests Unavailable
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
