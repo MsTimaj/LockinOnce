@@ -31,17 +31,17 @@ const DashboardDesktopLayout = ({
         <WelcomeSection />
       </div>
       
-      {/* Desktop Grid Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Main Content - Left/Center Column */}
-        <div className="xl:col-span-2 space-y-8">
+      {activeMatches.length === 0 ? (
+        <DashboardEmptyState />
+      ) : (
+        <div className="space-y-8">
           {/* Mutual Matches Section */}
           {mutualMatches.length > 0 && (
             <div>
               <h2 className="text-2xl font-playfair font-bold text-gray-800 mb-6">
                 🎉 Mutual Matches!
               </h2>
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {mutualMatches.map(match => (
                   <div 
                     key={match.id}
@@ -75,7 +75,7 @@ const DashboardDesktopLayout = ({
               <h2 className="text-2xl font-playfair font-bold text-gray-800 mb-6">
                 ⭐ Top 3 Choices
               </h2>
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {topChoices.filter(match => !mutualMatches.includes(match)).map(match => (
                   <div 
                     key={match.id}
@@ -106,23 +106,21 @@ const DashboardDesktopLayout = ({
               </div>
             </div>
           )}
-        </div>
 
-        {/* Sidebar - Right Column */}
-        <div className="xl:col-span-1">
+          {/* 7 Additional Matches Section */}
           {remainingMatches.length > 0 && (
             <div>
-              <h2 className="text-xl font-playfair font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-playfair font-bold text-gray-800 mb-6">
                 7 Additional Matches
               </h2>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {remainingMatches.map(match => (
                   <div 
                     key={match.id}
-                    className="bg-white/80 backdrop-blur-sm border rounded-lg p-4 cursor-pointer hover:shadow-md transition-all"
+                    className="bg-white/80 backdrop-blur-sm border rounded-lg p-4 cursor-pointer hover:shadow-md transition-all hover:scale-105"
                     onClick={() => onMatchClick(match)}
                   >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 mb-3">
                       <img 
                         src={match.photo} 
                         alt={match.name}
@@ -131,22 +129,21 @@ const DashboardDesktopLayout = ({
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-800 truncate">{match.name}, {match.age}</h4>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600">{match.location}</span>
+                          <span className="text-xs text-gray-600 truncate">{match.location}</span>
                           <span className={`text-sm font-bold ${getScoreColor(match.compatibilityScore.overall)}`}>
                             {match.compatibilityScore.overall}%
                           </span>
                         </div>
                       </div>
                     </div>
+                    <p className="text-xs text-gray-700 line-clamp-2">{match.bio}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
-
-          {activeMatches.length === 0 && <DashboardEmptyState />}
         </div>
-      </div>
+      )}
     </div>
   );
 };
