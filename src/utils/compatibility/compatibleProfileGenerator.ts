@@ -77,13 +77,25 @@ export const generateCompatibleAssessmentResults = (
     relocatation: userIntent?.relocatation || "somewhat_flexible"
   };
 
-  // Generate high emotional capacity for compatibility
+  // Generate high emotional capacity for compatibility with updated interface
   const compatibleEmotionalCapacity = {
-    stressManagement: "healthy_coping",
-    emotionalSupport: "natural_supporter", 
-    selfAwareness: "highly_aware",
-    empathy: "highly_empathetic",
-    resilience: "strong_resilience"
+    stressManagement: "high",
+    emotionalSupport: "high", 
+    selfAwareness: "high",
+    empathy: "high",
+    resilience: "high",
+    overallMaturity: "high",
+    insights: [
+      "Shows strong emotional intelligence in challenging situations",
+      "Naturally supportive and understanding of others' needs",
+      "Maintains emotional stability under pressure"
+    ],
+    strengths: [
+      "Excellent stress management skills",
+      "Natural emotional supporter",
+      "High self-awareness and empathy"
+    ],
+    growthAreas: []
   };
 
   // Create attachment style scores based on dominant style
