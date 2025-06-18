@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserStateManager } from "@/utils/userStateManager";
@@ -8,72 +7,36 @@ export const useOnboardingInit = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Enhanced scroll to top when step changes - mobile optimized
+  // Mobile-optimized scroll to top when step changes
   useEffect(() => {
     console.log('Step changed to:', currentStep, '- scrolling to top (mobile optimized)');
     
+    // Simple but effective mobile scroll approach
     const scrollToTop = () => {
-      // Method 1: Standard window scroll with smooth behavior for mobile
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      // Primary method - works best on mobile
+      window.scrollTo(0, 0);
       
-      // Method 2: Document element scroll
+      // Backup methods for different mobile browsers
       if (document.documentElement) {
         document.documentElement.scrollTop = 0;
       }
-      
-      // Method 3: Body scroll
       if (document.body) {
         document.body.scrollTop = 0;
       }
-      
-      // Method 4: Mobile-specific viewport meta handling
-      const viewportMeta = document.querySelector('meta[name="viewport"]');
-      if (viewportMeta) {
-        // Force a slight viewport refresh on mobile
-        const content = viewportMeta.getAttribute('content');
-        viewportMeta.setAttribute('content', content + ', user-scalable=no');
-        setTimeout(() => {
-          viewportMeta.setAttribute('content', content || 'width=device-width, initial-scale=1');
-        }, 1);
-      }
     };
 
-    // Method 5: Force scroll using multiple timing strategies for mobile
-    const forceScrollSequence = () => {
-      // Immediate scroll
+    // Execute scroll immediately
+    scrollToTop();
+    
+    // Execute again after DOM updates (critical for mobile)
+    setTimeout(() => {
       scrollToTop();
-      
-      // Animation frame scroll (for React state updates)
-      requestAnimationFrame(() => {
-        scrollToTop();
-      });
-      
-      // Short delay scroll (for DOM rendering)
-      setTimeout(() => {
-        scrollToTop();
-      }, 10);
-      
-      // Medium delay scroll (for mobile browsers)
-      setTimeout(() => {
-        scrollToTop();
-      }, 50);
-      
-      // Longer delay for stubborn mobile browsers
-      setTimeout(() => {
-        scrollToTop();
-      }, 100);
-      
-      // Final attempt with focus management for mobile
-      setTimeout(() => {
-        // Remove focus from any active elements that might prevent scroll
-        if (document.activeElement && document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        scrollToTop();
-      }, 150);
-    };
-
-    forceScrollSequence();
+    }, 10);
+    
+    // Final scroll after any animations settle
+    setTimeout(() => {
+      scrollToTop();
+    }, 100);
   }, [currentStep]);
 
   useEffect(() => {
