@@ -1,7 +1,7 @@
 
 import { AttachmentQuestion } from "./types";
 
-export const attachmentQuestions: AttachmentQuestion[] = [
+const baseAttachmentQuestions: AttachmentQuestion[] = [
   {
     id: 1,
     text: "When my partner is away for an extended period, I:",
@@ -83,3 +83,26 @@ export const attachmentQuestions: AttachmentQuestion[] = [
     ]
   }
 ];
+
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Randomize questions and also randomize the options within each question
+const randomizeQuestions = (): AttachmentQuestion[] => {
+  const shuffledQuestions = shuffleArray(baseAttachmentQuestions);
+  
+  // Also randomize the options within each question
+  return shuffledQuestions.map(question => ({
+    ...question,
+    options: shuffleArray(question.options)
+  }));
+};
+
+export const attachmentQuestions = randomizeQuestions();

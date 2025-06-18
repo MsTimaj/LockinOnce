@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { shuffleArray } from "@/utils/assessments/questionRandomizer";
 
 interface RelationshipIntentAssessmentProps {
   onComplete: (results: RelationshipIntentResults) => void;
@@ -18,7 +19,63 @@ export interface RelationshipIntentResults {
   relocatation: string;
 }
 
+const questionSections = [
+  {
+    id: "timeline",
+    title: "Your ideal relationship timeline:",
+    options: [
+      { value: "within_year", label: "Committed partnership within 1 year" },
+      { value: "1_2_years", label: "Serious relationship leading to commitment in 1-2 years" },
+      { value: "2_3_years", label: "Deep connection with commitment in 2-3 years" }
+    ]
+  },
+  {
+    id: "commitment",
+    title: "Your commitment goal:",
+    options: [
+      { value: "marriage", label: "Marriage" },
+      { value: "life_partnership", label: "Life partnership (may or may not include marriage)" },
+      { value: "long_term_exclusive", label: "Long-term exclusive relationship" }
+    ]
+  },
+  {
+    id: "lifeGoals",
+    title: "Your primary life focus:",
+    options: [
+      { value: "family_career", label: "Building family and career together" },
+      { value: "career_first", label: "Career growth with supportive partnership" },
+      { value: "family_focused", label: "Family-focused with career balance" }
+    ]
+  },
+  {
+    id: "familyPlanning",
+    title: "Your family planning intentions:",
+    options: [
+      { value: "want_children", label: "Want children (biological or adopted)" },
+      { value: "maybe_children", label: "Open to children but not certain" },
+      { value: "no_children", label: "Do not want children" }
+    ]
+  },
+  {
+    id: "relocation",
+    title: "Relocation flexibility:",
+    options: [
+      { value: "very_flexible", label: "Very flexible - willing to move for the right person" },
+      { value: "somewhat_flexible", label: "Somewhat flexible - open to discussing relocation" },
+      { value: "location_committed", label: "Committed to current location" }
+    ]
+  }
+];
+
 const RelationshipIntentAssessment = ({ onComplete }: RelationshipIntentAssessmentProps) => {
+  // Randomize sections and their options on component initialization
+  const [randomizedSections] = useState(() => 
+    shuffleArray(questionSections).map(section => ({
+      ...section,
+      options: shuffleArray(section.options)
+    }))
+  );
+
   const [timeline, setTimeline] = useState("");
   const [commitment, setCommitment] = useState("");
   const [lifeGoals, setLifeGoals] = useState("");
@@ -35,6 +92,27 @@ const RelationshipIntentAssessment = ({ onComplete }: RelationshipIntentAssessme
     };
     console.log('Relationship Intent Results:', results);
     onComplete(results);
+  };
+
+  const getValueForSection = (sectionId: string) => {
+    switch (sectionId) {
+      case "timeline": return timeline;
+      case "commitment": return commitment;
+      case "lifeGoals": return lifeGoals;
+      case "familyPlanning": return familyPlanning;
+      case "relocation": return relocation;
+      default: return "";
+    }
+  };
+
+  const setValueForSection = (sectionId: string, value: string) => {
+    switch (sectionId) {
+      case "timeline": setTimeline(value); break;
+      case "commitment": setCommitment(value); break;
+      case "lifeGoals": setLifeGoals(value); break;
+      case "familyPlanning": setFamilyPlanning(value); break;
+      case "relocation": setRelocation(value); break;
+    }
   };
 
   const isComplete = timeline && commitment && lifeGoals && familyPlanning && relocation;
@@ -56,120 +134,26 @@ const RelationshipIntentAssessment = ({ onComplete }: RelationshipIntentAssessme
       </div>
 
       <div className="space-y-6">
-        {/* Timeline */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your ideal relationship timeline:
-            </h3>
-            <RadioGroup value={timeline} onValueChange={setTimeline}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="within_year" id="within_year" />
-                <Label htmlFor="within_year" className="cursor-pointer flex-1">Committed partnership within 1 year</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="1_2_years" id="1_2_years" />
-                <Label htmlFor="1_2_years" className="cursor-pointer flex-1">Serious relationship leading to commitment in 1-2 years</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="2_3_years" id="2_3_years" />
-                <Label htmlFor="2_3_years" className="cursor-pointer flex-1">Deep connection with commitment in 2-3 years</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Commitment Level */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your commitment goal:
-            </h3>
-            <RadioGroup value={commitment} onValueChange={setCommitment}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="marriage" id="marriage" />
-                <Label htmlFor="marriage" className="cursor-pointer flex-1">Marriage</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="life_partnership" id="life_partnership" />
-                <Label htmlFor="life_partnership" className="cursor-pointer flex-1">Life partnership (may or may not include marriage)</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="long_term_exclusive" id="long_term_exclusive" />
-                <Label htmlFor="long_term_exclusive" className="cursor-pointer flex-1">Long-term exclusive relationship</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Life Goals */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your primary life focus:
-            </h3>
-            <RadioGroup value={lifeGoals} onValueChange={setLifeGoals}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="family_career" id="family_career" />
-                <Label htmlFor="family_career" className="cursor-pointer flex-1">Building family and career together</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="career_first" id="career_first" />
-                <Label htmlFor="career_first" className="cursor-pointer flex-1">Career growth with supportive partnership</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="family_focused" id="family_focused" />
-                <Label htmlFor="family_focused" className="cursor-pointer flex-1">Family-focused with career balance</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Family Planning */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your family planning intentions:
-            </h3>
-            <RadioGroup value={familyPlanning} onValueChange={setFamilyPlanning}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="want_children" id="want_children" />
-                <Label htmlFor="want_children" className="cursor-pointer flex-1">Want children (biological or adopted)</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="maybe_children" id="maybe_children" />
-                <Label htmlFor="maybe_children" className="cursor-pointer flex-1">Open to children but not certain</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="no_children" id="no_children" />
-                <Label htmlFor="no_children" className="cursor-pointer flex-1">Do not want children</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Relocation */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Relocation flexibility:
-            </h3>
-            <RadioGroup value={relocation} onValueChange={setRelocation}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="very_flexible" id="very_flexible" />
-                <Label htmlFor="very_flexible" className="cursor-pointer flex-1">Very flexible - willing to move for the right person</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="somewhat_flexible" id="somewhat_flexible" />
-                <Label htmlFor="somewhat_flexible" className="cursor-pointer flex-1">Somewhat flexible - open to discussing relocation</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="location_committed" id="location_committed" />
-                <Label htmlFor="location_committed" className="cursor-pointer flex-1">Committed to current location</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+        {randomizedSections.map((section) => (
+          <Card key={section.id} className="card-glass">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-medium mb-4 text-foreground">
+                {section.title}
+              </h3>
+              <RadioGroup 
+                value={getValueForSection(section.id)} 
+                onValueChange={(value) => setValueForSection(section.id, value)}
+              >
+                {section.options.map((option) => (
+                  <div key={`${section.id}-${option.value}`} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                    <RadioGroupItem value={option.value} id={`${section.id}-${option.value}`} />
+                    <Label htmlFor={`${section.id}-${option.value}`} className="cursor-pointer flex-1">{option.label}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Button 

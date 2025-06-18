@@ -18,7 +18,7 @@ export interface PersonalityResults {
   dominantType: string;
 }
 
-const questions = [
+const baseQuestions = [
   {
     id: 1,
     text: "When making important decisions, I typically:",
@@ -69,7 +69,28 @@ const questions = [
   }
 ];
 
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Randomize questions and their options
+const randomizeQuestions = () => {
+  const shuffledQuestions = shuffleArray(baseQuestions);
+  
+  return shuffledQuestions.map(question => ({
+    ...question,
+    options: shuffleArray(question.options)
+  }));
+};
+
 const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
+  const [questions] = useState(() => randomizeQuestions());
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
@@ -151,14 +172,14 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
             className="space-y-4"
           >
             {currentQuestionData.options.map((option, index) => (
-              <div key={index} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
+              <div key={`${currentQuestionData.id}-${option.value}-${index}`} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
                 <RadioGroupItem 
                   value={option.value} 
-                  id={`option-${index}`}
+                  id={`q${currentQuestionData.id}-option-${index}`}
                   className="mt-0.5"
                 />
                 <Label 
-                  htmlFor={`option-${index}`} 
+                  htmlFor={`q${currentQuestionData.id}-option-${index}`}
                   className="text-sm leading-relaxed cursor-pointer flex-1"
                 >
                   {option.text}

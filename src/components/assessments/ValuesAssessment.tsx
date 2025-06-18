@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { shuffleArray } from "@/utils/assessments/questionRandomizer";
 
 interface ValuesAssessmentProps {
   onComplete: (results: ValuesResults) => void;
@@ -16,7 +17,7 @@ export interface ValuesResults {
   dealBreakers: string[];
 }
 
-const coreValueOptions = [
+const baseCoreValueOptions = [
   { id: "family", label: "Family & Close Relationships" },
   { id: "career", label: "Career & Professional Growth" },
   { id: "adventure", label: "Adventure & New Experiences" },
@@ -29,7 +30,7 @@ const coreValueOptions = [
   { id: "learning", label: "Learning & Personal Growth" }
 ];
 
-const relationshipPriorityOptions = [
+const baseRelationshipPriorityOptions = [
   { id: "communication", label: "Open & honest communication" },
   { id: "shared_goals", label: "Shared life goals & vision" },
   { id: "emotional_support", label: "Emotional support & understanding" },
@@ -40,7 +41,7 @@ const relationshipPriorityOptions = [
   { id: "growth", label: "Supporting each other's growth" }
 ];
 
-const dealBreakerOptions = [
+const baseDealBreakerOptions = [
   { id: "dishonesty", label: "Dishonesty or lying" },
   { id: "addiction", label: "Substance abuse issues" },
   { id: "infidelity", label: "Cheating or infidelity" },
@@ -52,6 +53,11 @@ const dealBreakerOptions = [
 ];
 
 const ValuesAssessment = ({ onComplete }: ValuesAssessmentProps) => {
+  // Randomize all option lists on component initialization
+  const [coreValueOptions] = useState(() => shuffleArray(baseCoreValueOptions));
+  const [relationshipPriorityOptions] = useState(() => shuffleArray(baseRelationshipPriorityOptions));
+  const [dealBreakerOptions] = useState(() => shuffleArray(baseDealBreakerOptions));
+
   const [coreValues, setCoreValues] = useState<string[]>([]);
   const [relationshipPriorities, setRelationshipPriorities] = useState<string[]>([]);
   const [dealBreakers, setDealBreakers] = useState<string[]>([]);

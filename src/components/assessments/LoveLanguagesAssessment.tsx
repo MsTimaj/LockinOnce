@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { shuffleArray } from "@/utils/assessments/questionRandomizer";
 
 interface LoveLanguagesAssessmentProps {
   onComplete: (results: LoveLanguagesResults) => void;
@@ -17,7 +18,7 @@ export interface LoveLanguagesResults {
   givingPreference: string;
 }
 
-const loveLanguageOptions = [
+const baseLoveLanguageOptions = [
   { id: "words_of_affirmation", label: "Words of Affirmation", description: "Verbal expressions of love and appreciation" },
   { id: "quality_time", label: "Quality Time", description: "Focused attention and meaningful time together" },
   { id: "physical_touch", label: "Physical Touch", description: "Affectionate physical contact and closeness" },
@@ -25,7 +26,24 @@ const loveLanguageOptions = [
   { id: "receiving_gifts", label: "Receiving Gifts", description: "Thoughtful gifts that show love and remembrance" }
 ];
 
+const receivingPreferenceOptions = [
+  { value: "frequent_small", label: "Frequent small gestures throughout the day" },
+  { value: "meaningful_moments", label: "Meaningful expressions during special moments" },
+  { value: "consistent_pattern", label: "Consistent pattern of affection and care" }
+];
+
+const givingPreferenceOptions = [
+  { value: "express_verbally", label: "Express feelings through words and communication" },
+  { value: "show_through_actions", label: "Show love through helpful actions and service" },
+  { value: "physical_affection", label: "Express through physical affection and presence" }
+];
+
 const LoveLanguagesAssessment = ({ onComplete }: LoveLanguagesAssessmentProps) => {
+  // Randomize options on component initialization
+  const [loveLanguageOptions] = useState(() => shuffleArray(baseLoveLanguageOptions));
+  const [randomizedReceivingOptions] = useState(() => shuffleArray(receivingPreferenceOptions));
+  const [randomizedGivingOptions] = useState(() => shuffleArray(givingPreferenceOptions));
+
   const [primaryLoveLanguage, setPrimaryLoveLanguage] = useState("");
   const [secondaryLoveLanguage, setSecondaryLoveLanguage] = useState("");
   const [receivingPreference, setReceivingPreference] = useState("");
@@ -118,18 +136,12 @@ const LoveLanguagesAssessment = ({ onComplete }: LoveLanguagesAssessmentProps) =
               When receiving love, you prefer:
             </h3>
             <RadioGroup value={receivingPreference} onValueChange={setReceivingPreference}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="frequent_small" id="frequent-small" />
-                <Label htmlFor="frequent-small" className="cursor-pointer flex-1">Frequent small gestures throughout the day</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="meaningful_moments" id="meaningful-moments" />
-                <Label htmlFor="meaningful-moments" className="cursor-pointer flex-1">Meaningful expressions during special moments</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="consistent_pattern" id="consistent-pattern" />
-                <Label htmlFor="consistent-pattern" className="cursor-pointer flex-1">Consistent pattern of affection and care</Label>
-              </div>
+              {randomizedReceivingOptions.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                  <RadioGroupItem value={option.value} id={`receiving-${option.value}`} />
+                  <Label htmlFor={`receiving-${option.value}`} className="cursor-pointer flex-1">{option.label}</Label>
+                </div>
+              ))}
             </RadioGroup>
           </CardContent>
         </Card>
@@ -141,18 +153,12 @@ const LoveLanguagesAssessment = ({ onComplete }: LoveLanguagesAssessmentProps) =
               When showing love, you naturally tend to:
             </h3>
             <RadioGroup value={givingPreference} onValueChange={setGivingPreference}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="express_verbally" id="express-verbally" />
-                <Label htmlFor="express-verbally" className="cursor-pointer flex-1">Express feelings through words and communication</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="show_through_actions" id="show-through-actions" />
-                <Label htmlFor="show-through-actions" className="cursor-pointer flex-1">Show love through helpful actions and service</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="physical_affection" id="physical-affection" />
-                <Label htmlFor="physical-affection" className="cursor-pointer flex-1">Express through physical affection and presence</Label>
-              </div>
+              {randomizedGivingOptions.map((option) => (
+                <div key={option.value} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                  <RadioGroupItem value={option.value} id={`giving-${option.value}`} />
+                  <Label htmlFor={`giving-${option.value}`} className="cursor-pointer flex-1">{option.label}</Label>
+                </div>
+              ))}
             </RadioGroup>
           </CardContent>
         </Card>

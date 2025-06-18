@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowRight } from "lucide-react";
+import { shuffleArray } from "@/utils/assessments/questionRandomizer";
 
 interface PhysicalProximityAssessmentProps {
   onComplete: (results: PhysicalProximityResults) => void;
@@ -17,7 +18,54 @@ export interface PhysicalProximityResults {
   touchComfort: string;
 }
 
+const questionSections = [
+  {
+    id: "physicalAffection",
+    title: "Your ideal level of physical affection in a relationship:",
+    options: [
+      { value: "high", label: "High - Frequent hugs, cuddling, and physical touch throughout the day" },
+      { value: "moderate", label: "Moderate - Regular affection with balance of physical and non-physical intimacy" },
+      { value: "low", label: "Lower - Meaningful but less frequent physical affection" }
+    ]
+  },
+  {
+    id: "personalSpace",
+    title: "Your personal space needs:",
+    options: [
+      { value: "together", label: "Prefer spending most free time together" },
+      { value: "balanced", label: "Balanced mix of together time and individual space" },
+      { value: "independent", label: "Value significant independent time and personal space" }
+    ]
+  },
+  {
+    id: "intimacyPace",
+    title: "Your preferred pace for physical intimacy:",
+    options: [
+      { value: "gradual", label: "Gradual - Build physical intimacy slowly over time" },
+      { value: "natural", label: "Natural - Let physical intimacy develop organically" },
+      { value: "expressive", label: "Expressive - Comfortable with physical intimacy developing naturally" }
+    ]
+  },
+  {
+    id: "touchComfort",
+    title: "Your comfort with casual physical touch:",
+    options: [
+      { value: "very_comfortable", label: "Very comfortable - Enjoy casual touches, hand-holding, etc." },
+      { value: "comfortable", label: "Comfortable - Enjoy touch in appropriate moments" },
+      { value: "selective", label: "Selective - Prefer meaningful touch over casual contact" }
+    ]
+  }
+];
+
 const PhysicalProximityAssessment = ({ onComplete }: PhysicalProximityAssessmentProps) => {
+  // Randomize questions on component initialization
+  const [randomizedSections] = useState(() => 
+    shuffleArray(questionSections).map(section => ({
+      ...section,
+      options: shuffleArray(section.options)
+    }))
+  );
+
   const [physicalAffection, setPhysicalAffection] = useState("");
   const [personalSpace, setPersonalSpace] = useState("");
   const [intimacyPace, setIntimacyPace] = useState("");
@@ -32,6 +80,25 @@ const PhysicalProximityAssessment = ({ onComplete }: PhysicalProximityAssessment
     };
     console.log('Physical Proximity Results:', results);
     onComplete(results);
+  };
+
+  const getValueForSection = (sectionId: string) => {
+    switch (sectionId) {
+      case "physicalAffection": return physicalAffection;
+      case "personalSpace": return personalSpace;
+      case "intimacyPace": return intimacyPace;
+      case "touchComfort": return touchComfort;
+      default: return "";
+    }
+  };
+
+  const setValueForSection = (sectionId: string, value: string) => {
+    switch (sectionId) {
+      case "physicalAffection": setPhysicalAffection(value); break;
+      case "personalSpace": setPersonalSpace(value); break;
+      case "intimacyPace": setIntimacyPace(value); break;
+      case "touchComfort": setTouchComfort(value); break;
+    }
   };
 
   const isComplete = physicalAffection && personalSpace && intimacyPace && touchComfort;
@@ -50,97 +117,26 @@ const PhysicalProximityAssessment = ({ onComplete }: PhysicalProximityAssessment
       </div>
 
       <div className="space-y-6">
-        {/* Physical Affection */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your ideal level of physical affection in a relationship:
-            </h3>
-            <RadioGroup value={physicalAffection} onValueChange={setPhysicalAffection}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="high" id="high-affection" />
-                <Label htmlFor="high-affection" className="cursor-pointer flex-1">High - Frequent hugs, cuddling, and physical touch throughout the day</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="moderate" id="moderate-affection" />
-                <Label htmlFor="moderate-affection" className="cursor-pointer flex-1">Moderate - Regular affection with balance of physical and non-physical intimacy</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="low" id="low-affection" />
-                <Label htmlFor="low-affection" className="cursor-pointer flex-1">Lower - Meaningful but less frequent physical affection</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Personal Space */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your personal space needs:
-            </h3>
-            <RadioGroup value={personalSpace} onValueChange={setPersonalSpace}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="together" id="together" />
-                <Label htmlFor="together" className="cursor-pointer flex-1">Prefer spending most free time together</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="balanced" id="balanced" />
-                <Label htmlFor="balanced" className="cursor-pointer flex-1">Balanced mix of together time and individual space</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="independent" id="independent" />
-                <Label htmlFor="independent" className="cursor-pointer flex-1">Value significant independent time and personal space</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Intimacy Pace */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your preferred pace for physical intimacy:
-            </h3>
-            <RadioGroup value={intimacyPace} onValueChange={setIntimacyPace}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="gradual" id="gradual" />
-                <Label htmlFor="gradual" className="cursor-pointer flex-1">Gradual - Build physical intimacy slowly over time</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="natural" id="natural" />
-                <Label htmlFor="natural" className="cursor-pointer flex-1">Natural - Let physical intimacy develop organically</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="expressive" id="expressive" />
-                <Label htmlFor="expressive" className="cursor-pointer flex-1">Expressive - Comfortable with physical intimacy developing naturally</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
-
-        {/* Touch Comfort */}
-        <Card className="card-glass">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4 text-foreground">
-              Your comfort with casual physical touch:
-            </h3>
-            <RadioGroup value={touchComfort} onValueChange={setTouchComfort}>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="very_comfortable" id="very-comfortable" />
-                <Label htmlFor="very-comfortable" className="cursor-pointer flex-1">Very comfortable - Enjoy casual touches, hand-holding, etc.</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="comfortable" id="comfortable" />
-                <Label htmlFor="comfortable" className="cursor-pointer flex-1">Comfortable - Enjoy touch in appropriate moments</Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
-                <RadioGroupItem value="selective" id="selective" />
-                <Label htmlFor="selective" className="cursor-pointer flex-1">Selective - Prefer meaningful touch over casual contact</Label>
-              </div>
-            </RadioGroup>
-          </CardContent>
-        </Card>
+        {randomizedSections.map((section) => (
+          <Card key={section.id} className="card-glass">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-medium mb-4 text-foreground">
+                {section.title}
+              </h3>
+              <RadioGroup 
+                value={getValueForSection(section.id)} 
+                onValueChange={(value) => setValueForSection(section.id, value)}
+              >
+                {section.options.map((option, index) => (
+                  <div key={`${section.id}-${option.value}`} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent/50">
+                    <RadioGroupItem value={option.value} id={`${section.id}-${option.value}`} />
+                    <Label htmlFor={`${section.id}-${option.value}`} className="cursor-pointer flex-1">{option.label}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Button 
