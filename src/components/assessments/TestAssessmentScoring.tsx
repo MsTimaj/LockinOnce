@@ -90,8 +90,8 @@ const TestAssessmentScoring = () => {
                     {Object.entries(result.breakdown).map(([category, score]) => (
                       <div key={category} className="flex items-center justify-between text-sm">
                         <span className="capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}:</span>
-                        <span className={`px-2 py-1 rounded text-xs ${getScoreColor(score)} text-white`}>
-                          {score}
+                        <span className={`px-2 py-1 rounded text-xs ${getScoreColor(score as number)} text-white`}>
+                          {score as number}
                         </span>
                       </div>
                     ))}
