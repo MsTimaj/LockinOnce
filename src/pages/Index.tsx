@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Users, Target, Sparkles, ArrowRight, RotateCcw } from "lucide-react";
@@ -59,7 +58,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3 mb-6">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-black">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
                 LockInOnce
               </h1>
               <span className="bg-rose-100 text-rose-600 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium">
