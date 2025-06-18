@@ -37,7 +37,8 @@ export const generateCompatibleAssessmentResults = (
                   userBirthOrder === 'youngest' ? 'oldest' : 
                   userBirthOrder === 'only' ? 'youngest' : 'oldest',
       familySize: "medium",
-      parentalDynamics: "supportive"
+      parentalDynamics: "warm_supportive",
+      siblingGap: "moderate_4_6_years"
     },
     relationshipIntent: {
       timeline: "1-2 years",
