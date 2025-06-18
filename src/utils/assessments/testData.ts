@@ -1,4 +1,3 @@
-
 import { ComprehensiveAssessmentResults } from "@/utils/assessment/types";
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
@@ -60,9 +59,9 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     }
   },
   attractionLayer: {
-    physicalImportance: 'important',
+    physicalAttraction: 'important',
     emotionalConnection: 'essential',
-    intellectualCompatibility: 'very_important',
+    intellectualStimulation: 'very_important',
     sharedValues: 'essential'
   },
   physicalProximity: {
@@ -78,33 +77,36 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     listeningStyle: 'active_empathetic'
   },
   lifeGoals: {
-    careerImportance: 'high',
-    familyImportance: 'important',
-    lifestylePreference: 'balanced',
-    personalGrowth: 'continuous'
+    careerGoals: 'high',
+    familyGoals: 'important',
+    personalGrowth: 'balanced',
+    lifestyle: 'continuous'
   },
   values: {
-    coreValues: ['extremely_important'],
-    relationshipValues: 'very_important',
-    lifestyleValues: 'moderately_important',
-    personalValues: 'very_important',
-    sharedBeliefs: 'moderately_important'
+    coreValues: 'extremely_important',
+    familyValues: 'very_important',
+    careerValues: 'moderately_important',
+    socialValues: 'very_important',
+    spiritualValues: 'moderately_important'
   },
   lifestyle: {
-    socialActivity: 'moderate',
-    fitnessLevel: 'active',
-    dietaryPreferences: 'flexible',
-    workLifeBalance: 'balanced'
+    livingArrangement: 'moderate',
+    dailyRoutine: 'active',
+    socialPreference: 'flexible',
+    travelStyle: 'balanced',
+    homeEnvironment: 'balanced'
   },
   loveLanguages: {
     primaryLoveLanguage: 'quality_time',
-    secondaryLoveLanguage: 'acts_of_service'
+    secondaryLoveLanguage: 'acts_of_service',
+    receivingPreference: 'quality_time',
+    givingPreference: 'acts_of_service'
   },
   financialValues: {
-    spendingHabits: 'balanced',
-    savingPriority: 'high',
-    financialGoals: 'security_growth',
-    debtTolerance: 'low'
+    financialPriorities: 'balanced',
+    spendingStyle: 'high',
+    savingsGoals: 'security_growth',
+    debtAttitude: 'low'
   }
 });
 
