@@ -47,9 +47,10 @@ const LoveVeeChatButton = ({
         <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pb-20">
           <div className="w-full max-w-md h-[70vh] bg-white rounded-t-2xl shadow-2xl border border-gray-200 overflow-hidden">
             <LoveVeeChat 
+              isOpen={isOpen}
+              onToggle={onToggle}
               initialTopic={initialTopic}
               analysisData={analysisData}
-              onClose={onToggle}
             />
           </div>
         </div>
