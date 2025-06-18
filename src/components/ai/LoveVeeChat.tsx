@@ -75,8 +75,8 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic, analysisData }: LoveVeeCh
   if (!isOpen) return null;
 
   return (
-    <div className="relative">
-      <Card className={`bg-white/95 backdrop-blur-xl shadow-2xl border-2 border-rose-200/50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'}`}>
+    <div className="relative w-full h-full">
+      <Card className={`bg-white/95 backdrop-blur-xl shadow-2xl border-2 border-rose-200/50 transition-all duration-300 w-full ${isMinimized ? 'h-16' : 'h-full'}`}>
         <CardHeader className="p-0">
           <ChatHeader 
             isMinimized={isMinimized}
@@ -86,7 +86,7 @@ const LoveVeeChat = ({ isOpen, onToggle, initialTopic, analysisData }: LoveVeeCh
         </CardHeader>
         
         {!isMinimized && (
-          <CardContent className="p-0 flex flex-col h-80">
+          <CardContent className="p-0 flex flex-col h-[calc(100%-64px)]">
             {showApiKeyInput && (
               <ApiKeyInput
                 apiKey={apiKey}
