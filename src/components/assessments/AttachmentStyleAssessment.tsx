@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { AttachmentStyleAssessmentProps, AttachmentStyleResults } from "./attachment/types";
 import { attachmentQuestions } from "./attachment/questions";
 import { calculateAttachmentResults } from "./attachment/scoring";
+import { randomizeQuestionsWithOptions } from "@/utils/assessments/questionRandomizer";
 import { useScrollToTop } from "./hooks/useScrollToTop";
 import AssessmentHeader from "./attachment/AssessmentHeader";
 import QuestionCard from "./attachment/QuestionCard";
@@ -12,15 +13,16 @@ import QuestionCard from "./attachment/QuestionCard";
 const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProps) => {
   useScrollToTop();
   
+  const [questions] = useState(() => randomizeQuestionsWithOptions(attachmentQuestions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
   const handleAnswer = (value: string) => {
-    console.log('Answer selected:', value, 'for question:', attachmentQuestions[currentQuestion].id);
+    console.log('Answer selected:', value, 'for question:', questions[currentQuestion].id);
     setAnswers(prev => {
       const updated = {
         ...prev,
-        [attachmentQuestions[currentQuestion].id]: value
+        [questions[currentQuestion].id]: value
       };
       console.log('Updated answers:', updated);
       return updated;
@@ -28,7 +30,7 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < attachmentQuestions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       completeAssessment();
@@ -41,7 +43,7 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
     onComplete(results);
   };
 
-  const currentQuestionData = attachmentQuestions[currentQuestion];
+  const currentQuestionData = questions[currentQuestion];
   const currentAnswer = answers[currentQuestionData.id] || "";
 
   console.log('Current answer for question', currentQuestionData.id, ':', currentAnswer);
@@ -50,7 +52,7 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
     <div className="space-y-6">
       <AssessmentHeader 
         currentQuestion={currentQuestion}
-        totalQuestions={attachmentQuestions.length}
+        totalQuestions={questions.length}
       />
 
       <QuestionCard
@@ -64,7 +66,7 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
         disabled={!currentAnswer}
         className="btn-gradient w-full"
       >
-        {currentQuestion === attachmentQuestions.length - 1 ? 'Complete Assessment' : 'Next Question'}
+        {currentQuestion === questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
         <ArrowRight className="h-4 w-4 ml-2" />
       </Button>
     </div>
