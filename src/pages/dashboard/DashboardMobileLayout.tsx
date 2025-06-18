@@ -26,9 +26,9 @@ const DashboardMobileLayout = ({
   const activeMatches = MatchPoolManager.getActiveMatches(matches);
   const mutualMatches = MatchPoolManager.getMutualMatches(matches);
   
-  // Show mutual matches first, then top choices
+  // Show mutual matches first, then top 3 choices, then remaining 7
   const topChoices = [...mutualMatches, ...activeMatches.filter(m => !mutualMatches.includes(m))].slice(0, 3);
-  const remainingMatches = activeMatches.slice(3);
+  const remainingMatches = activeMatches.slice(3, 10); // Show exactly 7 additional matches
 
   return (
     <div className="lg:hidden w-full max-w-sm sm:max-w-md mx-auto px-4 sm:px-6 pb-24 overflow-x-hidden">

@@ -21,9 +21,9 @@ const DashboardDesktopLayout = ({
   const activeMatches = MatchPoolManager.getActiveMatches(matches);
   const mutualMatches = MatchPoolManager.getMutualMatches(matches);
   
-  // Show mutual matches first, then top choices
+  // Show mutual matches first, then top 3 choices, then remaining 7
   const topChoices = [...mutualMatches, ...activeMatches.filter(m => !mutualMatches.includes(m))].slice(0, 3);
-  const remainingMatches = activeMatches.slice(3);
+  const remainingMatches = activeMatches.slice(3, 10); // Show exactly 7 additional matches
 
   return (
     <div className="hidden lg:block max-w-6xl mx-auto px-8 pb-12">
@@ -69,11 +69,11 @@ const DashboardDesktopLayout = ({
             </div>
           )}
 
-          {/* Top Choices Section */}
+          {/* Top 3 Choices Section */}
           {topChoices.length > 0 && (
             <div>
               <h2 className="text-2xl font-playfair font-bold text-gray-800 mb-6">
-                ⭐ Top Choices
+                ⭐ Top 3 Choices
               </h2>
               <div className="grid gap-6 md:grid-cols-2">
                 {topChoices.filter(match => !mutualMatches.includes(match)).map(match => (
@@ -113,10 +113,10 @@ const DashboardDesktopLayout = ({
           {remainingMatches.length > 0 && (
             <div>
               <h2 className="text-xl font-playfair font-bold text-gray-800 mb-4">
-                More Matches ({remainingMatches.length})
+                7 Additional Matches
               </h2>
               <div className="space-y-4 max-h-96 overflow-y-auto">
-                {remainingMatches.slice(0, 8).map(match => (
+                {remainingMatches.map(match => (
                   <div 
                     key={match.id}
                     className="bg-white/80 backdrop-blur-sm border rounded-lg p-4 cursor-pointer hover:shadow-md transition-all"

@@ -32,7 +32,7 @@ export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentRe
 };
 
 const generateMatchesFromProfiles = (profiles: any[], userProfile: ComprehensiveAssessmentResults): MatchProfile[] => {
-  return profiles.map((profile, index) => {
+  const matches = profiles.map((profile, index) => {
     // Generate assessment results that are scientifically compatible
     const compatibleResults = generateCompatibleAssessmentResults(userProfile, index);
     
@@ -54,4 +54,24 @@ const generateMatchesFromProfiles = (profiles: any[], userProfile: Comprehensive
       lastActive: "2 hours ago"
     };
   }).sort((a, b) => b.compatibilityScore.overall - a.compatibilityScore.overall);
+
+  // Ensure we always return exactly 10 matches (3 top + 7 additional)
+  // If we have fewer than 10, duplicate some matches with slight variations
+  const targetMatches = 10;
+  const finalMatches = [...matches];
+  
+  while (finalMatches.length < targetMatches && matches.length > 0) {
+    const sourceMatch = matches[finalMatches.length % matches.length];
+    const duplicatedMatch = {
+      ...sourceMatch,
+      id: `${sourceMatch.id}_dup_${finalMatches.length}`,
+      compatibilityScore: {
+        ...sourceMatch.compatibilityScore,
+        overall: Math.max(60, sourceMatch.compatibilityScore.overall - Math.floor(Math.random() * 10))
+      }
+    };
+    finalMatches.push(duplicatedMatch);
+  }
+
+  return finalMatches.slice(0, targetMatches);
 };

@@ -32,7 +32,7 @@ const OtherMatchesSection = ({
       <div className="flex items-center space-x-2 mb-3 sm:mb-4">
         <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0" />
         <h2 className="text-base sm:text-lg font-serif font-bold text-gray-800">
-          More Matches ({otherMatches.length})
+          7 Additional Matches
         </h2>
       </div>
       
