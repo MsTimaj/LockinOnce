@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
@@ -14,7 +13,6 @@ import NavigationFooter from "@/components/dashboard/NavigationFooter";
 import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
 import UpdateChecklist from "@/components/dashboard/UpdateChecklist";
 import ProjectStatusChecklist from "@/components/dashboard/ProjectStatusChecklist";
-import SessionInfo from "@/components/dashboard/SessionInfo";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -162,8 +160,6 @@ const Dashboard = () => {
       />
 
       <div className="w-full max-w-sm sm:max-w-md mx-auto px-3 sm:px-6 pb-20 sm:pb-24 overflow-x-hidden">
-        <SessionInfo />
-        
         <WelcomeSection />
         
         {/* Show mutual matches section if any */}
