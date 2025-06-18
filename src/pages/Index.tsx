@@ -49,53 +49,53 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 sm:py-16">
         <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <div className="flex items-center justify-center mb-6">
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 shadow-lg">
-                <Heart className="h-12 w-12 text-white" />
+              <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-500 shadow-lg">
+                <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
               </div>
             </div>
-            <div className="flex items-center justify-center space-x-3 mb-6">
-              <h1 className="text-5xl font-serif font-bold text-gray-800">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3 mb-6">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-black">
                 LockInOnce
               </h1>
-              <span className="bg-rose-100 text-rose-600 text-sm px-3 py-1 rounded-full font-medium">
+              <span className="bg-rose-100 text-rose-600 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-medium">
                 Beta Demo
               </span>
             </div>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
               Science-based compatibility matching for serious relationships. 
               Find your one true match through our comprehensive personality and attachment assessment.
             </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 mb-6 sm:mb-8 max-w-2xl mx-auto">
               <p className="text-sm text-amber-800">
                 <strong>Demo Version:</strong> This is a demonstration of the LockInOnce matching system. 
                 All profiles and matches are simulated for testing purposes.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
               <Button 
                 onClick={handleStartOnboarding}
-                className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-3 text-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-6 sm:px-8 py-3 text-base sm:text-lg"
                 size="lg"
               >
                 Start Demo Assessment
-                <ArrowRight className="h-5 w-5 ml-2" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
               </Button>
               <Button 
                 onClick={handleCheckDashboard}
                 variant="outline"
-                className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                className="w-full sm:w-auto border-rose-200 text-rose-600 hover:bg-rose-50"
               >
                 View Demo Results
               </Button>
             </div>
             
             {/* Testing Reset Button */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
               <p className="text-sm text-gray-500 mb-3">Demo Controls</p>
               <Button 
                 onClick={handleResetForTesting}
@@ -110,16 +110,16 @@ const Index = () => {
           </div>
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 px-4 sm:px-0">
             <Card className="bg-white/70 backdrop-blur-sm border border-white/50">
               <CardHeader className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-r from-purple-400 to-rose-400 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-xl bg-gradient-to-r from-purple-400 to-rose-400 flex items-center justify-center">
+                  <Target className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <CardTitle className="text-rose-700">Science-Based Matching</CardTitle>
+                <CardTitle className="text-rose-700 text-lg sm:text-xl">Science-Based Matching</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-center">
+                <p className="text-gray-600 text-center text-sm sm:text-base">
                   Our algorithm uses proven psychology research on attachment theory, personality compatibility, and relationship science to find your ideal match.
                 </p>
               </CardContent>
@@ -127,27 +127,27 @@ const Index = () => {
 
             <Card className="bg-white/70 backdrop-blur-sm border border-white/50">
               <CardHeader className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center">
+                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <CardTitle className="text-rose-700">Deep Compatibility</CardTitle>
+                <CardTitle className="text-rose-700 text-lg sm:text-xl">Deep Compatibility</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-center">
+                <p className="text-gray-600 text-center text-sm sm:text-base">
                   Go beyond surface-level attraction. We analyze 13 key dimensions of compatibility including values, communication styles, and life goals.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 backdrop-blur-sm border border-white/50">
+            <Card className="bg-white/70 backdrop-blur-sm border border-white/50 sm:col-span-2 md:col-span-1">
               <CardHeader className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-r from-pink-400 to-rose-500 flex items-center justify-center">
-                  <Sparkles className="h-6 w-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-xl bg-gradient-to-r from-pink-400 to-rose-500 flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <CardTitle className="text-rose-700">AI Relationship Coach</CardTitle>
+                <CardTitle className="text-rose-700 text-lg sm:text-xl">AI Relationship Coach</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-center">
+                <p className="text-gray-600 text-center text-sm sm:text-base">
                   Meet Love-vee, your personal AI dating coach. Get personalized advice, conversation starters, and relationship guidance 24/7.
                 </p>
               </CardContent>
@@ -155,17 +155,17 @@ const Index = () => {
           </div>
 
           {/* Assessment Preview */}
-          <Card className="bg-gradient-to-r from-rose-100 to-pink-100 border-rose-200">
-            <CardContent className="p-8">
+          <Card className="bg-gradient-to-r from-rose-100 to-pink-100 border-rose-200 mx-4 sm:mx-0">
+            <CardContent className="p-6 sm:p-8">
               <div className="text-center">
-                <h2 className="text-2xl font-serif font-bold text-gray-800 mb-4">
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-800 mb-3 sm:mb-4">
                   Your Comprehensive Assessment
                 </h2>
-                <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+                <p className="text-gray-700 mb-4 sm:mb-6 max-w-2xl mx-auto text-sm sm:text-base">
                   Complete our 13-part assessment covering attachment style, personality, values, and relationship goals. 
                   Takes 15-20 minutes and creates your unique compatibility profile.
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-600 mb-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">
                   <div>• Attachment Style</div>
                   <div>• Personality Type</div>
                   <div>• Communication Style</div>
@@ -177,7 +177,7 @@ const Index = () => {
                 </div>
                 <Button 
                   onClick={handleStartOnboarding}
-                  className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white"
+                  className="w-full sm:w-auto bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white"
                 >
                   Begin Assessment
                   <ArrowRight className="h-4 w-4 ml-2" />
