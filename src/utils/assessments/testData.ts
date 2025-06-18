@@ -60,10 +60,10 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     }
   },
   attractionLayer: {
-    physicalImportance: 'important',
-    emotionalConnection: 'essential',
-    intellectualStimulation: 'very_important',
-    sharedValues: 'essential'
+    physical: 'important',
+    emotional: 'essential',
+    intellectual: 'very_important',
+    values: 'essential'
   },
   physicalProximity: {
     physicalAffection: 'moderate',
@@ -78,36 +78,34 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     listeningStyle: 'active_empathetic'
   },
   lifeGoals: {
-    careerImportance: 'high',
-    familyImportance: 'important',
-    lifestyleBalance: 'balanced',
-    personalGrowth: 'continuous'
+    career: 'high',
+    family: 'important',
+    lifestyle: 'balanced',
+    growth: 'continuous'
   },
   values: {
-    coreValues: ['extremely_important'],
-    relationshipValues: 'very_important',
-    lifestyleValues: 'moderately_important',
-    personalValues: 'very_important',
-    sharedBeliefs: 'moderately_important'
+    core: ['extremely_important'],
+    relationship: 'very_important',
+    lifestyle: 'moderately_important',
+    personal: 'very_important',
+    shared: 'moderately_important'
   },
   lifestyle: {
-    socialActivity: 'moderate',
-    fitnessLevel: 'active',
-    dietaryPreferences: 'flexible',
-    workLifeBalance: 'balanced'
+    social: 'moderate',
+    fitness: 'active',
+    diet: 'flexible',
+    workLife: 'balanced'
   },
   loveLanguages: {
-    wordsOfAffirmation: 'moderate',
-    qualityTime: 'high',
-    physicalTouch: 'moderate',
-    actsOfService: 'high',
-    receivingGifts: 'low'
+    primary: 'quality_time',
+    secondary: 'acts_of_service',
+    tertiary: 'words_of_affirmation'
   },
   financialValues: {
-    spendingHabits: 'balanced',
-    savingPriority: 'high',
-    financialGoals: 'security_growth',
-    debtComfort: 'low'
+    spending: 'balanced',
+    saving: 'high',
+    goals: 'security_growth',
+    debt: 'low'
   }
 });
 
