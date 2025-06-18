@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -114,7 +115,7 @@ const PreferencesAssessment = ({ onComplete }: PreferencesAssessmentProps) => {
 
   // Debug logging to help identify the issue
   useEffect(() => {
-    console.log('Validation Debug:', {
+    console.log('Preferences Validation Debug:', {
       genderPreference,
       careerAmbition, 
       wantsChildren,

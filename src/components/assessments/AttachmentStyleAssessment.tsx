@@ -106,10 +106,15 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
   const handleAnswer = (value: string) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questions[currentQuestion].id]: value
-    }));
+    console.log('Answer selected:', value, 'for question:', questions[currentQuestion].id);
+    setAnswers(prev => {
+      const updated = {
+        ...prev,
+        [questions[currentQuestion].id]: value
+      };
+      console.log('Updated answers:', updated);
+      return updated;
+    });
   };
 
   const nextQuestion = () => {
@@ -161,6 +166,9 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
 
   const currentQuestionData = questions[currentQuestion];
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const currentAnswer = answers[currentQuestionData.id] || "";
+
+  console.log('Current answer for question', currentQuestionData.id, ':', currentAnswer);
 
   return (
     <div className="space-y-6">
@@ -191,19 +199,19 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
           </h3>
           
           <RadioGroup 
-            value={answers[currentQuestionData.id] || ""} 
+            value={currentAnswer}
             onValueChange={handleAnswer}
             className="space-y-4"
           >
             {currentQuestionData.options.map((option, index) => (
-              <div key={index} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
+              <div key={`${currentQuestionData.id}-${index}`} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
                 <RadioGroupItem 
                   value={option.value} 
-                  id={`option-${index}`}
-                  className="mt-0.5"
+                  id={`q${currentQuestionData.id}-option-${index}`}
+                  className="mt-0.5 shrink-0"
                 />
                 <Label 
-                  htmlFor={`option-${index}`} 
+                  htmlFor={`q${currentQuestionData.id}-option-${index}`}
                   className="text-sm leading-relaxed cursor-pointer flex-1"
                 >
                   {option.text}
@@ -216,7 +224,7 @@ const AttachmentStyleAssessment = ({ onComplete }: AttachmentStyleAssessmentProp
 
       <Button 
         onClick={nextQuestion}
-        disabled={!answers[currentQuestionData.id]}
+        disabled={!currentAnswer}
         className="btn-gradient w-full"
       >
         {currentQuestion === questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
