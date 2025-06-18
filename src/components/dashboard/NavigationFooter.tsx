@@ -9,7 +9,7 @@ const NavigationFooter = () => {
 
   const getButtonClass = (path: string) => {
     const isActive = location.pathname === path;
-    return `flex-1 flex flex-col items-center justify-center space-y-1 py-2 sm:py-3 px-2 sm:px-3 rounded-xl transition-all duration-200 min-h-[60px] sm:min-h-[70px] ${
+    return `flex-1 flex flex-col items-center justify-center space-y-0.5 sm:space-y-1 py-2 sm:py-3 px-1 sm:px-3 rounded-lg sm:rounded-xl transition-all duration-200 min-h-[56px] sm:min-h-[70px] ${
       isActive 
         ? 'bg-rose-500 text-white shadow-md transform scale-105' 
         : 'text-gray-600 hover:text-rose-500 hover:bg-rose-50 active:scale-95'
@@ -18,7 +18,7 @@ const NavigationFooter = () => {
 
   const getIconClass = (path: string) => {
     const isActive = location.pathname === path;
-    return `h-5 w-5 sm:h-6 sm:w-6 ${isActive ? 'text-white' : ''} transition-all duration-200`;
+    return `h-4 w-4 sm:h-6 sm:w-6 ${isActive ? 'text-white' : ''} transition-all duration-200`;
   };
 
   const getTextClass = (path: string) => {
@@ -27,8 +27,8 @@ const NavigationFooter = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-3 sm:px-4 py-2 shadow-lg z-50">
-      <div className="max-w-md mx-auto flex items-center justify-between gap-1 sm:gap-2">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-2 sm:px-4 py-1.5 sm:py-2 shadow-lg z-50">
+      <div className="max-w-sm sm:max-w-md mx-auto flex items-center justify-between gap-0.5 sm:gap-2">
         <Button
           variant="ghost"
           className={getButtonClass('/dashboard')}

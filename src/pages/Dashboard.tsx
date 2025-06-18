@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
@@ -121,10 +122,10 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center px-3 sm:px-4">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your matches...</p>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-sm sm:text-base">Loading your matches...</p>
         </div>
       </div>
     );
@@ -133,7 +134,7 @@ const Dashboard = () => {
   // Show match detail if a match is selected
   if (selectedMatch) {
     return (
-      <div className="pb-24">
+      <div className="pb-20 sm:pb-24">
         <MatchDetail 
           match={selectedMatch}
           onBack={handleBackToMatches}
@@ -160,36 +161,36 @@ const Dashboard = () => {
         onShowProjectStatus={() => setShowProjectStatus(true)}
       />
 
-      <div className="w-full max-w-md mx-auto px-4 sm:px-6 pb-24 overflow-x-hidden">
+      <div className="w-full max-w-sm sm:max-w-md mx-auto px-3 sm:px-6 pb-20 sm:pb-24 overflow-x-hidden">
         <SessionInfo />
         
         <WelcomeSection />
         
         {/* Show mutual matches section if any */}
         {mutualMatches.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-playfair font-bold text-gray-800 mb-3">
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-playfair font-bold text-gray-800 mb-2 sm:mb-3">
               🎉 Mutual Matches!
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {mutualMatches.map(match => (
                 <div 
                   key={match.id}
-                  className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all"
+                  className="bg-gradient-to-r from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-3 sm:p-4 cursor-pointer hover:shadow-md transition-all"
                   onClick={() => handleMatchClick(match)}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
                     <img 
                       src={match.photo} 
                       alt={match.name}
-                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-800 truncate">{match.name}</h3>
-                      <p className="text-sm text-pink-600">Both interested! 💕</p>
+                      <h3 className="font-semibold text-gray-800 truncate text-sm sm:text-base">{match.name}</h3>
+                      <p className="text-xs sm:text-sm text-pink-600">Both interested! 💕</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="text-lg font-bold text-pink-600">
+                      <div className="text-base sm:text-lg font-bold text-pink-600">
                         {match.compatibilityScore.overall}%
                       </div>
                     </div>
@@ -221,9 +222,9 @@ const Dashboard = () => {
         )}
 
         {activeMatches.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">You've seen all available matches!</p>
-            <p className="text-sm text-gray-500">New compatible profiles will appear soon.</p>
+          <div className="text-center py-8 sm:py-12">
+            <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">You've seen all available matches!</p>
+            <p className="text-xs sm:text-sm text-gray-500">New compatible profiles will appear soon.</p>
           </div>
         )}
       </div>
