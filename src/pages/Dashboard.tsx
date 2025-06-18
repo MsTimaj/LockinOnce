@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
@@ -11,14 +12,10 @@ import TopChoicesSection from "@/components/dashboard/TopChoicesSection";
 import OtherMatchesSection from "@/components/dashboard/OtherMatchesSection";
 import NavigationFooter from "@/components/dashboard/NavigationFooter";
 import LoveVeeChatButton from "@/components/ai/LoveVeeChatButton";
-import UpdateChecklist from "@/components/dashboard/UpdateChecklist";
-import ProjectStatusChecklist from "@/components/dashboard/ProjectStatusChecklist";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
-  const [showChecklist, setShowChecklist] = useState(false);
-  const [showProjectStatus, setShowProjectStatus] = useState(false);
   const [matches, setMatches] = useState<MatchProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -154,10 +151,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50">
-      <DashboardHeader 
-        onShowChecklist={() => setShowChecklist(true)} 
-        onShowProjectStatus={() => setShowProjectStatus(true)}
-      />
+      <DashboardHeader />
 
       {/* Mobile Layout */}
       <div className="lg:hidden w-full max-w-sm sm:max-w-md mx-auto px-4 sm:px-6 pb-24 overflow-x-hidden">
@@ -357,14 +351,6 @@ const Dashboard = () => {
 
       <NavigationFooter />
       <LoveVeeChatButton />
-      
-      {showChecklist && (
-        <UpdateChecklist onClose={() => setShowChecklist(false)} />
-      )}
-      
-      {showProjectStatus && (
-        <ProjectStatusChecklist onClose={() => setShowProjectStatus(false)} />
-      )}
     </div>
   );
 };
