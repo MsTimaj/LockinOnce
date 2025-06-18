@@ -7,6 +7,7 @@ import { UserStateManager } from "@/utils/userStateManager";
 import { calculateRelationshipReadiness, getDominantPersonalityType, getTopStrengths } from "@/utils/assessmentScoring";
 import AnalysisLoadingState from "@/components/ai-results/AnalysisLoadingState";
 import AIResultsDisplay from "@/components/ai-results/AIResultsDisplay";
+import NavigationFooter from "@/components/dashboard/NavigationFooter";
 
 const AIResultsSummary = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -148,20 +149,26 @@ const AIResultsSummary = () => {
   // Loading states or analyzing (only for new users)
   if (isInitializing || isAnalyzing || !analysis) {
     return (
-      <AnalysisLoadingState
-        isInitializing={isInitializing}
-        onAnalysisComplete={() => setIsAnalyzing(false)}
-      />
+      <div className="pb-24">
+        <AnalysisLoadingState
+          isInitializing={isInitializing}
+          onAnalysisComplete={() => setIsAnalyzing(false)}
+        />
+        <NavigationFooter />
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-      <AIResultsDisplay
-        analysis={analysis}
-        onLearnMore={handleLearnMore}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-24">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 overflow-x-hidden">
+        <AIResultsDisplay
+          analysis={analysis}
+          onLearnMore={handleLearnMore}
+        />
+      </div>
 
+      <NavigationFooter />
       <LoveVeeChatButton 
         initialTopic={chatTopic}
         isOpen={isChatOpen}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,7 +81,7 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -90,15 +91,15 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 pb-24">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/50 px-6 py-4">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-white/50 px-4 sm:px-6 py-4 sticky top-0 z-10">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate('/dashboard')}
-            className="p-3 rounded-xl"
+            className="p-3 rounded-xl min-h-[44px] min-w-[44px]"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -109,14 +110,14 @@ const Profile = () => {
             variant="ghost"
             size="sm"
             onClick={() => setIsEditing(!isEditing)}
-            className="p-3 rounded-xl"
+            className="p-3 rounded-xl min-h-[44px] min-w-[44px]"
           >
             {isEditing ? <Save className="h-5 w-5" /> : <Edit3 className="h-5 w-5" />}
           </Button>
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-6 py-6 space-y-6">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 py-6 space-y-6 overflow-x-hidden">
         {/* Profile Photo & Basic Info */}
         <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
           <CardContent className="p-6">
@@ -134,6 +135,7 @@ const Profile = () => {
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="Your name"
+                      className="mt-1"
                     />
                   </div>
                   <div>
@@ -144,6 +146,7 @@ const Profile = () => {
                       value={formData.age}
                       onChange={(e) => setFormData({...formData, age: e.target.value})}
                       placeholder="Your age"
+                      className="mt-1"
                     />
                   </div>
                 </div>
@@ -165,8 +168,8 @@ const Profile = () => {
         <Card className="bg-white/80 backdrop-blur-sm border border-white/50 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center text-gray-800">
-              <MapPin className="h-5 w-5 mr-2" />
-              About Me
+              <MapPin className="h-5 w-5 mr-2 flex-shrink-0" />
+              <span>About Me</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -179,6 +182,7 @@ const Profile = () => {
                     value={formData.location}
                     onChange={(e) => setFormData({...formData, location: e.target.value})}
                     placeholder="City, State"
+                    className="mt-1"
                   />
                 </div>
                 <div>
@@ -188,6 +192,7 @@ const Profile = () => {
                     value={formData.occupation}
                     onChange={(e) => setFormData({...formData, occupation: e.target.value})}
                     placeholder="Your job/career"
+                    className="mt-1"
                   />
                 </div>
                 <div>
@@ -198,20 +203,21 @@ const Profile = () => {
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     placeholder="Tell others about yourself..."
                     rows={4}
+                    className="mt-1 resize-none"
                   />
                 </div>
               </>
             ) : (
               <>
-                <div className="flex items-center text-gray-600">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  <span>{formData.location || "Location not set"}</span>
+                <div className="flex items-center text-gray-600 min-w-0">
+                  <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">{formData.location || "Location not set"}</span>
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <Briefcase className="h-4 w-4 mr-2" />
-                  <span>{formData.occupation || "Occupation not set"}</span>
+                <div className="flex items-center text-gray-600 min-w-0">
+                  <Briefcase className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">{formData.occupation || "Occupation not set"}</span>
                 </div>
-                <p className="text-gray-700 text-sm">
+                <p className="text-gray-700 text-sm break-words">
                   {formData.bio || "No bio yet. Edit your profile to add one!"}
                 </p>
               </>
@@ -224,8 +230,8 @@ const Profile = () => {
           <Card className={`border shadow-md ${getReadinessBackground(profile.readinessScore.overall)}`}>
             <CardHeader>
               <CardTitle className="flex items-center text-gray-800">
-                <Heart className="h-5 w-5 mr-2" />
-                Relationship Readiness
+                <Heart className="h-5 w-5 mr-2 flex-shrink-0" />
+                <span>Relationship Readiness</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -245,7 +251,7 @@ const Profile = () => {
         {isEditing && (
           <Button 
             onClick={handleSave}
-            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white"
+            className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white min-h-[48px]"
           >
             Save Changes
           </Button>

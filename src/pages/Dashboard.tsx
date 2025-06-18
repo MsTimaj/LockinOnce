@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MatchProfile } from "@/utils/compatibilityCalculator";
 import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
@@ -122,7 +121,7 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-rose-50 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your matches...</p>
@@ -134,7 +133,7 @@ const Dashboard = () => {
   // Show match detail if a match is selected
   if (selectedMatch) {
     return (
-      <>
+      <div className="pb-24">
         <MatchDetail 
           match={selectedMatch}
           onBack={handleBackToMatches}
@@ -142,7 +141,7 @@ const Dashboard = () => {
           onPass={handlePass}
         />
         <LoveVeeChatButton />
-      </>
+      </div>
     );
   }
 
@@ -161,7 +160,7 @@ const Dashboard = () => {
         onShowProjectStatus={() => setShowProjectStatus(true)}
       />
 
-      <div className="max-w-md mx-auto px-4 pb-20">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 pb-24 overflow-x-hidden">
         <SessionInfo />
         
         <WelcomeSection />
@@ -183,13 +182,13 @@ const Dashboard = () => {
                     <img 
                       src={match.photo} 
                       alt={match.name}
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-800">{match.name}</h3>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 truncate">{match.name}</h3>
                       <p className="text-sm text-pink-600">Both interested! 💕</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="text-lg font-bold text-pink-600">
                         {match.compatibilityScore.overall}%
                       </div>
@@ -206,16 +205,8 @@ const Dashboard = () => {
             topChoices={topChoices}
             onMatchClick={handleMatchClick}
             onConnect={handleConnect}
-            getScoreColor={(score: number) => {
-              if (score >= 80) return "text-emerald-600";
-              if (score >= 60) return "text-amber-600";
-              return "text-red-500";
-            }}
-            getScoreBackground={(score: number) => {
-              if (score >= 80) return "bg-emerald-50 border-emerald-200";
-              if (score >= 60) return "bg-amber-50 border-amber-200";
-              return "bg-red-50 border-red-200";
-            }}
+            getScoreColor={getScoreColor}
+            getScoreBackground={getScoreBackground}
           />
         )}
 
@@ -224,16 +215,8 @@ const Dashboard = () => {
             otherMatches={remainingMatches}
             connectedMatches={new Set(MatchStorageManager.getInterestedMatches())}
             onMatchClick={handleMatchClick}
-            getScoreColor={(score: number) => {
-              if (score >= 80) return "text-emerald-600";
-              if (score >= 60) return "text-amber-600";
-              return "text-red-500";
-            }}
-            getScoreBackground={(score: number) => {
-              if (score >= 80) return "bg-emerald-50 border-emerald-200";
-              if (score >= 60) return "bg-amber-50 border-amber-200";
-              return "bg-red-50 border-red-200";
-            }}
+            getScoreColor={getScoreColor}
+            getScoreBackground={getScoreBackground}
           />
         )}
 
@@ -243,10 +226,9 @@ const Dashboard = () => {
             <p className="text-sm text-gray-500">New compatible profiles will appear soon.</p>
           </div>
         )}
-
-        <NavigationFooter />
       </div>
 
+      <NavigationFooter />
       <LoveVeeChatButton />
       
       {showChecklist && (

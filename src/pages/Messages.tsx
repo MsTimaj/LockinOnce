@@ -4,6 +4,7 @@ import { Conversation } from "@/utils/messaging/types";
 import ConversationsList from "@/components/messaging/ConversationsList";
 import ChatInterface from "@/components/messaging/ChatInterface";
 import { useNavigate } from "react-router-dom";
+import NavigationFooter from "@/components/dashboard/NavigationFooter";
 
 const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
@@ -23,21 +24,27 @@ const Messages = () => {
 
   if (selectedConversation) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-        <ChatInterface 
-          conversation={selectedConversation}
-          onBack={handleBack}
-        />
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-24">
+        <div className="w-full max-w-md mx-auto px-4 sm:px-6 overflow-x-hidden">
+          <ChatInterface 
+            conversation={selectedConversation}
+            onBack={handleBack}
+          />
+        </div>
+        <NavigationFooter />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
-      <ConversationsList 
-        onBack={handleBack}
-        onSelectConversation={handleSelectConversation}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-24">
+      <div className="w-full max-w-md mx-auto px-4 sm:px-6 overflow-x-hidden">
+        <ConversationsList 
+          onBack={handleBack}
+          onSelectConversation={handleSelectConversation}
+        />
+      </div>
+      <NavigationFooter />
     </div>
   );
 };
