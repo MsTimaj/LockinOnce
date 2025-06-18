@@ -23,10 +23,20 @@ const LoveVeeChatButton = ({
 
   const handleButtonClick = () => {
     console.log('Chat button clicked, current state:', isOpen);
-    if (externalOnToggle) {
-      externalOnToggle();
+    if (isOpen) {
+      // Chat is open, so close it
+      if (externalOnToggle) {
+        externalOnToggle();
+      } else {
+        setInternalIsOpen(false);
+      }
     } else {
-      setInternalIsOpen(!internalIsOpen);
+      // Chat is closed, so open it
+      if (externalOnToggle) {
+        externalOnToggle();
+      } else {
+        setInternalIsOpen(true);
+      }
     }
   };
 
