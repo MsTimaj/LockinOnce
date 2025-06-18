@@ -13,26 +13,45 @@ const AttachmentStyleCard = ({ dominantStyle, onLearnMore }: AttachmentStyleCard
   const getStyleDescription = (style: string) => {
     switch (style) {
       case 'secure':
-        return "Your secure attachment style means you're comfortable with intimacy and independence. This is your biggest relationship asset - you naturally create safe, stable connections.";
+        return "You feel comfortable with intimacy and independence. You trust others, communicate your needs clearly, and handle conflict constructively. This is a significant relationship strength that helps you form stable, satisfying partnerships.";
       case 'anxious':
-        return "You value close relationships but sometimes worry about your partner's feelings. Learning to self-soothe and communicate needs clearly will strengthen your connections.";
+        return "You deeply value close relationships but sometimes worry about your partner's commitment or availability. You may seek frequent reassurance and can become preoccupied with relationship security. Learning self-soothing techniques will strengthen your connections.";
       case 'avoidant':
-        return "You value independence but may struggle with intimacy. Gradually opening up and recognizing the value of emotional connection will enhance your relationships.";
+        return "You highly value your independence and may feel uncomfortable with too much emotional closeness. You might suppress or minimize emotions and prefer to handle problems alone. Gradually practicing emotional vulnerability will enhance your relationships.";
+      case 'disorganized':
+        return "You experience conflicting desires for both closeness and distance in relationships. Your emotions and behaviors in relationships may feel unpredictable or overwhelming. Working with a therapist can help you develop more consistent relationship patterns.";
       default:
-        return "You may experience conflicting needs for closeness and distance. Developing emotional awareness and communication skills will help create more stable relationships.";
+        return "Understanding your attachment style helps you recognize your patterns in relationships and work towards healthier connections.";
     }
   };
 
   const getStyleColor = (style: string) => {
     switch (style) {
       case 'secure':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'anxious':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       case 'avoidant':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'disorganized':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       default:
-        return 'bg-red-100 text-red-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStyleTitle = (style: string) => {
+    switch (style) {
+      case 'secure':
+        return 'Secure Attachment';
+      case 'anxious':
+        return 'Anxious Attachment';
+      case 'avoidant':
+        return 'Avoidant Attachment';
+      case 'disorganized':
+        return 'Disorganized Attachment';
+      default:
+        return 'Your Attachment Style';
     }
   };
 
@@ -45,10 +64,10 @@ const AttachmentStyleCard = ({ dominantStyle, onLearnMore }: AttachmentStyleCard
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Badge variant="secondary" className={`mb-3 ${getStyleColor(dominantStyle)}`}>
-          {dominantStyle.charAt(0).toUpperCase() + dominantStyle.slice(1)} Attachment
+        <Badge variant="secondary" className={`mb-3 border ${getStyleColor(dominantStyle)}`}>
+          {getStyleTitle(dominantStyle)}
         </Badge>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-gray-700 mb-4 leading-relaxed">
           {getStyleDescription(dominantStyle)}
         </p>
         <Button 
@@ -57,7 +76,7 @@ const AttachmentStyleCard = ({ dominantStyle, onLearnMore }: AttachmentStyleCard
           onClick={() => onLearnMore("attachment style")}
           className="text-rose-600 border-rose-200 hover:bg-rose-50"
         >
-          Learn More
+          Learn More About This Style
         </Button>
       </CardContent>
     </Card>

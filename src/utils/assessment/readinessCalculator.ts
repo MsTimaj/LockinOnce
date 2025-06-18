@@ -23,14 +23,34 @@ const getGrowthAreaDescription = (area: string): string => {
 };
 
 const generatePersonalizedStrategy = (results: ComprehensiveAssessmentResults, overallScore: number): string => {
+  const attachmentStyle = results.attachmentStyle?.dominantStyle || 'unknown';
+  
   if (overallScore >= 85) {
-    return "You're exceptionally ready for a meaningful relationship. Focus on finding someone who matches your emotional maturity and relationship goals. Trust your instincts and don't settle for less than genuine compatibility.";
+    if (attachmentStyle === 'secure') {
+      return "Your secure attachment style is your greatest asset. You naturally create safe, trusting relationships. Focus on finding someone who matches your emotional maturity and values authentic connection.";
+    } else {
+      return "You've developed strong relationship skills despite attachment challenges. Continue this growth mindset while seeking someone who appreciates your self-awareness and commitment to healthy relationships.";
+    }
   } else if (overallScore >= 70) {
-    return "You're well-prepared for a serious relationship. Continue developing your communication skills and stay open to growth within a partnership. Look for someone who complements your strengths and supports your areas of growth.";
+    if (attachmentStyle === 'secure') {
+      return "Your secure attachment gives you a solid foundation. Work on the areas that scored lower while maintaining your natural ability to create healthy connections.";
+    } else if (attachmentStyle === 'anxious') {
+      return "Your anxious attachment means you value connection deeply. Practice self-soothing techniques and clear communication. Look for partners who are consistent and reassuring, ideally with secure attachment.";
+    } else if (attachmentStyle === 'avoidant') {
+      return "Your avoidant attachment shows you value independence. Practice gradually opening up emotionally. Consider partners who respect your need for space while gently encouraging intimacy.";
+    } else {
+      return "Focus on understanding your attachment patterns and developing emotional regulation skills. Consider therapy to work through conflicting needs for closeness and distance.";
+    }
   } else if (overallScore >= 55) {
-    return "You have solid relationship potential with some areas to develop. Consider focusing on personal growth, perhaps through therapy or self-reflection, while remaining open to connections that feel natural and supportive.";
+    if (attachmentStyle === 'anxious') {
+      return "Your anxious attachment creates challenges with self-worth and fear of abandonment. Focus on building self-confidence and emotional regulation before serious dating. Consider therapy to address underlying fears.";
+    } else if (attachmentStyle === 'avoidant') {
+      return "Your avoidant attachment makes intimacy challenging. Work on recognizing and expressing emotions. Consider why vulnerability feels unsafe and gradually practice emotional openness.";
+    } else {
+      return "Focus on personal development, particularly emotional awareness and communication skills. Consider professional support to work through attachment challenges before pursuing serious relationships.";
+    }
   } else {
-    return "This might be a perfect time for personal development before pursuing a serious relationship. Focus on building emotional awareness, communication skills, and self-understanding. Consider this a valuable investment in your future relationships.";
+    return "This is an excellent time for personal growth before serious dating. Consider therapy to address attachment wounds and develop emotional regulation skills. Building self-awareness now will lead to much healthier future relationships.";
   }
 };
 
@@ -359,29 +379,58 @@ const calculateRelationshipGoals = (results: ComprehensiveAssessmentResults): nu
 };
 
 const calculateAttachmentSecurity = (results: ComprehensiveAssessmentResults): number => {
-  let score = 50;
+  if (!results.attachmentStyle) return 45; // Lower default for missing data
+  
+  const attachmentStyle = results.attachmentStyle.dominantStyle;
+  let baseScore: number;
+  
+  // More accurate scoring based on attachment research
+  switch (attachmentStyle) {
+    case 'secure':
+      baseScore = 88; // High but not perfect - room for growth
+      break;
+    case 'anxious':
+      baseScore = 52; // Moderate challenges with emotional regulation
+      break;
+    case 'avoidant':
+      baseScore = 48; // Significant challenges with intimacy and emotional expression
+      break;
+    case 'disorganized':
+      baseScore = 35; // Most challenging for relationship stability
+      break;
+    default:
+      baseScore = 45;
+  }
 
-  if (results.attachmentStyle) {
-    score = results.attachmentStyle.dominantStyle === 'secure' ? 90 :
-            results.attachmentStyle.dominantStyle === 'anxious' ? 65 :
-            results.attachmentStyle.dominantStyle === 'avoidant' ? 55 : 45;
-
-    // Boost score based on emotional capacity
-    if (results.emotionalCapacity?.resilience === 'strong_resilience') {
-      score += 10;
-    } else if (results.emotionalCapacity?.resilience === 'moderate_resilience') {
-      score += 5;
+  // Adjust based on emotional capacity factors
+  if (results.emotionalCapacity) {
+    const ec = results.emotionalCapacity;
+    
+    // Resilience significantly affects attachment security
+    if (ec.resilience === 'strong_resilience') {
+      baseScore += 8;
+    } else if (ec.resilience === 'moderate_resilience') {
+      baseScore += 4;
+    } else if (ec.resilience === 'low_resilience') {
+      baseScore -= 5;
     }
 
-    // Factor in empathy for relationship security
-    if (results.emotionalCapacity?.empathy === 'highly_empathetic') {
-      score += 8;
-    } else if (results.emotionalCapacity?.empathy === 'moderate_empathy') {
-      score += 4;
+    // Self-awareness helps with attachment healing
+    if (ec.selfAwareness === 'highly_aware') {
+      baseScore += 6;
+    } else if (ec.selfAwareness === 'moderately_aware') {
+      baseScore += 3;
+    }
+
+    // Empathy supports secure relating
+    if (ec.empathy === 'highly_empathetic') {
+      baseScore += 4;
+    } else if (ec.empathy === 'moderate_empathy') {
+      baseScore += 2;
     }
   }
 
-  return Math.max(20, Math.min(100, Math.round(score)));
+  return Math.max(20, Math.min(95, Math.round(baseScore)));
 };
 
 export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentResults): RelationshipReadinessScore => {
@@ -402,23 +451,24 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
     attachmentSecurity
   });
 
-  // Weighted overall score
+  // Weighted overall score - attachment security is more heavily weighted
   const overall = Math.round(
-    (emotionalReadiness * 0.3) +
-    (communicationSkills * 0.25) +
-    (selfAwareness * 0.2) +
-    (relationshipGoals * 0.15) +
-    (attachmentSecurity * 0.1)
+    (attachmentSecurity * 0.35) +    // Increased weight for attachment
+    (emotionalReadiness * 0.25) +   // Emotional regulation
+    (communicationSkills * 0.20) +  // Communication skills
+    (selfAwareness * 0.15) +        // Self-understanding
+    (relationshipGoals * 0.05)      // Goals are less predictive than attachment/emotional factors
   );
 
   const scores = { emotionalReadiness, communicationSkills, selfAwareness, relationshipGoals, attachmentSecurity };
   const strengths: string[] = [];
   const growthAreas: string[] = [];
 
+  // More nuanced strength/growth identification
   Object.entries(scores).forEach(([area, score]) => {
-    if (score >= 80) {
+    if (score >= 75) {  // Lowered threshold for strengths
       strengths.push(getStrengthDescription(area));
-    } else if (score < 65) {
+    } else if (score < 60) {  // Raised threshold for growth areas
       growthAreas.push(getGrowthAreaDescription(area));
     }
   });
@@ -433,6 +483,6 @@ export const calculateRelationshipReadiness = (results: ComprehensiveAssessmentR
     strengths,
     growthAreas,
     personalizedStrategy,
-    isReady: overall >= 70
+    isReady: overall >= 65  // Lowered threshold - being "ready" doesn't mean perfect
   };
 };

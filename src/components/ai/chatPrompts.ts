@@ -3,35 +3,69 @@ import { AnalysisData } from "./types";
 
 export const getSystemPrompt = (analysisData?: AnalysisData): string => {
   if (!analysisData) {
-    return `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice.`;
+    return `You are Love-vee, a warm, empathetic AI dating coach with expertise in attachment theory. You help people navigate their dating journey with emotional intelligence and practical advice.`;
   }
 
   const { readinessScore, personalityType, dominantStyle, topStrengths } = analysisData;
   const readinessDescription = readinessScore.isReady 
-    ? "highly prepared for a meaningful relationship" 
-    : "working on building readiness for a healthy relationship";
+    ? "well-prepared for a meaningful relationship" 
+    : "actively building readiness for a healthy relationship";
 
-  return `You are Love-vee, a warm, empathetic AI dating coach. You help people navigate their dating journey with emotional intelligence and practical advice. 
+  const attachmentInsights = getAttachmentInsights(dominantStyle);
+
+  return `You are Love-vee, a warm, empathetic AI dating coach with expertise in attachment theory. You help people navigate their dating journey with emotional intelligence and practical advice. 
 
 Your user has these traits based on their compatibility assessment:
 - ${readinessScore.overall}% relationship readiness score - they are ${readinessDescription}
-- ${dominantStyle} attachment style 
+- ${dominantStyle} attachment style: ${attachmentInsights.corePattern}
 - ${personalityType} communication style
 - Top strengths: ${topStrengths.join(', ')}
 - Growth areas: ${readinessScore.growthAreas.join(', ')}
 
-Guidelines for your responses:
+Attachment-specific coaching guidelines:
+${attachmentInsights.coachingTips}
+
+General guidelines for your responses:
 - Be warm, supportive, and use heart emojis occasionally 💕
-- Give practical, actionable dating advice
+- Give practical, actionable dating advice rooted in attachment science
 - Address their emotions and validate their feelings
 - Ask follow-up questions to understand their situation better
 - Keep responses concise but meaningful (2-4 sentences)
 - Focus on building their confidence and helping them find genuine connections
-- If they mention being stood up, ghosted, or disappointed, provide emotional support first
-- Help them see patterns and make better choices in dating
-- Reference their specific readiness score (${readinessScore.overall}%) and traits when relevant
+- Reference their specific attachment style and readiness patterns when relevant
+- Help them recognize their triggers and develop healthier relationship behaviors
 
-Remember: You're their personal dating coach who cares about their wellbeing and success in love.`;
+Remember: You're their personal dating coach who understands their attachment style and cares about their wellbeing and success in love.`;
+};
+
+const getAttachmentInsights = (dominantStyle: string) => {
+  switch (dominantStyle) {
+    case 'secure':
+      return {
+        corePattern: "You naturally balance intimacy and independence, trust others, and communicate needs clearly",
+        coachingTips: "- Acknowledge their relationship strengths and natural emotional intelligence\n- Help them recognize when partners may have different attachment needs\n- Support them in being patient with less secure partners while maintaining boundaries\n- Encourage them to trust their instincts about relationship compatibility"
+      };
+    case 'anxious':
+      return {
+        corePattern: "You deeply value connection but may worry about partner availability and seek frequent reassurance",
+        coachingTips: "- Validate their deep capacity for love while helping them build self-soothing skills\n- Help them distinguish between intuition and anxiety-driven thoughts\n- Encourage secure partners who can provide consistency\n- Support them in developing independence alongside their relationships\n- Teach them to recognize their protest behaviors (pursuing, demanding) and healthier alternatives"
+      };
+    case 'avoidant':
+      return {
+        corePattern: "You highly value independence and may feel overwhelmed by emotional closeness or partner needs",
+        coachingTips: "- Respect their need for space while gently encouraging emotional expression\n- Help them recognize the value of interdependence vs. complete independence\n- Support them in taking small steps toward vulnerability\n- Validate their discomfort with emotions while encouraging gradual openness\n- Help them understand that healthy relationships enhance rather than threaten autonomy"
+      };
+    case 'disorganized':
+      return {
+        corePattern: "You experience conflicting needs for closeness and distance, with unpredictable relationship emotions",
+        coachingTips: "- Provide extra emotional validation and patience\n- Help them recognize their internal conflicts without judgment\n- Encourage professional therapy alongside dating advice\n- Support them in developing emotional regulation skills\n- Help them understand that healing is possible and they deserve love"
+      };
+    default:
+      return {
+        corePattern: "Your attachment patterns are still being understood",
+        coachingTips: "- Focus on helping them develop self-awareness about their relationship patterns\n- Encourage exploration of their emotional needs and fears\n- Support them in building healthy relationship skills"
+      };
+  }
 };
 
 export const getTopicResponse = (topic: string, analysisData?: AnalysisData): string => {
@@ -41,33 +75,82 @@ export const getTopicResponse = (topic: string, analysisData?: AnalysisData): st
 
   const { readinessScore, personalityType, dominantStyle } = analysisData;
   const scoreText = `${readinessScore.overall}%`;
-  const readinessDescription = readinessScore.isReady 
-    ? "fantastic! 🌟 This means you've done the inner work and you're emotionally prepared for a genuine connection."
-    : "shows you're on a great path! 🌱 You're building the foundation for a healthy relationship.";
+  const attachmentInsights = getAttachmentInsights(dominantStyle);
 
   switch (topic.toLowerCase()) {
     case 'relationship readiness':
-      return `Your ${scoreText} relationship readiness score is ${readinessDescription} You have strong self-awareness and clear intentions - these are valuable qualities. ${readinessScore.isReady ? "The fact that you're even thinking about readiness shows maturity." : "Focus on your growth areas and you'll continue building that readiness."} What specific aspect of being 'ready' feels most important to you right now?`;
+      return `Your ${scoreText} relationship readiness score reflects your current emotional and relational development! 💕 ${readinessScore.isReady ? "This shows you've built important self-awareness and relationship skills." : "This indicates you're actively growing and building the foundation for healthy love."} With your ${dominantStyle} attachment style, ${getReadinessAdviceByAttachment(dominantStyle, readinessScore.overall)} What feels most important to you about being ready for love?`;
     
     case 'attachment style':
-      return `Having a ${dominantStyle} attachment style is important to understand! 💪 ${dominantStyle === 'secure' ? "You naturally create safe spaces for emotional intimacy while maintaining your independence. This means you won't chase someone who's pulling away, and you won't run from someone getting close." : "Understanding your attachment patterns helps you build healthier relationships and recognize what you need from a partner."} How does knowing this about yourself change how you approach dating?`;
+      return `Having ${dominantStyle} attachment means ${attachmentInsights.corePattern.toLowerCase()}. 💪 ${getAttachmentSpecificAdvice(dominantStyle)} This isn't about being "good" or "bad" - it's about understanding your relationship blueprint so you can work with it effectively! How does this resonate with your past relationship experiences?`;
     
     case 'communication style':
-      return `Your ${personalityType} communication style is such a gift! 💕 This affects how you connect with others and express your feelings. Your challenge might be that some people won't immediately 'get' your style, but that's actually perfect filtering! The right person will be drawn to your authenticity. What kind of conversations make you feel most connected?`;
+      return `Your ${personalityType} communication style, combined with your ${dominantStyle} attachment, creates a unique relationship approach! 💕 ${getCommunicationAttachmentAdvice(personalityType, dominantStyle)} The right person will appreciate your authentic way of connecting. What kind of conversations make you feel most understood?`;
     
     case 'relationship strengths':
-      return `Your strengths include ${analysisData.topStrengths.join(', ')} - these make you incredibly dateable! 🌟 These strengths will help you build something real and meaningful. Which of these feels like your biggest superpower in relationships?`;
+      return `Your strengths (${analysisData.topStrengths.join(', ')}) are genuine assets! 🌟 With ${dominantStyle} attachment, these strengths help you ${getStrengthsByAttachment(dominantStyle)} Which of these feels like your biggest relationship superpower?`;
     
     case 'relationship growth areas':
-      return `Your growth areas (${readinessScore.growthAreas.join(', ')}) aren't weaknesses - they're your next level up! 📈 With your ${scoreText} readiness score, you have a great foundation to work on these areas. What feels like the biggest challenge for you in these areas?`;
-    
-    case 'personalized dating strategy':
-      return `Based on your ${dominantStyle} attachment style and ${personalityType} communication style, your personalized strategy is so smart! 🎯 ${readinessScore.personalizedStrategy} This approach might take longer, but it leads to much better relationships. What activities or conversation topics light you up most?`;
-    
-    case 'matching algorithm':
-      return `Our algorithm prioritizes what actually predicts relationship success! 💕 Values alignment, communication compatibility, attachment styles, and life goals. We're not just matching you on surface attraction - we're finding people you could genuinely build a life with based on your ${scoreText} readiness score and ${dominantStyle} attachment style. What matters most to you in a potential partner?`;
+      return `Your growth areas (${readinessScore.growthAreas.join(', ')}) are opportunities for deeper love! 📈 Given your ${dominantStyle} attachment style, ${getGrowthAdviceByAttachment(dominantStyle)} Growth takes courage, and you're already showing that by being here. What feels like the biggest opportunity for you?`;
     
     default:
-      return `I'm so glad you want to explore ${topic} more deeply! 💕 Based on your ${scoreText} readiness score and ${dominantStyle} attachment style, you have so many strengths to work with. Tell me what's really on your mind about this - are you feeling excited, nervous, curious, or something else?`;
+      return `I love that you want to explore ${topic} more deeply! 💕 With your ${dominantStyle} attachment style and ${scoreText} readiness score, you have a unique relationship blueprint. ${attachmentInsights.corePattern} Tell me what's really on your heart about this - what are you feeling curious, excited, or maybe nervous about?`;
+  }
+};
+
+const getReadinessAdviceByAttachment = (style: string, score: number): string => {
+  if (score >= 70) {
+    switch (style) {
+      case 'secure': return "your natural emotional balance gives you a strong foundation for partnership.";
+      case 'anxious': return "you've developed good self-awareness about your attachment needs.";
+      case 'avoidant': return "you've made meaningful progress in emotional openness.";
+      default: return "you've done important work on your relationship patterns.";
+    }
+  } else {
+    switch (style) {
+      case 'secure': return "you have great emotional instincts to build upon.";
+      case 'anxious': return "focusing on self-soothing and building security within yourself will be transformative.";
+      case 'avoidant': return "practicing emotional vulnerability in small steps will open new possibilities.";
+      default: return "developing emotional awareness and regulation skills will be incredibly valuable.";
+    }
+  }
+};
+
+const getAttachmentSpecificAdvice = (style: string): string => {
+  switch (style) {
+    case 'secure': return "This is a wonderful foundation - you create safety for yourself and others naturally.";
+    case 'anxious': return "Your deep capacity for love is beautiful, and learning to self-soothe will make you even more amazing in relationships.";
+    case 'avoidant': return "Your independence is valuable, and gradually allowing interdependence will add richness to your connections.";
+    case 'disorganized': return "Your complexity in relationships makes sense given your experiences, and healing is absolutely possible.";
+    default: return "Understanding your patterns is the first step toward healthier, more fulfilling relationships.";
+  }
+};
+
+const getCommunicationAttachmentAdvice = (personality: string, attachment: string): string => {
+  if (attachment === 'secure') {
+    return "Your secure attachment helps you communicate authentically and handle differences well.";
+  } else if (attachment === 'anxious') {
+    return "Learning to express needs clearly rather than through emotional escalation will be powerful for you.";
+  } else if (attachment === 'avoidant') {
+    return "Practicing sharing your inner world, even in small ways, will deepen your connections.";
+  }
+  return "Understanding both your communication and attachment styles helps you connect more effectively.";
+};
+
+const getStrengthsByAttachment = (style: string): string => {
+  switch (style) {
+    case 'secure': return "create natural safety and trust in relationships.";
+    case 'anxious': return "show deep care and commitment to your connections.";
+    case 'avoidant': return "bring stability and thoughtfulness to partnerships.";
+    default: return "bring unique qualities to your relationships.";
+  }
+};
+
+const getGrowthAdviceByAttachment = (style: string): string => {
+  switch (style) {
+    case 'secure': return "you're already well-positioned to work on these areas within a healthy relationship.";
+    case 'anxious': return "building internal security and self-soothing skills will transform your relationship experience.";
+    case 'avoidant': return "gradually practicing emotional openness and interdependence will feel challenging but rewarding.";
+    default: return "understanding your attachment patterns will accelerate your growth in these areas.";
   }
 };
