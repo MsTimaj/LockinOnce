@@ -1,4 +1,5 @@
 
+
 import { ComprehensiveAssessmentResults } from "@/utils/assessment/types";
 import { AttachmentStyleResults } from "@/components/assessments/AttachmentStyleAssessment";
 import { PersonalityResults } from "@/components/assessments/PersonalityAssessment";
@@ -60,10 +61,10 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     }
   },
   attractionLayer: {
-    physical: 'important',
-    emotional: 'essential',
-    intellectual: 'very_important',
-    values: 'essential'
+    physicalAttraction: 'important',
+    emotionalConnection: 'essential',
+    intellectualConnection: 'very_important',
+    valuesAlignment: 'essential'
   },
   physicalProximity: {
     physicalAffection: 'moderate',
@@ -78,34 +79,34 @@ export const createTestAssessmentResults = (): ComprehensiveAssessmentResults =>
     listeningStyle: 'active_empathetic'
   },
   lifeGoals: {
-    career: 'high',
-    family: 'important',
-    lifestyle: 'balanced',
-    growth: 'continuous'
+    careerAmbition: 'high',
+    familyImportance: 'important',
+    lifestylePreference: 'balanced',
+    personalGrowth: 'continuous'
   },
   values: {
-    core: ['extremely_important'],
-    relationship: 'very_important',
-    lifestyle: 'moderately_important',
-    personal: 'very_important',
-    shared: 'moderately_important'
+    coreValues: ['extremely_important'],
+    relationshipValues: 'very_important',
+    lifestyleValues: 'moderately_important',
+    personalValues: 'very_important',
+    sharedBeliefs: 'moderately_important'
   },
   lifestyle: {
-    social: 'moderate',
-    fitness: 'active',
-    diet: 'flexible',
-    workLife: 'balanced'
+    socialLevel: 'moderate',
+    fitnessLevel: 'active',
+    dietaryPreferences: 'flexible',
+    workLifeBalance: 'balanced'
   },
   loveLanguages: {
-    primary: 'quality_time',
-    secondary: 'acts_of_service',
-    tertiary: 'words_of_affirmation'
+    primaryLoveLanguage: 'quality_time',
+    secondaryLoveLanguage: 'acts_of_service',
+    tertiaryLoveLanguage: 'words_of_affirmation'
   },
   financialValues: {
-    spending: 'balanced',
-    saving: 'high',
-    goals: 'security_growth',
-    debt: 'low'
+    spendingStyle: 'balanced',
+    savingPriority: 'high',
+    financialGoals: 'security_growth',
+    debtTolerance: 'low'
   }
 });
 
@@ -182,3 +183,4 @@ export const createPartialAssessmentResults = (): ComprehensiveAssessmentResults
   loveLanguages: null,
   financialValues: null
 });
+
