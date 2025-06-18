@@ -22,12 +22,17 @@ const LoveVeeChatButton = ({
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const onToggle = externalOnToggle || (() => setInternalIsOpen(!internalIsOpen));
 
+  const handleButtonClick = () => {
+    console.log('Chat button clicked, current state:', isOpen);
+    onToggle();
+  };
+
   return (
     <>
       {/* Fixed position button with proper z-index and bottom spacing for nav */}
       <div className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-40">
         <Button
-          onClick={onToggle}
+          onClick={handleButtonClick}
           className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-xl transition-all duration-300 ${
             isOpen 
               ? 'bg-gray-500 hover:bg-gray-600' 
