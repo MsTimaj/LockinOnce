@@ -24,7 +24,11 @@ const LoveVeeChatButton = ({
 
   const handleButtonClick = () => {
     console.log('Chat button clicked, current state:', isOpen);
-    onToggle();
+    if (externalOnToggle) {
+      externalOnToggle();
+    } else {
+      setInternalIsOpen(!internalIsOpen);
+    }
   };
 
   return (
@@ -53,7 +57,7 @@ const LoveVeeChatButton = ({
           <div className="w-full max-w-md h-[70vh] bg-white rounded-t-2xl shadow-2xl border border-gray-200 overflow-hidden">
             <LoveVeeChat 
               isOpen={isOpen}
-              onToggle={onToggle}
+              onToggle={handleButtonClick}
               initialTopic={initialTopic}
               analysisData={analysisData}
             />
