@@ -34,9 +34,12 @@ export class MatchStorageManager {
       localStorage.setItem(this.DECISIONS_KEY, JSON.stringify(decisions));
       console.log('Match decision saved:', { matchId, decision });
 
-      // Simulate mutual match for demo (20% chance)
-      if (decision === 'interested' && Math.random() < 0.2) {
-        this.createMutualMatch(matchId);
+      // Create mutual match for demo - higher chance for first 3 matches
+      if (decision === 'interested') {
+        const chance = ['1', '2', '3'].includes(matchId) ? 0.8 : 0.3;
+        if (Math.random() < chance) {
+          this.createMutualMatch(matchId);
+        }
       }
     } catch (error) {
       console.error('Failed to save match decision:', error);

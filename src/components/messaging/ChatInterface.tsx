@@ -7,6 +7,7 @@ import { ArrowLeft, Send } from "lucide-react";
 import { Conversation, Message } from "@/utils/messaging/types";
 import { MessagingManager } from "@/utils/messaging/messagingManager";
 import { UserStateManager } from "@/utils/userStateManager";
+import { generateCompatibleMatches } from "@/utils/compatibilityCalculator";
 
 interface ChatInterfaceProps {
   conversation: Conversation;
@@ -17,12 +18,21 @@ const ChatInterface = ({ conversation, onBack }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
+  const [matchInfo, setMatchInfo] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const initializeChat = async () => {
       const userId = await UserStateManager.getCurrentUserId();
       setCurrentUserId(userId);
+      
+      // Load match information
+      const profile = await UserStateManager.getUserProfile();
+      if (profile?.assessmentResults) {
+        const matches = generateCompatibleMatches(profile.assessmentResults);
+        const match = matches.find(m => m.id === conversation.matchId);
+        setMatchInfo(match);
+      }
       
       const conversationMessages = MessagingManager.getConversationMessages(conversation.id);
       setMessages(conversationMessages);
@@ -61,7 +71,10 @@ const ChatInterface = ({ conversation, onBack }: ChatInterfaceProps) => {
         "Haha, you're funny! I like your sense of humor 😄",
         "Thanks for sharing that with me",
         "I'd love to hear more about your thoughts on this",
-        "You seem like such a thoughtful person ❤️"
+        "You seem like such a thoughtful person ❤️",
+        "That sounds amazing! I'd love to experience that too",
+        "You have such great taste! 🌟",
+        "I can't wait to meet you in person!"
       ];
       
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
@@ -108,9 +121,23 @@ const ChatInterface = ({ conversation, onBack }: ChatInterfaceProps) => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-lg font-playfair font-bold text-foreground">
-            Your Match
-          </h1>
+          <div className="flex items-center space-x-3">
+            {matchInfo?.photo && (
+              <img 
+                src={matchInfo.photo} 
+                alt={matchInfo.name}
+                className="w-8 h-8 rounded-full object-cover border border-white shadow-sm"
+              />
+            )}
+            <div className="text-center">
+              <h1 className="text-lg font-playfair font-bold text-foreground">
+                {matchInfo?.name || 'Your Match'}
+              </h1>
+              {matchInfo?.age && (
+                <p className="text-xs text-gray-500">{matchInfo.age} years old</p>
+              )}
+            </div>
+          </div>
           <div className="w-12" />
         </div>
       </div>
