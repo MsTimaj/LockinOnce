@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserStateManager } from "@/utils/userStateManager";
@@ -8,13 +7,41 @@ export const useOnboardingInit = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Scroll to top when step changes
+  // Enhanced scroll to top when step changes
   useEffect(() => {
+    console.log('Step changed to:', currentStep, '- scrolling to top');
+    
+    // Multiple approaches to ensure scroll works
+    const scrollToTop = () => {
+      // Method 1: Standard window scroll
+      window.scrollTo(0, 0);
+      
+      // Method 2: Document element scroll
+      if (document.documentElement) {
+        document.documentElement.scrollTop = 0;
+      }
+      
+      // Method 3: Body scroll
+      if (document.body) {
+        document.body.scrollTop = 0;
+      }
+      
+      // Method 4: Force scroll with small delay
+      setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }, 10);
+    };
+
+    // Execute immediately
+    scrollToTop();
+    
+    // Also execute after animation frame to ensure DOM is ready
     requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      scrollToTop();
     });
+    
+    // Backup scroll after a short delay
+    setTimeout(scrollToTop, 50);
   }, [currentStep]);
 
   useEffect(() => {
