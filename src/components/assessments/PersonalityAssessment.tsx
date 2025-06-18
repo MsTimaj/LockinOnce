@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -135,10 +136,11 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
   
   const [questions] = useState(() => randomizeQuestionsWithOptions(baseQuestions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+  // Store both the unique value and the actual personality dimension
+  const [answers, setAnswers] = useState<Record<number, { uniqueValue: string; personalityValue: string }>>({});
 
   const handleAnswer = (uniqueValue: string) => {
-    // Extract the actual personality dimension from the unique value
+    // Extract the option index from the unique value
     const [questionId, optionIndex] = uniqueValue.split('-option-');
     const actualValue = questions[currentQuestion].options[parseInt(optionIndex)].value;
     
@@ -146,7 +148,10 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
     
     setAnswers(prev => ({
       ...prev,
-      [questions[currentQuestion].id]: actualValue
+      [questions[currentQuestion].id]: {
+        uniqueValue,
+        personalityValue: actualValue
+      }
     }));
   };
 
@@ -166,10 +171,10 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
       feeling: 0
     };
 
-    // Count responses for each personality dimension
+    // Count responses for each personality dimension using the stored personality values
     Object.values(answers).forEach(answer => {
-      if (answer && scores.hasOwnProperty(answer)) {
-        scores[answer as keyof typeof scores]++;
+      if (answer?.personalityValue && scores.hasOwnProperty(answer.personalityValue)) {
+        scores[answer.personalityValue as keyof typeof scores]++;
       }
     });
 
@@ -218,10 +223,7 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
   const progress = Math.min((currentQuestion / questions.length) * 100, 95);
   
   // Get the selected unique value for the current question
-  const selectedAnswer = answers[currentQuestionData.id];
-  const selectedUniqueValue = selectedAnswer ? 
-    `${currentQuestionData.id}-option-${currentQuestionData.options.findIndex(opt => opt.value === selectedAnswer)}` : 
-    "";
+  const selectedUniqueValue = answers[currentQuestionData.id]?.uniqueValue || "";
 
   return (
     <div className="space-y-6">
@@ -292,3 +294,4 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
 };
 
 export default PersonalityAssessment;
+
