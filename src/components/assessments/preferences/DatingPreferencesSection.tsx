@@ -33,7 +33,7 @@ const DatingPreferencesSection = ({
 }: DatingPreferencesSectionProps) => {
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-4">Dating Preferences (All Strictly Enforced)</h3>
+      <h3 className="text-lg font-semibold mb-4">Dating Preferences</h3>
       
       {/* Gender Preference */}
       <div className="space-y-3 mb-6">
@@ -49,7 +49,6 @@ const DatingPreferencesSection = ({
             <SelectItem value="everyone">Everyone</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced - you will only see profiles matching this preference</p>
       </div>
 
       {/* Age Range */}
@@ -72,7 +71,6 @@ const DatingPreferencesSection = ({
           <span>18</span>
           <span>65</span>
         </div>
-        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced - profiles outside this range are excluded</p>
       </div>
 
       {/* Location Radius */}
@@ -139,7 +137,6 @@ const DatingPreferencesSection = ({
             <SelectItem value="any">No preference</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced unless "No preference" is selected</p>
       </div>
     </div>
   );
