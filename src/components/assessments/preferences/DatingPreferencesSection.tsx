@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface DatingPreferencesSectionProps {
   genderPreference: string;
@@ -32,11 +33,11 @@ const DatingPreferencesSection = ({
 }: DatingPreferencesSectionProps) => {
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-4">Dating Preferences</h3>
+      <h3 className="text-lg font-semibold mb-4">Dating Preferences (All Strictly Enforced)</h3>
       
       {/* Gender Preference */}
       <div className="space-y-3 mb-6">
-        <Label className="text-base font-medium">I'm interested in dating:</Label>
+        <Label className="text-base font-medium">I'm interested in dating: *</Label>
         <Select value={genderPreference} onValueChange={setGenderPreference}>
           <SelectTrigger>
             <SelectValue placeholder="Select gender preference" />
@@ -48,12 +49,13 @@ const DatingPreferencesSection = ({
             <SelectItem value="everyone">Everyone</SelectItem>
           </SelectContent>
         </Select>
+        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced - you will only see profiles matching this preference</p>
       </div>
 
       {/* Age Range */}
       <div className="space-y-3 mb-6">
         <Label className="text-base font-medium">
-          Age Range: {ageRange[0]} - {ageRange[1]} years old
+          Age Range: {ageRange[0]} - {ageRange[1]} years old *
         </Label>
         <div className="px-3">
           <Slider
@@ -70,6 +72,7 @@ const DatingPreferencesSection = ({
           <span>18</span>
           <span>65</span>
         </div>
+        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced - profiles outside this range are excluded</p>
       </div>
 
       {/* Location Radius */}
@@ -119,6 +122,7 @@ const DatingPreferencesSection = ({
             Maybe/Unsure
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground">Note: "Maybe/Unsure" can match with both "Yes" and "No"</p>
       </div>
 
       {/* Career Ambition */}
@@ -135,6 +139,7 @@ const DatingPreferencesSection = ({
             <SelectItem value="any">No preference</SelectItem>
           </SelectContent>
         </Select>
+        <p className="text-xs text-muted-foreground">⚠️ Strictly enforced unless "No preference" is selected</p>
       </div>
     </div>
   );

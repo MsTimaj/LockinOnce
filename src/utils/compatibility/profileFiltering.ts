@@ -6,44 +6,50 @@ export const filterProfilesByPreferences = (profiles: any[], preferences: any): 
     return profiles;
   }
 
-  console.log('Filtering profiles with preferences:', preferences);
+  console.log('Filtering profiles with STRICT preferences enforcement for ALL matches:', preferences);
 
   return profiles.filter(profile => {
-    console.log('Checking profile:', profile.name, 'against preferences');
+    console.log('Checking profile:', profile.name, 'against strict preferences');
 
-    // Gender preference filtering - STRICT enforcement for top matches
+    // Gender preference filtering - ABSOLUTELY STRICT for ALL matches
     if (preferences.genderPreference && preferences.genderPreference !== 'any' && preferences.genderPreference !== 'everyone') {
-      if (!profile.gender || profile.gender !== preferences.genderPreference) {
-        console.log(`Filtered out ${profile.name}: gender ${profile.gender} doesn't match preference ${preferences.genderPreference}`);
+      // Map preference values to profile gender values
+      const genderMap: Record<string, string> = {
+        'women': 'female',
+        'men': 'male',
+        'nonbinary': 'nonbinary'
+      };
+      
+      const expectedGender = genderMap[preferences.genderPreference] || preferences.genderPreference;
+      
+      if (!profile.gender || profile.gender !== expectedGender) {
+        console.log(`Filtered out ${profile.name}: gender ${profile.gender} doesn't match strict preference ${preferences.genderPreference} (${expectedGender})`);
         return false;
       }
     }
 
-    // Age range filtering - STRICT enforcement
+    // Age range filtering - ABSOLUTELY STRICT for ALL matches
     if (preferences.ageRange) {
       const minAge = preferences.ageRange.min || preferences.ageRange[0];
       const maxAge = preferences.ageRange.max || preferences.ageRange[1];
       
       if (minAge && maxAge) {
         if (profile.age < minAge || profile.age > maxAge) {
-          console.log(`Filtered out ${profile.name}: age ${profile.age} not in range ${minAge}-${maxAge}`);
+          console.log(`Filtered out ${profile.name}: age ${profile.age} not in strict range ${minAge}-${maxAge}`);
           return false;
         }
       }
     }
 
-    // Children preference filtering
-    if (preferences.wantsChildren !== null && preferences.wantsChildren !== undefined) {
-      if (profile.wantsChildren !== preferences.wantsChildren) {
-        // Allow some flexibility for "maybe" responses
-        if (preferences.wantsChildren !== "maybe" && profile.wantsChildren !== "maybe") {
-          console.log(`Filtered out ${profile.name}: children preference ${profile.wantsChildren} doesn't match ${preferences.wantsChildren}`);
-          return false;
-        }
+    // Children preference filtering - STRICT (only "maybe" allows flexibility)
+    if (preferences.wantsChildren !== null && preferences.wantsChildren !== undefined && preferences.wantsChildren !== "maybe") {
+      if (profile.wantsChildren !== preferences.wantsChildren && profile.wantsChildren !== "maybe") {
+        console.log(`Filtered out ${profile.name}: children preference ${profile.wantsChildren} doesn't match strict preference ${preferences.wantsChildren}`);
+        return false;
       }
     }
 
-    // Deal breakers filtering - STRICT enforcement
+    // Deal breakers filtering - ABSOLUTELY STRICT for ALL matches
     if (preferences.dealBreakers) {
       // Religion deal breakers
       if (preferences.dealBreakers.religion?.length > 0 && profile.religion) {
@@ -71,7 +77,7 @@ export const filterProfilesByPreferences = (profiles: any[], preferences: any): 
       }
     }
 
-    // Must-haves filtering
+    // Must-haves filtering - STRICT for ALL matches
     if (preferences.mustHaves) {
       // Education requirements
       if (preferences.mustHaves.education?.length > 0 && profile.education) {
@@ -81,69 +87,23 @@ export const filterProfilesByPreferences = (profiles: any[], preferences: any): 
         }
       }
 
-      // Career ambition matching
+      // Career ambition matching - STRICT
       if (preferences.careerAmbition && preferences.careerAmbition !== 'any' && profile.careerAmbition) {
         if (profile.careerAmbition !== preferences.careerAmbition) {
-          console.log(`Filtered out ${profile.name}: career ambition ${profile.careerAmbition} doesn't match ${preferences.careerAmbition}`);
+          console.log(`Filtered out ${profile.name}: career ambition ${profile.careerAmbition} doesn't match strict requirement ${preferences.careerAmbition}`);
           return false;
         }
       }
     }
 
-    console.log(`${profile.name} passed all filters`);
+    console.log(`${profile.name} passed ALL strict filters`);
     return true;
   });
 };
 
-// New function to get flexible matches for remaining slots
+// Remove flexible matching - ALL matches are now strict
 export const getFlexibleMatches = (profiles: any[], preferences: any, strictMatches: any[]): any[] => {
-  if (!preferences) {
-    return profiles.filter(p => !strictMatches.find(sm => sm.id === p.id));
-  }
-
-  const usedIds = strictMatches.map(m => m.id);
-  
-  return profiles.filter(profile => {
-    // Skip already used profiles
-    if (usedIds.includes(profile.id)) return false;
-
-    // Gender is still enforced (this is typically non-negotiable)
-    if (preferences.genderPreference && preferences.genderPreference !== 'any' && preferences.genderPreference !== 'everyone') {
-      if (!profile.gender || profile.gender !== preferences.genderPreference) {
-        return false;
-      }
-    }
-
-    // Age range can be more flexible (±5 years)
-    if (preferences.ageRange) {
-      const minAge = (preferences.ageRange.min || preferences.ageRange[0]) - 5;
-      const maxAge = (preferences.ageRange.max || preferences.ageRange[1]) + 5;
-      
-      if (profile.age < minAge || profile.age > maxAge) {
-        return false;
-      }
-    }
-
-    // Deal breakers are still enforced
-    if (preferences.dealBreakers) {
-      if (preferences.dealBreakers.religion?.length > 0 && profile.religion) {
-        if (preferences.dealBreakers.religion.includes(profile.religion)) {
-          return false;
-        }
-      }
-      if (preferences.dealBreakers.politics?.length > 0 && profile.politics) {
-        if (preferences.dealBreakers.politics.includes(profile.politics)) {
-          return false;
-        }
-      }
-      if (preferences.dealBreakers.lifestyle?.length > 0 && profile.lifestyle) {
-        if (preferences.dealBreakers.lifestyle.some((dealBreaker: string) => 
-          profile.lifestyle.includes(dealBreaker))) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  });
+  // No flexible matches - return empty array
+  console.log('Flexible matching disabled - all matches must be strict');
+  return [];
 };

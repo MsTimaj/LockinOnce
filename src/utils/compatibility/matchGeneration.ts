@@ -3,43 +3,32 @@ import { ComprehensiveAssessmentResults } from "../assessmentScoring";
 import { MatchProfile } from "./types";
 import { calculateDetailedCompatibility } from "./detailedCompatibility";
 import { baseProfiles } from "./mockProfiles";
-import { filterProfilesByPreferences, getFlexibleMatches } from "./profileFiltering";
+import { filterProfilesByPreferences } from "./profileFiltering";
 import { generateCompatibleAssessmentResults } from "./compatibleProfileGenerator";
 
 export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentResults): MatchProfile[] => {
-  console.log('Generating matches for user profile:', userProfile);
+  console.log('Generating matches for user profile with STRICT preferences enforcement:', userProfile);
   
   // Get user preferences
   const preferences = userProfile?.preferences;
-  console.log('User preferences for matching:', preferences);
+  console.log('User preferences for STRICT matching:', preferences);
   
   if (!preferences) {
     console.log('No preferences found, using all profiles');
     return generateMatchesFromProfiles(baseProfiles, userProfile);
   }
 
-  // Step 1: Get strict preference matches (for top 3 spots)
+  // ONLY strict preference matches - NO flexible matching
   const strictMatches = filterProfilesByPreferences(baseProfiles, preferences);
-  console.log(`Found ${strictMatches.length} strict preference matches from ${baseProfiles.length} total`);
+  console.log(`Found ${strictMatches.length} STRICT preference matches from ${baseProfiles.length} total profiles`);
 
-  // Step 2: Get flexible matches for remaining spots if needed
-  const flexibleMatches = strictMatches.length < 8 
-    ? getFlexibleMatches(baseProfiles, preferences, strictMatches)
-    : [];
-  
-  console.log(`Found ${flexibleMatches.length} flexible matches`);
-
-  // Step 3: Combine matches, prioritizing strict matches
-  const allCandidates = [...strictMatches, ...flexibleMatches];
-  
-  // If still no matches, provide a small subset to avoid empty state
-  const finalCandidates = allCandidates.length > 0 ? allCandidates : baseProfiles.slice(0, 3);
-  
-  if (allCandidates.length === 0) {
-    console.log('No matches found even with flexible criteria - showing subset of all profiles');
+  // If no matches meet strict criteria, inform user but don't compromise
+  if (strictMatches.length === 0) {
+    console.log('No matches found with strict criteria - user needs to adjust preferences');
+    return []; // Return empty array instead of compromising
   }
 
-  return generateMatchesFromProfiles(finalCandidates, userProfile);
+  return generateMatchesFromProfiles(strictMatches, userProfile);
 };
 
 const generateMatchesFromProfiles = (profiles: any[], userProfile: ComprehensiveAssessmentResults): MatchProfile[] => {
