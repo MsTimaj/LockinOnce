@@ -17,7 +17,14 @@ export const generateCompatibleMatches = (userProfile: ComprehensiveAssessmentRe
 
   console.log(`Filtered ${filteredProfiles.length} profiles from ${baseProfiles.length} total`);
 
-  return filteredProfiles.map((profile, index) => {
+  // If no profiles match preferences, return a subset of all profiles to avoid empty state
+  const profilesToUse = filteredProfiles.length > 0 ? filteredProfiles : baseProfiles.slice(0, 3);
+  
+  if (filteredProfiles.length === 0) {
+    console.log('No profiles matched preferences - showing subset of all profiles');
+  }
+
+  return profilesToUse.map((profile, index) => {
     const compatibleResults = generateCompatibleAssessmentResults(userProfile, index);
     const compatibilityScore = calculateDetailedCompatibility(userProfile, compatibleResults);
     
