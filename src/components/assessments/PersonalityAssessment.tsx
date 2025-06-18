@@ -1,5 +1,4 @@
 
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -226,72 +225,146 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
   const selectedUniqueValue = answers[currentQuestionData.id]?.uniqueValue || "";
 
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-4">
-        <h2 className="text-2xl font-playfair font-bold text-foreground">
-          Personality Assessment
-        </h2>
-        <div className="card-glass p-4">
+    <div>
+      {/* Mobile Layout */}
+      <div className="lg:hidden space-y-4">
+        <div className="text-center space-y-3">
+          <h2 className="text-xl font-playfair font-bold text-foreground">
+            Personality Assessment
+          </h2>
+          <div className="card-glass p-3">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <strong>Why this matters:</strong> Understanding your natural energy patterns and decision-making style helps us match you with someone whose approach to life complements yours for authentic, sustainable connection.
+            </p>
+          </div>
           <p className="text-sm text-muted-foreground">
-            <strong>Why this matters:</strong> Understanding your natural energy patterns and decision-making style helps us match you with someone whose approach to life complements yours for authentic, sustainable connection.
+            Question {currentQuestion + 1} of {questions.length}
           </p>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-        <p className="text-muted-foreground">
-          Question {currentQuestion + 1} of {questions.length}
-        </p>
-        <div className="w-full bg-muted rounded-full h-2">
-          <div 
-            className="bg-primary h-2 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+
+        <Card className="card-glass">
+          <CardContent className="p-4">
+            <h3 className="text-base font-medium mb-4 text-foreground">
+              {currentQuestionData.text}
+            </h3>
+            
+            <RadioGroup 
+              value={selectedUniqueValue} 
+              onValueChange={handleAnswer}
+              className="space-y-3"
+            >
+              {currentQuestionData.options.map((option, index) => {
+                const uniqueValue = `${currentQuestionData.id}-option-${index}`;
+                const uniqueId = `q${currentQuestionData.id}-option${index}-${option.value}`;
+                return (
+                  <div key={uniqueId} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+                    <RadioGroupItem 
+                      value={uniqueValue} 
+                      id={uniqueId}
+                      className="mt-0.5"
+                    />
+                    <Label 
+                      htmlFor={uniqueId}
+                      className="text-sm leading-relaxed cursor-pointer flex-1"
+                    >
+                      {option.text}
+                    </Label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+
+        <Button 
+          onClick={nextQuestion}
+          disabled={!answers[currentQuestionData.id]}
+          className="btn-gradient w-full"
+        >
+          {currentQuestion === questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
       </div>
 
-      <Card className="card-glass">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium mb-6 text-foreground">
-            {currentQuestionData.text}
-          </h3>
-          
-          <RadioGroup 
-            value={selectedUniqueValue} 
-            onValueChange={handleAnswer}
-            className="space-y-4"
-          >
-            {currentQuestionData.options.map((option, index) => {
-              const uniqueValue = `${currentQuestionData.id}-option-${index}`;
-              const uniqueId = `q${currentQuestionData.id}-option${index}-${option.value}`;
-              return (
-                <div key={uniqueId} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
-                  <RadioGroupItem 
-                    value={uniqueValue} 
-                    id={uniqueId}
-                    className="mt-0.5"
-                  />
-                  <Label 
-                    htmlFor={uniqueId}
-                    className="text-sm leading-relaxed cursor-pointer flex-1"
-                  >
-                    {option.text}
-                  </Label>
-                </div>
-              );
-            })}
-          </RadioGroup>
-        </CardContent>
-      </Card>
+      {/* Desktop Layout */}
+      <div className="hidden lg:block space-y-8">
+        <div className="text-center space-y-6">
+          <h2 className="text-3xl font-playfair font-bold text-foreground">
+            Personality Assessment
+          </h2>
+          <div className="card-glass p-6 max-w-3xl mx-auto">
+            <p className="text-base text-muted-foreground leading-relaxed">
+              <strong>Why this matters:</strong> Understanding your natural energy patterns and decision-making style helps us match you with someone whose approach to life complements yours for authentic, sustainable connection.
+            </p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground mb-4">
+              Question {currentQuestion + 1} of {questions.length}
+            </p>
+            <div className="w-full bg-muted rounded-full h-3">
+              <div 
+                className="bg-primary h-3 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
 
-      <Button 
-        onClick={nextQuestion}
-        disabled={!answers[currentQuestionData.id]}
-        className="btn-gradient w-full"
-      >
-        {currentQuestion === questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
-        <ArrowRight className="h-4 w-4 ml-2" />
-      </Button>
+        <div className="max-w-4xl mx-auto">
+          <Card className="card-glass">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-medium mb-8 text-foreground text-center">
+                {currentQuestionData.text}
+              </h3>
+              
+              <RadioGroup 
+                value={selectedUniqueValue} 
+                onValueChange={handleAnswer}
+                className="space-y-4 max-w-3xl mx-auto"
+              >
+                {currentQuestionData.options.map((option, index) => {
+                  const uniqueValue = `${currentQuestionData.id}-option-${index}`;
+                  const uniqueId = `q${currentQuestionData.id}-option${index}-${option.value}`;
+                  return (
+                    <div key={uniqueId} className="flex items-start space-x-4 p-6 rounded-xl hover:bg-accent/50 transition-colors border border-transparent hover:border-accent/30">
+                      <RadioGroupItem 
+                        value={uniqueValue} 
+                        id={uniqueId}
+                        className="mt-1"
+                      />
+                      <Label 
+                        htmlFor={uniqueId}
+                        className="text-base leading-relaxed cursor-pointer flex-1"
+                      >
+                        {option.text}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          <div className="text-center mt-8">
+            <Button 
+              onClick={nextQuestion}
+              disabled={!answers[currentQuestionData.id]}
+              className="btn-gradient px-12 py-4 text-lg"
+            >
+              {currentQuestion === questions.length - 1 ? 'Complete Assessment' : 'Next Question'}
+              <ArrowRight className="h-5 w-5 ml-3" />
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default PersonalityAssessment;
-

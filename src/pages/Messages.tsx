@@ -24,26 +24,46 @@ const Messages = () => {
 
   if (selectedConversation) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-20 sm:pb-24">
-        <div className="w-full max-w-sm mx-auto px-3 sm:px-6 overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+        {/* Mobile Layout */}
+        <div className="lg:hidden w-full max-w-sm mx-auto px-4 pb-20 overflow-x-hidden">
           <ChatInterface 
             conversation={selectedConversation}
             onBack={handleBack}
           />
         </div>
+        
+        {/* Desktop Layout */}
+        <div className="hidden lg:block max-w-4xl mx-auto px-8 pb-12">
+          <ChatInterface 
+            conversation={selectedConversation}
+            onBack={handleBack}
+          />
+        </div>
+        
         <NavigationFooter />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-20 sm:pb-24">
-      <div className="w-full max-w-sm mx-auto px-3 sm:px-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50">
+      {/* Mobile Layout */}
+      <div className="lg:hidden w-full max-w-sm mx-auto px-4 pb-20 overflow-x-hidden">
         <ConversationsList 
           onBack={handleBack}
           onSelectConversation={handleSelectConversation}
         />
       </div>
+      
+      {/* Desktop Layout */}
+      <div className="hidden lg:block max-w-4xl mx-auto px-8 pb-12">
+        <ConversationsList 
+          onBack={handleBack}
+          onSelectConversation={handleSelectConversation}
+        />
+      </div>
+      
       <NavigationFooter />
     </div>
   );
