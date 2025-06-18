@@ -4,82 +4,102 @@ import { AttachmentQuestion } from "./types";
 const baseAttachmentQuestions: AttachmentQuestion[] = [
   {
     id: 1,
-    text: "When my partner is away for an extended period, I:",
+    text: "Your partner hasn't responded to your text for 4 hours, but they usually reply within an hour. Your first thought is:",
     options: [
-      { value: "secure", text: "Miss them but trust they'll return and maintain my own activities" },
-      { value: "anxious", text: "Feel anxious and worry about our relationship constantly" },
-      { value: "avoidant", text: "Feel relieved to have space and independence" },
-      { value: "disorganized", text: "Have mixed feelings - sometimes missing them, sometimes feeling relieved" }
+      { value: "secure", text: "They're probably busy - I'll hear from them when they're free" },
+      { value: "anxious", text: "Did I say something wrong? I should probably check in again" },
+      { value: "avoidant", text: "Good, I have some space to focus on my own things" },
+      { value: "disorganized", text: "I feel confused - part of me worries, part of me feels relieved" }
     ]
   },
   {
     id: 2,
-    text: "During conflicts with my partner, I typically:",
+    text: "It's Friday evening and your partner suggests staying in and ordering takeout instead of the restaurant reservation you made. You typically:",
     options: [
-      { value: "secure", text: "Stay calm and work together to find solutions" },
-      { value: "anxious", text: "Get emotional and seek immediate reassurance" },
-      { value: "avoidant", text: "Withdraw and prefer to handle things alone" },
-      { value: "disorganized", text: "React unpredictably - sometimes pursuing, sometimes withdrawing" }
+      { value: "secure", text: "Go with the flow - either option sounds nice as long as we're together" },
+      { value: "anxious", text: "Wonder if they're losing interest in making effort for our relationship" },
+      { value: "avoidant", text: "Feel relieved - staying in means less pressure and more comfort" },
+      { value: "disorganized", text: "Feel torn between disappointment and relief, unsure what I actually prefer" }
     ]
   },
   {
     id: 3,
-    text: "When it comes to expressing my feelings in relationships, I:",
+    text: "When someone you're dating wants to talk about 'where this is going,' your instinct is to:",
     options: [
-      { value: "secure", text: "Find it natural and comfortable to share openly" },
-      { value: "anxious", text: "Share intensely and frequently, seeking validation" },
-      { value: "avoidant", text: "Prefer to keep feelings private and maintain independence" },
-      { value: "disorganized", text: "Struggle with inconsistent emotional expression" }
+      { value: "secure", text: "Appreciate their openness and share my own thoughts honestly" },
+      { value: "anxious", text: "Feel anxious but also hopeful - I've been wanting this conversation too" },
+      { value: "avoidant", text: "Feel a bit trapped and wish we could just enjoy things as they are" },
+      { value: "disorganized", text: "Feel simultaneously excited and panicked about defining things" }
     ]
   },
   {
     id: 4,
-    text: "My typical approach to intimacy is:",
+    text: "Your ideal Sunday morning with a romantic partner would be:",
     options: [
-      { value: "secure", text: "I'm comfortable with closeness and maintain my sense of self" },
-      { value: "anxious", text: "I crave closeness but worry about being abandoned" },
-      { value: "avoidant", text: "I value independence and can feel overwhelmed by too much closeness" },
-      { value: "disorganized", text: "I want intimacy but find it scary and unpredictable" }
+      { value: "secure", text: "A mix of together time and personal space - maybe coffee together, then our own activities" },
+      { value: "anxious", text: "Spending the whole morning together, talking and being close" },
+      { value: "avoidant", text: "Parallel activities - being in the same space but doing our own things" },
+      { value: "disorganized", text: "I'd want closeness but also feel like I need space - it's confusing" }
     ]
   },
   {
     id: 5,
-    text: "When my partner seems distant or preoccupied, I:",
+    text: "A friend asks for your advice: 'My partner seems emotionally distant lately.' You'd probably say:",
     options: [
-      { value: "secure", text: "Give them space while being available for support" },
-      { value: "anxious", text: "Immediately worry and try to reconnect or get reassurance" },
-      { value: "avoidant", text: "Use it as an opportunity to focus on my own interests" },
-      { value: "disorganized", text: "Feel confused and react inconsistently" }
+      { value: "secure", text: "Have you talked to them about it? They might be stressed about something else" },
+      { value: "anxious", text: "That's concerning - distance usually means something is wrong in the relationship" },
+      { value: "avoidant", text: "Maybe they just need some space. Not everyone is emotionally expressive all the time" },
+      { value: "disorganized", text: "That's hard to read - it could mean anything, which would drive me crazy" }
     ]
   },
   {
     id: 6,
-    text: "When I feel hurt by my partner's actions, I:",
+    text: "After a really great first date, you typically:",
     options: [
-      { value: "secure", text: "Express my feelings clearly and work toward understanding" },
-      { value: "anxious", text: "Become emotional and need immediate reassurance that they still care" },
-      { value: "avoidant", text: "Tend to shut down and process the hurt internally" },
-      { value: "disorganized", text: "Feel overwhelmed and react in ways that confuse even myself" }
+      { value: "secure", text: "Feel happy and text them the next day to say I had a good time" },
+      { value: "anxious", text: "Feel excited but worry about when they'll text and what it means if they don't" },
+      { value: "avoidant", text: "Feel good but also need some time to process before reaching out" },
+      { value: "disorganized", text: "Feel excited but also surprisingly anxious about what comes next" }
     ]
   },
   {
     id: 7,
-    text: "In past relationships, I've typically:",
+    text: "When you think about past relationships that ended, you usually:",
     options: [
-      { value: "secure", text: "Maintained my independence while being committed to the relationship" },
-      { value: "anxious", text: "Worried frequently about whether my partner truly loved me" },
-      { value: "avoidant", text: "Felt suffocated when partners wanted too much closeness" },
-      { value: "disorganized", text: "Experienced intense highs and lows with unpredictable patterns" }
+      { value: "secure", text: "Learned something valuable even if it was sad when they ended" },
+      { value: "anxious", text: "Wonder if I was too much or not enough for them" },
+      { value: "avoidant", text: "Feel like I'm better off focusing on myself and my own goals" },
+      { value: "disorganized", text: "Have mixed feelings - sometimes missing them, sometimes feeling relieved" }
     ]
   },
   {
     id: 8,
-    text: "When thinking about commitment, I:",
+    text: "Your partner seems upset but says 'I'm fine' when you ask what's wrong. You:",
     options: [
-      { value: "secure", text: "Feel excited about building a life with the right person" },
-      { value: "anxious", text: "Want commitment but worry about being hurt or abandoned" },
-      { value: "avoidant", text: "Feel nervous about losing my freedom and independence" },
-      { value: "disorganized", text: "Have conflicting feelings - wanting it but also fearing it" }
+      { value: "secure", text: "Give them space but let them know I'm here when they're ready to talk" },
+      { value: "anxious", text: "Keep gently asking because I can tell something's bothering them" },
+      { value: "avoidant", text: "Take them at their word - if they wanted to talk about it, they would" },
+      { value: "disorganized", text: "Feel confused about whether to push or back off" }
+    ]
+  },
+  {
+    id: 9,
+    text: "In your family growing up, when someone was upset, the usual response was:",
+    options: [
+      { value: "secure", text: "Talk it through together and find a way to help" },
+      { value: "anxious", text: "A lot of emotional intensity and focus on fixing the problem immediately" },
+      { value: "avoidant", text: "Give them space to work it out on their own" },
+      { value: "disorganized", text: "Unpredictable - sometimes ignored, sometimes overwhelming attention" }
+    ]
+  },
+  {
+    id: 10,
+    text: "When you imagine your ideal long-term relationship, you picture:",
+    options: [
+      { value: "secure", text: "Two independent people who choose to build a life together" },
+      { value: "anxious", text: "Being deeply connected and central to each other's happiness" },
+      { value: "avoidant", text: "Maintaining your individual identities while sharing some key experiences" },
+      { value: "disorganized", text: "Feeling safe and close, though that feels almost too good to be true" }
     ]
   }
 ];
