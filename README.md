@@ -3,7 +3,7 @@
 
 LockInOnce is a sophisticated AI-powered relationship matching platform designed exclusively for individuals seeking deep, lasting love, no swipes, no games.. Built on proven relationship science, our platform uses comprehensive compatibility assessments to create meaningful connections for long-term partnerships. 
 
-🛠️ **Built for the [Lovable.dev](https://lovable.dev) June 2025 Hackathon.**  
+🛠️ **Built for the [Lovable.dev](https://lovable.dev) June 2025 AI Showdown.**  
 🚀 Submission: [[Project Page Link](https://lock-in-once.lovable.app/)] 
 
 ## 🎯 MVP Mission
