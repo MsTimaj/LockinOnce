@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import LoveVeeChat from "./LoveVeeChat";
 
 interface LoveVeeChatButtonProps {
@@ -23,11 +23,8 @@ const LoveVeeChatButton = ({
 
   const handleButtonClick = () => {
     console.log('Chat button clicked, current state:', isOpen);
-    if (isOpen) {
-      // Chat is open, so close it - use the same close logic as the chat component
-      handleChatClose();
-    } else {
-      // Chat is closed, so open it
+    if (!isOpen) {
+      // Only open the chat, don't handle closing from the button
       if (externalOnToggle) {
         externalOnToggle();
       } else {
@@ -51,17 +48,9 @@ const LoveVeeChatButton = ({
       <div className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-40">
         <Button
           onClick={handleButtonClick}
-          className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-xl transition-all duration-300 ${
-            isOpen 
-              ? 'bg-gray-500 hover:bg-gray-600' 
-              : 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600'
-          }`}
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-xl transition-all duration-300 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600"
         >
-          {isOpen ? (
-            <X className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-          ) : (
-            <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-          )}
+          <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
         </Button>
       </div>
 
