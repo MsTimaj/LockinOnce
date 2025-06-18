@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -244,21 +243,24 @@ const PersonalityAssessment = ({ onComplete }: PersonalityAssessmentProps) => {
             onValueChange={handleAnswer}
             className="space-y-4"
           >
-            {currentQuestionData.options.map((option, index) => (
-              <div key={`${currentQuestionData.id}-${option.value}-${index}`} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
-                <RadioGroupItem 
-                  value={option.value} 
-                  id={`q${currentQuestionData.id}-option-${index}`}
-                  className="mt-0.5"
-                />
-                <Label 
-                  htmlFor={`q${currentQuestionData.id}-option-${index}`}
-                  className="text-sm leading-relaxed cursor-pointer flex-1"
-                >
-                  {option.text}
-                </Label>
-              </div>
-            ))}
+            {currentQuestionData.options.map((option, index) => {
+              const uniqueId = `q${currentQuestionData.id}-option${index}-${option.value}`;
+              return (
+                <div key={uniqueId} className="flex items-start space-x-3 p-4 rounded-lg hover:bg-accent/50 transition-colors">
+                  <RadioGroupItem 
+                    value={option.value} 
+                    id={uniqueId}
+                    className="mt-0.5"
+                  />
+                  <Label 
+                    htmlFor={uniqueId}
+                    className="text-sm leading-relaxed cursor-pointer flex-1"
+                  >
+                    {option.text}
+                  </Label>
+                </div>
+              );
+            })}
           </RadioGroup>
         </CardContent>
       </Card>
