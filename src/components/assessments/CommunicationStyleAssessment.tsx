@@ -6,6 +6,7 @@ import { communicationStyleQuestions } from "./communicationStyle/questions";
 import { scoreCommunicationStyle } from "./communicationStyle/scoring";
 import { AssessmentHeader } from "./communicationStyle/AssessmentHeader";
 import { QuestionCard } from "./communicationStyle/QuestionCard";
+import { randomizeQuestionsWithOptions } from "@/utils/assessments/questionRandomizer";
 import { useScrollToTop } from "./hooks/useScrollToTop";
 
 interface CommunicationStyleAssessmentProps {
@@ -20,22 +21,23 @@ export interface CommunicationStyleResults {
 }
 
 const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessmentProps) => {
+  useScrollToTop();
+  
+  const [questions] = useState(() => randomizeQuestionsWithOptions(communicationStyleQuestions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<number, string>>({});
-  
-  useScrollToTop();
 
   const handleAnswerSelect = (value: string) => {
     console.log(`Question ${currentQuestion + 1} answered:`, value);
     const newResponses = {
       ...responses,
-      [communicationStyleQuestions[currentQuestion].id]: value
+      [questions[currentQuestion].id]: value
     };
     setResponses(newResponses);
   };
 
   const handleNext = () => {
-    if (currentQuestion < communicationStyleQuestions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       // Assessment complete
@@ -52,16 +54,16 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
     }
   };
 
-  const currentQuestionData = communicationStyleQuestions[currentQuestion];
+  const currentQuestionData = questions[currentQuestion];
   const currentResponse = responses[currentQuestionData.id] || "";
   const canProceed = currentResponse !== "";
-  const isLastQuestion = currentQuestion === communicationStyleQuestions.length - 1;
+  const isLastQuestion = currentQuestion === questions.length - 1;
 
   return (
     <div className="space-y-6">
       <AssessmentHeader 
         currentQuestion={currentQuestion}
-        totalQuestions={communicationStyleQuestions.length}
+        totalQuestions={questions.length}
       />
 
       <QuestionCard
