@@ -1,5 +1,7 @@
 
-import { runScoringTests, testIndividualScoring } from "./scoringTest";
+import { runScoringTests } from "./scoringTests";
+import { testIndividualScoring } from "./individualTests";
+import { runValidationTests } from "./validationTests";
 
 // Main test runner that can be called from console or component
 export const runAllAssessmentTests = () => {
@@ -10,6 +12,11 @@ export const runAllAssessmentTests = () => {
   try {
     // Run comprehensive scoring tests
     const results = runScoringTests();
+    
+    console.log('\n' + '=' .repeat(60));
+    
+    // Run validation tests
+    runValidationTests(results);
     
     console.log('\n' + '=' .repeat(60));
     
