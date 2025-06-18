@@ -132,7 +132,7 @@ const AIResultsSummary = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-3 sm:px-6">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 flex items-center justify-center px-4 sm:px-6">
         <div className="max-w-sm w-full text-center space-y-4">
           <div className="text-red-500 text-sm sm:text-base font-medium px-2">{error}</div>
           <Button 
@@ -161,7 +161,7 @@ const AIResultsSummary = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-20 sm:pb-24">
-      <div className="w-full max-w-sm sm:max-w-md mx-auto px-3 sm:px-6 overflow-x-hidden">
+      <div className="w-full max-w-sm mx-auto px-3 sm:px-6 overflow-x-hidden">
         <AIResultsDisplay
           analysis={analysis}
           onLearnMore={handleLearnMore}
