@@ -23,7 +23,7 @@ const CommunicationStyleAssessment = ({ onComplete }: CommunicationStyleAssessme
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<number, string>>({});
   
-  useScrollToTop(currentQuestion);
+  useScrollToTop();
 
   const handleAnswerSelect = (value: string) => {
     console.log(`Question ${currentQuestion + 1} answered:`, value);
